@@ -7,7 +7,7 @@ from accounts.managers import UserManager
 class MyUser(AbstractUser):
     username = None
     email = models.CharField(max_length=50, unique=True)
-    mobile_number = models.CharField(max_length=15)
+    mobile_number = models.CharField(max_length=15, unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
