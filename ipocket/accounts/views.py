@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from accounts.forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -31,10 +31,11 @@ def signin(request):
         user = authenticate(username = email, password=password)
 
         if user is not None:
-            print("User Exist")
+            login(request,user)
+            return redirect('https://www.youtube.com/watch?v=7W58mD6sAhg')
 
         else:
-            print("Nope")
+            messages.error(request,'Check credentials or the user may not exist.')
 
     return render(request,'user/signin.html')
 
