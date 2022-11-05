@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-</head>
-<body>
+ {% extends 'owner/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
 
 <div class="messages">
 
@@ -14,8 +11,7 @@
 
 </div>
 
-<h3>Welcome Back!</h3>
-<a href="{% url 'ownerout' %}">Logout</a>
+<section></section>
 
-</body>
-</html>
+
+{% endblock %}
