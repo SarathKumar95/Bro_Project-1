@@ -59,10 +59,15 @@ def owner(request):
         return redirect('dashboard')
 
     else:
-        print("Wrong!")
+        messages.info(request,'You dont seem to be an admin.')
 
     return render(request,'owner/ownin.html')
 
 
 def dashboard(request):
     return render(request,'owner/dashboard.html')
+
+
+def owner_out(request):
+    logout(request)
+    return redirect('owner')

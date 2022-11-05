@@ -6,7 +6,16 @@
 </head>
 <body>
 
-<h1>Inside Admin</h1>
+<div class="messages">
+
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+
+</div>
+
+<h3>Welcome Back!</h3>
+<a href="{% url 'ownerout' %}">Logout</a>
 
 </body>
 </html>

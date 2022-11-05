@@ -6,6 +6,12 @@
 </head>
 <body>
 
+<div class="messages">
+  {% for message in messages %}
+    {{message}}
+  {% endfor %}
+</div>
+
 <form action="" method="POST">
 
   {% csrf_token %}
