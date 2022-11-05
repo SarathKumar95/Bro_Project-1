@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from accounts.forms import *
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
@@ -32,10 +32,37 @@ def signin(request):
 
         if user is not None:
             login(request,user)
-            return redirect('https://www.youtube.com/watch?v=7W58mD6sAhg')
+            return redirect('userhome')
 
         else:
             messages.error(request,'Check credentials or the user may not exist.')
 
     return render(request,'user/signin.html')
 
+
+
+def signout(request):
+    logout(request)
+    return redirect('signin')
+
+
+def myaccount(request):
+    return render(request,'user/userhome.html')
+
+def owner(request):
+    username = request.POST.get('adminuser')
+    password = request.POST.get('adminpass')
+
+    admin = authenticate(username=username,password=password)
+
+    if admin is not None:
+        return redirect('dashboard')
+
+    else:
+        print("Wrong!")
+
+    return render(request,'owner/ownin.html')
+
+
+def dashboard(request):
+    return render(request,'owner/dashboard.html')

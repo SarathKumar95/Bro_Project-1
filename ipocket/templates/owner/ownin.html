@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner Sign In</title>
+</head>
+<body>
+
+<form action="" method="POST">
+
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label for="adminuser">Email Id : </label>
+    <input type="email" id="adminuser" name="adminuser">
+  </div>
+
+  <div class="mb-3">
+    <label for="adminpass">Password : </label>
+    <input type="password" id="adminpass" name="adminpass">
+  </div>
+
+  <div class="mb-3">
+    <input type="submit" value="Enter">
+  </div>
+
+</form>
+
+
+</body>
+</html>
