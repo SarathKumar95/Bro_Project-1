@@ -2,12 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from accounts.managers import UserManager
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class MyUser(AbstractUser):
     username = None
-    email = models.CharField(max_length=50, unique=True)
-    mobile_number = models.CharField(max_length=15, unique=True)
+    email = models.EmailField(max_length=50, unique=True)
+    mobile_number = PhoneNumberField(unique=True, blank=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

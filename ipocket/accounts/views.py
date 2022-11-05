@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from accounts.forms import *
+from django.contrib import messages
 
 # Create your views here.
 
@@ -13,7 +14,8 @@ def register(request):
 
         if form.is_valid():
             form.save()
-            print('Yes')
+            messages.info(request,"You are registered!")
         else:
-            print('Nope!')
+            messages.error(request,form.errors)
+
     return render(request, 'user/register.html', context)

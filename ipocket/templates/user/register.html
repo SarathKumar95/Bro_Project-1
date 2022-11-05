@@ -10,9 +10,34 @@
 
     {% csrf_token %}
 
-    {{form}}
+    <div class="mb-2">
 
-    <input type="submit" value="Register">
+        <label>First Name : </label>{{form.first_name}}
+        <label>Last Name : </label>{{form.last_name}}
+
+    </div>
+
+    <div class="mb-2">
+        <label>Email Id :</label>{{form.email}}
+        <label>Mobie Number</label>{{form.mobile_number}}
+    </div>
+
+      <div class="mb-2">
+          <label>Password :</label>{{form.password1}}
+          <label>Confirm password:</label>{{form.password2}}
+    </div>
+
+      <div class="mb-2">
+        <input type="submit" value="Register">
+      </div>
+
+      <div class="messages">
+
+          {% for message in messages %}
+            {{message}}
+          {% endfor %}
+
+      </div>
 
 
 </form>
