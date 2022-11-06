@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-from accounts.managers import UserManager
+from .managers import UserManager
 from phonenumber_field.modelfields import PhoneNumberField
 
 
