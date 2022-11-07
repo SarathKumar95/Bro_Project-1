@@ -1,0 +1,48 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}User Manager{% endblock %}
+
+{% block content %}
+
+    <div class="main text-center mt-2">
+
+        <h1>User Manager</h1>
+
+        <table class="table" id="usertable">
+            <tr>
+                <th># User Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Mobile Number</th>
+                <th>Email Address</th>
+                <th>Actions</th>
+                <th>Block Status</th>
+            </tr>
+
+            {% for item in users %}
+                {% if item.is_superuser == False %}
+                <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.first_name}}</td>
+                    <td>{{item.last_name}}</td>
+                    <td>{{item.mobile_number}}</td>
+                    <td>{{item.email}}</td>
+                    <td>{{item.is_active}}</td>
+                    <td>
+                        <a href="{% url 'blockuser'   %}">Block User</a>
+                    </td>
+
+                </tr>
+
+                {% endif %}
+            {% endfor %}
+
+
+        </table>
+
+
+    </div>
+
+
+
+{% endblock %}

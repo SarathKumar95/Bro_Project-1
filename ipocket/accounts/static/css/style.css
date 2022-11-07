@@ -5,22 +5,32 @@ box-sizing : border-box;
 
 }
 
-#me{
-    color:green;
-}
-
-aside {
-    width : 250px;
-    height : 800px;
+.sidebar {
+    height: 100%;
+    width: 200px;
+    position:fixed;
+    z-index: 1;
+    left : 0;
     background-color : #212529;
+    overflow-x : hidden;
+    padding-top: 50px;
+
 }
 
-.aside_list{
-    padding-top : 50px;
-    list-style : none;
+.sidebar ul{
+    list-style:none;
 }
 
-.aside_list li a {
+.sidebar a{
     text-decoration : none;
-    color : white;
+    color: white;
 }
+
+.main {
+  margin-left: 250px;
+}
+
+#usertable tr th{
+    font-size : 18px;
+}
+

@@ -16,7 +16,8 @@ def register(request):
 
         if form.is_valid():
             form.save()
-            messages.info(request, "You are registered!")
+            messages.info(request, "You are registered!Login Here.")
+            return redirect('signin')
         else:
             messages.error(request, form.errors)
 
@@ -85,3 +86,24 @@ def dashboard(request):
 def owner_out(request):
     del request.session['admin']
     return redirect('owner')
+
+
+def user_manager(request):
+    if 'admin' in request.session:
+        users = MyUser.objects.all()
+        print(users)
+        context = {'users':users}
+        return render(request,'owner/usermanager.html',context)
+
+    else:
+        return redirect(request.path)
+
+
+def block_user(request):
+    if request.method == 'POST':
+        print('Blocked')
+
+    else:
+        print('Unchanged')
+
+    return redirect(request.path)

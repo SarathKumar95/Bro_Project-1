@@ -13,7 +13,7 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark ps-3 pe-3 ">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">SuperUser</a>
+    <a class="navbar-brand" href="{% url 'dashboard'  %}">SuperUser</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -32,24 +32,21 @@
 
 </header>
 
-
 <aside>
 
-    <ul class="aside_list">
-        <li class="mb-5 ps-5"><a href=""><img class="pe-1" src="{% static 'images/monitor.png' %}" alt="">Dashboard</a></li>
-        <li class="mb-5 ps-5"><a href=""><img class="pe-1" src="{% static 'images/user.png' %}" alt="">User Manager</a></li>
-        <li class="mb-5 ps-5"><a href=""><img class="pe-1" src="{% static 'images/product.png' %}" alt="">Product Manager</a></li>
-        <li class="mb-5 ps-5"><a href=""><img class="pe-1" src="{% static 'images/categories.png' %}" alt="">Category Manager</a></li>
-        <li class="mb-5 ps-5"><a href=""><img class="pe-1" src="{% static 'images/promo.png' %}" alt="">Coupon Manager</a></li>
-        <li class="mb-5 ps-5"><a href=""><img class="pe-1" src="{% static 'images/sent.png' %}" alt="">Order Manager</a></li>
-    </ul>
-
+    <div class="sidebar">
+        <ul>
+            <li class="mb-5"><a href="">Dashboard</a></li>
+            <li class="mb-5"><a href="{% url 'usermanager' %}">UserManager</a></li>
+            <li class="mb-5"><a href="{% url 'usermanager' %}">Product Manager</a></li>
+            <li class="mb-5"><a href="{% url 'usermanager' %}">Order Manager</a></li>
+        </ul>
+    </div>
 
 
 </aside>
 
 {% block content %}
-
 
 {% endblock %}
 
