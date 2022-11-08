@@ -33,13 +33,13 @@ def signin(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(username=email, password=password)
-
-        if user is not None:
+        print(user)
+        if user is not None and user.is_active == True:
             request.session['username'] = email
             return redirect('userhome')
 
         else:
-            messages.error(request, 'Check credentials or the user may not exist.')
+            messages.error(request, 'Check credentials or contact admin.')
 
     return render(request, 'user/signin.html')
 
@@ -91,7 +91,6 @@ def owner_out(request):
 def user_manager(request):
     if 'admin' in request.session:
         users = MyUser.objects.all()
-        print(users)
         context = {'users':users}
         return render(request,'owner/usermanager.html',context)
 
@@ -99,11 +98,18 @@ def user_manager(request):
         return redirect(request.path)
 
 
-def block_user(request):
-    if request.method == 'POST':
-        print('Blocked')
+def block_user(request,id):
+    blocked_user = MyUser.objects.get(id=id)
+    blocked_user.is_active = False
+    blocked_user.save()
+    print("Blocked user is",blocked_user)
+    print("Is active status of blocked user is",blocked_user.is_active)
+    return redirect("usermanager")
 
-    else:
-        print('Unchanged')
-
-    return redirect(request.path)
+def unblock_user(request,id):
+    user_to_unblock = MyUser.objects.get(id=id)
+    user_to_unblock.is_active = True
+    user_to_unblock.save()
+    print("Unblocked user is", user_to_unblock)
+    print("Is active status of blocked user is", user_to_unblock.is_active)
+    return redirect("usermanager")

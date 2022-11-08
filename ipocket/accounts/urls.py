@@ -10,5 +10,7 @@ urlpatterns = [
     path('dashboard',views.dashboard, name='dashboard'),
     path('ownerout',views.owner_out,name='ownerout'),
     path('usermanager',views.user_manager, name='usermanager'),
-    path('blockuser',views.block_user,name='blockuser'),
+    path('blockuser/<int:id>',views.block_user,name='blockuser'),
+    path('unblockuser/<int:id>', views.unblock_user, name='unblockuser'),
+
 ]

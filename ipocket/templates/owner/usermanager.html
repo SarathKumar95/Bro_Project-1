@@ -10,26 +10,36 @@
 
         <table class="table" id="usertable">
             <tr>
-                <th># User Id</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Mobile Number</th>
                 <th>Email Address</th>
-                <th>Actions</th>
                 <th>Block Status</th>
+                <th>Action</th>
             </tr>
 
             {% for item in users %}
                 {% if item.is_superuser == False %}
                 <tr>
-                    <td>{{item.id}}</td>
                     <td>{{item.first_name}}</td>
                     <td>{{item.last_name}}</td>
                     <td>{{item.mobile_number}}</td>
                     <td>{{item.email}}</td>
-                    <td>{{item.is_active}}</td>
+                    <td>{% if item.is_active == False %}
+                            {{'Blocked'}}
+                        {% else %}
+                            {{'Authorized'}}
+                        {% endif %}
+                    </td>
                     <td>
-                        <a href="{% url 'blockuser'   %}">Block User</a>
+                        {% if item.is_active == True  %}
+                            <a style="display:block;" class="btn btn-danger btn-sm" onclick="showBlocked()" href="{% url 'blockuser' item.id %}">Block User</a>
+                            <a style="display:none;" class="btn btn-success btn-sm" onclick="showUnblocked()"  href="{% url 'unblockuser' item.id %}">Unblock User</a>
+                        {% else %}
+                            <a style="display:none;" class="btn btn-danger btn-sm" onclick="showBlocked()" href="{% url 'blockuser' item.id %}">Block User</a>
+                            <a style="display:block;" class="btn btn-success btn-sm" onclick="showUnblocked()"  href="{% url 'unblockuser' item.id %}">Unblock User</a>
+                        {% endif %}
+
                     </td>
 
                 </tr>
@@ -43,6 +53,5 @@
 
     </div>
 
-
-
 {% endblock %}
+
