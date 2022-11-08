@@ -6,6 +6,9 @@ from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
+def home_page(request):
+    return render(request,'home/index.html')
+
 
 def register(request):
     form = CustomUserCreationForm()
@@ -85,6 +88,7 @@ def dashboard(request):
 
 def owner_out(request):
     del request.session['admin']
+    messages.info(request,"Thank you for spending time with us.")
     return redirect('owner')
 
 

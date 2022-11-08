@@ -21,13 +21,17 @@ box-sizing : border-box;
     list-style:none;
 }
 
-.sidebar a{
+.sidebar  a{
     text-decoration : none;
     color: white;
 }
 
+.sidebar ul li a:active{
+    color: pink;
+}
+
 .main {
-  margin-left: 250px;
+  margin-left: 200px;
 }
 
 #usertable tr th{
@@ -37,7 +41,7 @@ box-sizing : border-box;
 .ownerlog {
     margin:100px auto;
     width : 350px;
-    height : 300px;
+    height : 350px;
     border: 2px solid black;
     border-radius : 15px;
     color: white;
