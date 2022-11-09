@@ -13,6 +13,6 @@ urlpatterns = [
     path('usermanager',views.user_manager, name='usermanager'),
     path('blockuser/<int:id>',views.block_user,name='blockuser'),
     path('unblockuser/<int:id>', views.unblock_user, name='unblockuser'),
-    path('category',include('category.urls')),
+    path('productmanager/',include('category.urls',)),
 
 ]

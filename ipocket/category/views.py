@@ -9,3 +9,9 @@ def product_manager(request):
     print(items)
     context = {'items': items}
     return render(request,'owner/productmanager.html',context)
+
+
+def product_edit(request,product_id):
+    item = Products.objects.get(product_id=product_id)
+    print(item)
+    return render(request,'owner/producteditor.html')
