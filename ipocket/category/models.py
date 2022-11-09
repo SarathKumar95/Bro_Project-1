@@ -23,7 +23,7 @@ class Products(models.Model):
     price = models.IntegerField(default=1000)
     quantity = models.IntegerField(default=0)
     description = models.TextField(max_length=500, null=True, blank=True)
-    images = models.ImageField(upload_to = 'media/images/products',null=True, blank=True)
+    images = models.ImageField(upload_to = 'images/products',null=True, blank=True)
     is_available = models.BooleanField(default=True,null=True)
     is_out_of_stock = models.BooleanField(default=False)
 
