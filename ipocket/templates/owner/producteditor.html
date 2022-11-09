@@ -4,18 +4,18 @@
 
 
 {% block content %}  
+{% load crispy_forms_tags %}
 
     <section>
 
-        <div class="main mt-2">
+        <h3>Edit User</h3>
 
-            <form action="" method="POST">
-                   
-                <label for="productname">Product Name : </label>
-                <input type="text">
-
-                labe
-
+        <div class="main mt-2" style="width:400px;">
+            
+            <form enctype="multipart/form-data" action="" method="POST">
+                {% csrf_token %}
+                   {{form|crispy}}
+                   <input type="submit" value="Update">
             </form>
             
 

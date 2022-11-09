@@ -18,17 +18,25 @@
                         <th class="table-primary">Category</th>
                         <th class="table-primary">Price</th>
                         <th class="table-primary">Quantity</th>
+                        <th class="table-primary">Description</th>
                         <th class="table-primary">Out of Stock</th>
                         <th class="table-primary">Action</th>
                     </tr>
         
                     {% for item in items %}
                         <tr>
-                            <td><img src ="{{item.images.url}}" alt="item-image" style="height:100px;"></td>
+                            <td>
+                                {% if item.images %}
+                                    <img src ="{{item.images.url}}" alt="item-image" style="height:100px;">
+                                {% else %}  
+                                    <p>No image</p>                           
+                                {% endif %}
+                            </td>
                             <td>{{item}}</td>
                             <td>{{item.category}}</td>
                             <td>{{item.price}}</td>
                             <td>{{item.quantity}}</td>
+                            <td>{{item.description}}</td>
                             <td>{{item.is_out_of_stock}}</td>
                             <td>
                                 <a class="btn btn-success" href="{% url 'producteditor' item.product_id%}">Edit</a>
