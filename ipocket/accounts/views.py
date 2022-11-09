@@ -118,6 +118,3 @@ def unblock_user(request,id):
     print("Is active status of blocked user is", user_to_unblock.is_active)
     return redirect("usermanager")
 
-
-def product_manager(request):
-    pass

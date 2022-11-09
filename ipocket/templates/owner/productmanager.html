@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'owner/base.html' %}
 
-</body>
-</html>
+{% block title %}Product Manager {% endblock %}
+
+
+{% block content %}  
+
+    <section>
+
+        <div class="main text-center mt-2">
+
+                <h1>Product Management</h1>
+                
+                <table class="table table-striped mt-5" id="producttable">
+                    <tr>
+                        <th class="table-primary">Image</th>
+                        <th class="table-primary">Item Name</th>
+                        <th class="table-primary">Category</th>
+                        <th class="table-primary">Price</th>
+                        <th class="table-primary">Quantity</th>
+                        <th class="table-primary">Out of Stock</th>
+                        <th class="table-primary">Action</th>
+                    </tr>
+        
+                    {% for item in items %}
+                        <tr>
+                            <td><img src ="{{item.images.url}}" alt="item-image" style="height:100px;"></td>
+                            <td>{{item}}</td>
+                            <td>{{item.category}}</td>
+                            <td>{{item.price}}</td>
+                            <td>{{item.quantity}}</td>
+                            <td>{{item.is_out_of_stock}}</td>
+                            <td>Edit</td>
+        
+                        </tr>
+                    {% endfor %}
+        
+        
+                </table>
+        
+
+
+        </div>    
+
+    </section>
+
+{% endblock %}
