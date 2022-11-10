@@ -55,3 +55,23 @@ def delete_product(request,product_id):
     return redirect('productmanager')
 
 
+def category_list(request):
+    items = Categories.objects.all()
+    context = {'items':items}
+    return render(request,'owner/categorymanager.html',context)
+
+
+def category_add(request):
+    form = CategoryForm()
+    context = {'form':form}
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category Added!")
+            return redirect("categorymanager")
+        else:
+            messages.error(request,form.errors)    
+    return render(request,'owner/categoryadd.html',context)

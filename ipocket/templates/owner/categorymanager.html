@@ -1,0 +1,42 @@
+{% extends 'owner/base.html' %}  
+
+{% block title %} Manage Category {% endblock %}  
+
+
+{% block content %}
+    <div class="main">
+        <h1 class="text-center">Category Manager</h1>
+        <section>
+            {% for message in messages %}
+            {{message}}
+        {% endfor  %}
+        
+        <a href="{% url 'addcategory' %}">Add Category</a>
+        
+        <table class="table table-striped mt-5" id="categorytable">
+            <tr>
+                <th class="table-primary">Category Name</th>
+                <th class="table-primary">Action</th>
+            </tr>
+    
+            {% for item in items %}
+                <tr>
+                    <td>{{item.category_name}}</td>
+                    <td>
+                        <a class="btn btn-success" href="">Edit</a>
+                        <a class="btn btn-danger" href="">Delete</a>
+                    </td>
+    
+                </tr>
+            {% endfor %}
+    
+    
+        </table>
+    
+    
+        </section>
+    
+
+    </div>
+    
+{% endblock %}    
