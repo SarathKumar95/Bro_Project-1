@@ -35,9 +35,13 @@ def product_edit(request,product_id):
 def product_add (request):
     form = ProductForm()
     context = {'form':form}
-
-    if form.is_valid():
-        form.save()
+    
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES) 
+        
+        if form.is_valid():
+            form.save()
+            messages.info(request,'Product added')
         return redirect('productmanager')
 
     else:
