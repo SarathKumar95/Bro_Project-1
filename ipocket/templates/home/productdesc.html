@@ -4,6 +4,7 @@
 
 
 {% block content %}
+    {% load static %}
 
     <div class="main d-flex">
 
@@ -12,10 +13,11 @@
         <div class="card" style="width: 12rem;">
             <div class="text-center">
                 <img src="{{item.images.url}}" class="card-img-top" alt="product image" style="height:200px; width:150px;">
+                <img src="{% static 'images/wishlist.png' %}" alt="wishlist" id="wishlist">
             </div>
         </div>
 
-        <div class="ms-3">
+        <div class="ms-5 ps-5">
             <h4>{{item.product_name}}-{{item.generation}}-{{item.series}}-{{item.color}}-{{item.internal_storage}}</h4>
             <h6>{{item.condition}}</h6>
             <p>₹ {{item.price}}</p>
