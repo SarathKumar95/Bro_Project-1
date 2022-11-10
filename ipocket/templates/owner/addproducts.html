@@ -1,0 +1,23 @@
+{% extends 'owner/base.html' %}
+
+{% block title %} Add product {% endblock %}   
+
+
+{% block content %}   
+
+<div class="main mt-2">
+
+    <h2>Add Product</h2>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Add">
+    </form>
+
+</div>
+
+
+
+
+{% endblock %}   

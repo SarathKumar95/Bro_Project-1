@@ -18,13 +18,13 @@ class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=50)
     generation = models.IntegerField()
-    series = models.CharField(max_length=10)
+    series = models.CharField(max_length=10,blank=True)
+    internal_storage = models.CharField(max_length=5, default= '32 GB')
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     price = models.IntegerField(default=1000)
     quantity = models.IntegerField(default=0)
     description = models.TextField(max_length=500, null=True, blank=True)
     images = models.ImageField(upload_to = 'images/products',null=True, blank=True)
-    is_available = models.BooleanField(default=True,null=True)
     is_out_of_stock = models.BooleanField(default=False)
 
     class Meta:

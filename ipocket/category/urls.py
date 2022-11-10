@@ -3,5 +3,8 @@ from category import views
 
 urlpatterns = [
     path('',views.product_manager,name='productmanager'),
-    path('editproduct/<int:product_id>',views.product_edit,name='producteditor')
+    path('product/add',views.product_add,name='productadd'),
+    path('editproduct/<int:product_id>',views.product_edit,name='producteditor'),
+    path('product/delete/<int:product_id>',views.delete_product,name='productdelete'),
+   
 ]

@@ -8,16 +8,13 @@
 
     <section>
 
-        <h3>Edit User</h3>
-
-        <div class="main mt-2" style="width:400px;">
-            
+        <div class="main mt-2" style="width: 400px;">
             <form enctype="multipart/form-data" action="" method="POST">
                 {% csrf_token %}
                    {{form|crispy}}
                    <input type="submit" value="Update">
             </form>
-            
+
 
 
         </div>    

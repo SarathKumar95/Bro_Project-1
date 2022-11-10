@@ -7,10 +7,18 @@
 
     <section>
 
+        
+
         <div class="main text-center mt-2">
 
                 <h1>Product Management</h1>
+
+                {% for message in messages %}
+                    {{message}}
+                {% endfor  %}
                 
+                <a href="{% url 'productadd' %}">Add Product</a>
+
                 <table class="table table-striped mt-5" id="producttable">
                     <tr>
                         <th class="table-primary">Image</th>
@@ -39,7 +47,8 @@
                             <td>{{item.description}}</td>
                             <td>{{item.is_out_of_stock}}</td>
                             <td>
-                                <a class="btn btn-success" href="{% url 'producteditor' item.product_id%}">Edit</a>
+                                <a class="btn btn-success" href="{% url 'producteditor' item.product_id %}">Edit</a>
+                                <a class="btn btn-danger" href="{% url 'productdelete' item.product_id  %}">Delete</a>
                             </td>
         
                         </tr>
