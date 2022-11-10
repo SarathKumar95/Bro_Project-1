@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-
+from category.models import *
 
 # Create your views here.
 
@@ -118,3 +118,8 @@ def unblock_user(request,id):
     print("Is active status of blocked user is", user_to_unblock.is_active)
     return redirect("usermanager")
 
+def products(request):
+    product = Products.objects.all()
+    context = {'product':product}
+    print(product)
+    return render(request,'home/productpage.html',context)

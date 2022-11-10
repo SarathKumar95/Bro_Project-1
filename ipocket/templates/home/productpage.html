@@ -1,0 +1,23 @@
+{% extends 'home/base.html'  %}
+
+{% block title %}Products{% endblock  %}   
+
+
+{% block content  %}
+
+    
+        {% for item in product %}
+
+            <div class="card" style="width: 18rem;">
+                <img src="{{item.images}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                <h5 class="card-title">{{item.product_name}} {{item.generation}} {{item.series}}</h5>
+                <p class="card-text">{{item.color}} {{item.internal_storage}}</p>
+                <p class="card-subtext" style="font-size:13px;">₹ {{item.price}}</p>
+                <a href="#" class="btn btn-primary">Buy Now</a>
+                </div>
+            </div>
+
+        {% endfor %}
+
+{% endblock %}

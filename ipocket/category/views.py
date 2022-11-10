@@ -72,9 +72,9 @@ def category_add(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Category Added!")
-            return redirect("categorymanager")
         else:
-            messages.error(request,form.errors)    
+            messages.error(request,form.errors)
+            return redirect("categorymanager")    
     return render(request,'owner/categoryadd.html',context)
 
 
