@@ -61,7 +61,8 @@ def category_list(request):
     return render(request,'owner/categorymanager.html',context)
 
 
-def category_add(request):
+def category_add(request):    
+
     form = CategoryForm()
     context = {'form':form}
 
@@ -75,3 +76,32 @@ def category_add(request):
         else:
             messages.error(request,form.errors)    
     return render(request,'owner/categoryadd.html',context)
+
+
+
+
+def category_delete(request,category_id):
+    category = Categories.objects.get(category_id=category_id)
+    category.delete()
+    name_of_cat = category.category_name
+    messages.info(request,"Deleted " + str(name_of_cat))
+    return redirect('categorymanager')
+
+
+
+
+
+def category_edit(request,category_id):
+    category = Categories.objects.get(category_id=category_id)
+    form = CategoryForm(instance=category)
+    context = {'category':category, 'form':form}
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST,instance=category)
+
+        if form.is_valid():
+            form.save()
+            messages.info(request,"Category updated.")
+            return redirect("categorymanager")
+
+    return render(request,'owner/categoryedit.html',context)    

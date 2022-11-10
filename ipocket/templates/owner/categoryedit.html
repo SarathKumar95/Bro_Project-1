@@ -1,0 +1,22 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}Edit Category{% endblock %}   
+
+{% block content %}  
+    <section>
+
+        
+    <div class="main">
+
+        <form action="#" method="POST">
+            {% csrf_token %}
+                {{form.as_p}}
+            <input type="submit" value="Update">
+        </form>
+
+
+    </div>
+
+
+    </section>
+{% endblock %}  
