@@ -39,7 +39,7 @@ def signin(request):
         print(user)
         if user is not None and user.is_active == True:
             request.session['username'] = email
-            return redirect('userhome')
+            return redirect('home')
 
         else:
             messages.error(request, 'Check credentials or contact admin.')
@@ -50,7 +50,7 @@ def signin(request):
 def signout(request):
     if 'username' in request.session:
         del request.session['username']
-        return redirect('signin')
+        return redirect('/')   
 
 
 def myaccount(request):

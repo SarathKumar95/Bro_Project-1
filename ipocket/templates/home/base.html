@@ -24,12 +24,18 @@
             My Account
           </a>
           <ul class="dropdown-menu">
+            {% if 'username' in request.session %}
+            <li><a class="dropdown-item" href="{% url 'userhome' %}">Profile</a></li>
+            {% else %}
             <li><a class="dropdown-item" href="{% url 'signin' %}">Login</a></li>
-            <!--<li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>---->
+            {% endif %}
           </ul>
         </li>
+        {% if 'username' in request.session  %}
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'signout' %}" style="font-size: 15px;">Logout</a>
+        </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link active" href="#" style="font-size: 15px;">Cart</a>
         </li>

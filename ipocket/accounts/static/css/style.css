@@ -72,3 +72,16 @@ color : white;
     color: white;
     background: black;
 }
+
+#signup{
+    display: block;
+    margin: 0px auto;
+    margin:100px auto;
+    width : 700px;
+    height : 300px;
+    border: 2px solid black;
+    border-radius : 15px;
+    color: white;
+    background: black;
+}
+
