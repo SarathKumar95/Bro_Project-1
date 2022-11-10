@@ -5,19 +5,32 @@
 
 {% block content  %}
 
-    
-        {% for item in product %}
+        <div class="container">
+            <div class="row ">
 
-            <div class="card" style="width: 18rem;">
-                <img src="{{item.images}}" class="card-img-top" alt="...">
-                <div class="card-body">
-                <h5 class="card-title">{{item.product_name}} {{item.generation}} {{item.series}}</h5>
-                <p class="card-text">{{item.color}} {{item.internal_storage}}</p>
-                <p class="card-subtext" style="font-size:13px;">₹ {{item.price}}</p>
-                <a href="#" class="btn btn-primary">Buy Now</a>
-                </div>
-            </div>
+                    {% for item in product %}
 
-        {% endfor %}
+                    <div class="col">
+                        
+                    <div class="card" style="width: 12rem;">
+                        <div class="text-center">
+                            <img src="{{item.images.url}}" class="card-img-top" alt="product image" style="height:100px; width:100px;">
+                        </div>
+                        <hr>
+                        <div class="card-body text-center" style="height:180px;">    
+                        <h6 class="card-title">{{item.product_name}} {{item.generation}} {{item.series}}</h6>
+                        <p class="card-text">{{item.color}} {{item.internal_storage}}</p>
+                        <strong><p class="card-subtext" style="font-size:13px;">₹ {{item.price}}</p></strong>
+                        <a href="#" class="btn btn-sm btn-primary">Buy Now</a>
+                        </div>
+                    </div>
+
+                    </div>
+
+                {% endfor %}
+
+                    </div>
+        </div>
+
 
 {% endblock %}
