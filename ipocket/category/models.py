@@ -24,6 +24,7 @@ class Products(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     price = models.IntegerField(default=1000)
     quantity = models.IntegerField(default=0)
+    condition = models.CharField(max_length=30,null=True,blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
     images = models.ImageField(upload_to = 'images/products',null=True, blank=True)
     is_out_of_stock = models.BooleanField(default=False)

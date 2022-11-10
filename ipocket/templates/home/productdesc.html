@@ -1,0 +1,31 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Product Description{% endblock %}
+
+
+{% block content %}
+
+    <div class="main d-flex">
+
+        {% for item in product %}
+            
+        <div class="card" style="width: 12rem;">
+            <div class="text-center">
+                <img src="{{item.images.url}}" class="card-img-top" alt="product image" style="height:200px; width:150px;">
+            </div>
+        </div>
+
+        <div class="ms-3">
+            <h4>{{item.product_name}}-{{item.generation}}-{{item.series}}-{{item.color}}-{{item.internal_storage}}</h4>
+            <h6>{{item.condition}}</h6>
+            <p>₹ {{item.price}}</p>
+        </div>
+
+
+
+        {% endfor %}
+        
+    </div>
+
+
+{% endblock %}

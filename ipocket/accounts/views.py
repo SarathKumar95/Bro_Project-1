@@ -123,3 +123,9 @@ def products(request):
     context = {'product':product}
     print(product)
     return render(request,'home/productpage.html',context)
+
+
+def item(request,product_id):
+    product = Products.objects.filter(product_id=product_id)
+    context = {'product':product}
+    return render(request,'home/productdesc.html',context)

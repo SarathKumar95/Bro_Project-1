@@ -15,5 +15,6 @@ urlpatterns = [
     path('unblockuser/<int:id>', views.unblock_user, name='unblockuser'),
     path('productmanager/',include('category.urls',)),
     path('products/',views.products,name="productspage"),
+    path('item/<int:product_id>',views.item,name="itempage"),
 
 ]
