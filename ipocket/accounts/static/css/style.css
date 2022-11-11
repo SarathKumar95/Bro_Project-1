@@ -85,6 +85,12 @@ color : white;
     background: black;
 }
 
+#image-wrapper{
+    height: auto;
+    max-width: 200px;
+    border: 1px solid black;
+}
+
 #img-container {
     z-index: 1;
     max-width: 150px;

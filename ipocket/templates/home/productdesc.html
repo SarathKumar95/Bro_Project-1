@@ -6,28 +6,29 @@
 {% block content %}
     {% load static %}
 
-    <div class="main d-flex">
+    <div class="main">
 
-        {% for item in product %}
-            
-        <div class="card">
-            <div class="text-center" id="img-container">
-                    <div id="lens"></div>
-                    <img id="featured" src="{{item.images.url}}" class="card-img-top" alt="product image">
-                    <img src="{% static 'images/wishlist.png' %}" alt="wishlist" id="wishlist">
+        <div class="container">
+            <div class="row">
+                <div class="col" id="image-wrapper">
+                    {% for item in product %}
+                    <div class="text-center" id="img-container">
+                        <div id="lens"></div>
+                        <img id="featured" src="{{item.images.url}}" class="card-img-top" alt="product image">
+                        <img src="{% static 'images/wishlist.png' %}" alt="wishlist" id="wishlist">
+                </div>        
+                </div>
+                <div class="col">
+                    <h4>{{item.product_name}}-{{item.generation}}-{{item.series}}-{{item.color}}-{{item.internal_storage}}</h4>
+                    <h6>{{item.condition}}</h6>
+                    <p>₹ {{item.price}}</p>
+                </div>
+                {% endfor %}
+                <div class="col"></div>
             </div>
+
         </div>
 
-        <div class="ms-5 ps-5">
-            <h4>{{item.product_name}}-{{item.generation}}-{{item.series}}-{{item.color}}-{{item.internal_storage}}</h4>
-            <h6>{{item.condition}}</h6>
-            <p>₹ {{item.price}}</p>
-        </div>
-
-
-
-        {% endfor %}
-        
     </div>
 
     <script src="{% static 'js/owner/script.js' %}"></script>
