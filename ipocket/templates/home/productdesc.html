@@ -15,7 +15,6 @@
                     <div class="text-center" id="img-container">
                         <div id="lens"></div>
                         <img id="featured" src="{{item.images.url}}" class="card-img-top" alt="product image">
-                        <img src="{% static 'images/wishlist.png' %}" alt="wishlist" id="wishlist">
                 </div>        
                 </div>
                 <div class="col">
@@ -24,7 +23,17 @@
                     <p>₹ {{item.price}}</p>
                 </div>
                 {% endfor %}
-                <div class="col"></div>
+                <div class="col">
+                    <div class="mb-2">
+                        <a class="btn btn-warning ms-2" href="#">Buy Now</a>
+                    </div>
+
+                    <div class="mb-2">
+                        <a class="btn btn-success" href="#">Add to Cart</a>
+                    </div>
+                   
+                    
+                </div>
             </div>
 
         </div>
