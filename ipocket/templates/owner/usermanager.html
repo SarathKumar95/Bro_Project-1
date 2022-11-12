@@ -45,7 +45,8 @@
                         <button class="btn btn-sm btn-danger" onclick="blockUser()" id="blockbtn" 
                         data-url="{% url 'blockuser' item.id %}">Block User</button>
                     {% else %}
-                        <button class="btn btn-sm btn-success" href="">Unblock User</button>    
+                        <button class="btn btn-sm btn-success" onclick="unblockUser()" id="unblockbtn"
+                        data-url="{% url 'unblockuser' item.id %}">Unblock User</button>    
                     {% endif %}    
                 </td>
             </tr>
