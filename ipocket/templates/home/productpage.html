@@ -18,7 +18,11 @@
                         </div>
                         <hr>
                         <div class="card-body text-center" style="height:180px;">    
-                        <h6 class="card-title">{{item.product_name}} {{item.generation}} {{item.series}}</h6>
+                            {% if item.generation %}
+                             <h6>{{item.product_name}} {{item.generation}} {{item.series}}</h6>
+                            {% else %}
+                            <h6>{{item.product_name}} {{item.series}}</h6>
+                            {% endif %}
                         <p class="card-text">{{item.color}} {{item.internal_storage}}</p>
                         <strong><p class="card-subtext" style="font-size:13px;">₹ {{item.price}}</p></strong>
                         <a href="{% url 'itempage' item.product_id %}" class="btn btn-sm btn-primary">Buy Now</a>

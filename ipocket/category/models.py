@@ -17,7 +17,7 @@ class Categories(models.Model):
 class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=50)
-    generation = models.IntegerField()
+    generation = models.IntegerField(blank=True)
     series = models.CharField(max_length=10,blank=True)
     color = models.CharField(max_length=10,null=True,blank=True)
     internal_storage = models.CharField(max_length=5, default= '32 GB')

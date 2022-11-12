@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,8 +42,11 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'category',
     "crispy_forms",
-    "crispy_bootstrap5",    
+    "crispy_bootstrap5",
+    "easy_thumbnails",
+    "image_cropping",    
     ]
+
     
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"

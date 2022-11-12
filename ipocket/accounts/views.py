@@ -2,8 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from category.models import *
-
+from category.models import * 
 # Create your views here.
 
 def home_page(request):
@@ -76,7 +75,7 @@ def owner(request):
         else:
             messages.error(request,"Fatal! You don't seem to be an admin")
 
-    return render(request, 'owner/ownin.html')
+    return render(request, 'owner/signin.html')
 
 
 def dashboard(request):
@@ -95,7 +94,11 @@ def owner_out(request):
 def user_manager(request):
     if 'admin' in request.session:
         users = MyUser.objects.all()
-        context = {'users':users}
+        no_of_users = MyUser.objects.filter().count()
+        no_of_superuser = MyUser.objects.filter(is_superuser=True).count()
+        no_of_filtered_users = no_of_users - no_of_superuser
+        # print("No of users to the front end is : ", no_of_filtered_users)
+        context = {'users': users , 'no_of_filtered_users': no_of_filtered_users}
         return render(request,'owner/usermanager.html',context)
 
     else:
@@ -129,3 +132,7 @@ def item(request,product_id):
     product = Products.objects.filter(product_id=product_id)
     context = {'product':product}
     return render(request,'home/productdesc.html',context)
+
+
+def signin_Otp(request):
+    pass
