@@ -7,7 +7,8 @@
   height:120px;
 }
 
-#message-wrapper{
+.message-wrapper p{
   color: #009cff;
 
 }
+

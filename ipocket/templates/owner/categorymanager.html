@@ -1,0 +1,55 @@
+{% extends 'owner/base.html' %} 
+
+{% block title %}Category Manager{% endblock %}  
+
+
+{% block content %}
+{% load static %} 
+
+<div class="main">
+    <div class="page-title text-center mb-3">
+        <h5>Category List</h5>
+    </div>
+
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+            <p>{{message}}</p>
+        {% endfor %}
+    </div>
+
+
+    <div >
+        <table class="table">
+            <tr>
+                <th>Category Image</th>
+                <th>Category Name</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for item in items %}
+
+            <tr>
+                <td>hehe</td>
+                <td>{{item.category_name}}</td>
+                <td>
+                    <button type="button" class="btn mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                      </button>
+                                    
+                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteCategory()" id="deletecategory-btn"
+                    data-url="{% url 'delcategory' item.category_id %}" style="height:25px;">
+                </td>  
+                
+            </tr>    
+
+            {% endfor %}
+        </table>
+    </div>
+
+
+</div>
+
+
+
+
+{% endblock %}

@@ -9,7 +9,8 @@ from django.contrib import messages
 
 def product_manager(request):
     products = Products.objects.all()
-    context = {'products': products}
+    form = ProductForm()
+    context = {'products': products, 'form':form}
     return render(request, 'owner/productmanager.html', context)
 
 def product_edit(request,product_id):

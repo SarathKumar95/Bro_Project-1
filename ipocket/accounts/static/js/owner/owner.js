@@ -26,7 +26,7 @@ function unblockUser(){
 
 }
 
-function deleteBtn(){
+function deleteProduct(){
 
     let confirmAction = confirm("Are you sure you want to delete this product? ");
     if(confirmAction){
@@ -38,6 +38,21 @@ function deleteBtn(){
         console.log("Do nothing!");
     }
 
-    
+}
+
+
+function deleteCategory(){
+
+    let confirmAction = confirm("Are you sure you want to delete this category ? ");
+    if(confirmAction){
+        console.log("Inside confirm");
+        let url = $("#deletecategory-btn").attr("data-url");
+        window.location = url;
+    }
+    else{
+        console.log("Do nothing!");
+    }
 
 }
+
+
