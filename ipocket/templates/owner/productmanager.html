@@ -1,0 +1,85 @@
+{% extends 'owner/base.html' %}  
+
+{% block title %} Product Manager {% endblock %}  
+
+
+{% block content %}
+{% load static %} 
+<div class="main">
+
+    <div class="page-title text-center mb-3">
+        <h5>Product List</h5>
+    </div>
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+            {{message}}
+        {% endfor %}
+    </div>
+
+    
+<table class="table">
+    <div class="table-buttons d-flex justify-content-between mb-3">
+        <div class="button-left">
+            <a href="" style="color:black;"><img src="{% static 'images/plus.png' %}" alt="plus button" style="height:16px;"> Add Product</a>
+        </div>
+        <div class="button-right">
+            <a href="" onclick="window.location.reload()"><img src="{% static 'images/refresh.png' %}" alt="refresh button" style="height:16px;"></a>
+        </div>
+    </div>
+
+    <tr>
+        <th>Product</th>
+        <th>Product Image</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Condition</th>
+        <th>Price</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for item in products %}
+
+        <tr>
+            <td>
+                <strong><p>{{item.product_name}} {{item.generation}} {{item.series}}</p></strong>
+                
+                <div class="product-details mt-2">
+                    <p>Color : {{item.color}}</p>
+                    <p>Internal Memory : {{item.internal_storage}}</p>
+                    <p>Category : {{item.category}}</p>
+                </div>
+            </td>
+            <td><img src="{{item.images.url}}" alt="item-image" id="product-image-owner"></td>
+            <td>{{item.description}}</td>
+            <td>
+                {% if item.quantity == 0 %}
+                    {{'Out of Stock'}}
+                {% else %}    
+                    {{item.quantity}}
+                {% endif %}
+
+            </td>
+            <td>{{item.condition}}</td>
+            <td>{{item.price}}</td>
+            <td>
+                <input type="image" src="{% static 'images/edit.png' %}" style="height:25px;">
+                <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteBtn()" id="deleteproduct-btn"
+                data-url="{% url 'productdelete' item.product_id %}" style="height:25px;">
+            </td>
+            
+        </tr>
+
+    {% endfor %}
+
+
+</table>
+
+
+
+
+
+
+</div>
+
+{% endblock %}

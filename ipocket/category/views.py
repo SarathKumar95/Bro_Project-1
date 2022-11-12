@@ -8,8 +8,8 @@ from django.contrib import messages
 # Create your views here.
 
 def product_manager(request):
-    items = Products.objects.all()
-    context = {'items': items}
+    products = Products.objects.all()
+    context = {'products': products}
     return render(request, 'owner/productmanager.html', context)
 
 def product_edit(request,product_id):

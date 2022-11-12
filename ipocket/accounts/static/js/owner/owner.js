@@ -25,3 +25,19 @@ function unblockUser(){
 
 
 }
+
+function deleteBtn(){
+
+    let confirmAction = confirm("Are you sure you want to delete this product? ");
+    if(confirmAction){
+        console.log("Inside confirm");
+        let url = $("#deleteproduct-btn").attr("data-url");
+        window.location = url;
+    }
+    else{
+        console.log("Do nothing!");
+    }
+
+    
+
+}
