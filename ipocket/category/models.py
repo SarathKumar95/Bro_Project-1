@@ -17,7 +17,7 @@ class Categories(models.Model):
 class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=50)
-    generation = models.IntegerField(blank=True)
+    generation = models.IntegerField(blank=True,null=True)
     series = models.CharField(max_length=10,blank=True)
     color = models.CharField(max_length=10,null=True,blank=True)
     internal_storage = models.CharField(max_length=5, default= '32 GB')
@@ -27,8 +27,7 @@ class Products(models.Model):
     condition = models.CharField(max_length=30,null=True,blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
     images = models.ImageField(upload_to = 'images/products',null=True, blank=True)
-    is_out_of_stock = models.BooleanField(default=False)
-
+    
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
