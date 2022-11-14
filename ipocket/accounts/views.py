@@ -6,7 +6,10 @@ from category.models import *
 # Create your views here.
 
 def home_page(request):
-    return render(request,'home/index.html')
+    category = Categories.objects.all()
+    product = Products.objects.all()
+    context = {'category':category, 'product':product}
+    return render(request,'home/index.html',context)
 
 
 def register(request):
