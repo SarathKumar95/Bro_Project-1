@@ -68,7 +68,7 @@ def category_add(request):
     context = {'form':form}
 
     if request.method == "POST":
-        form = CategoryForm(request.POST)
+        form = CategoryForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -98,7 +98,7 @@ def category_edit(request,category_id):
     context = {'category':category, 'form':form}
 
     if request.method == "POST":
-        form = CategoryForm(request.POST,instance=category)
+        form = CategoryForm(request.POST, request.FILES, instance=category)
 
         if form.is_valid():
             form.save()

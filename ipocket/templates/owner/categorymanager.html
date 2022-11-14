@@ -29,12 +29,18 @@
             {% for item in items %}
 
             <tr>
-                <td>hehe</td>
+                <td>
+                    {% if item.category_image|default_if_none:'' %}
+                    <img src="{{item.category_image.url}}" style="height:100px;" alt="category image">
+                    {% endif %}
+                </td>
                 <td>{{item.category_name}}</td>
                 <td>
-                    <button type="button" class="btn mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
-                      </button>
+                    <div class="mb-2">
+                        <a href="{% url 'editcategory' item.category_id %}">
+                            <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                          </a>    
+                    </div>
                                     
                     <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteCategory()" id="deletecategory-btn"
                     data-url="{% url 'delcategory' item.category_id %}" style="height:25px;">

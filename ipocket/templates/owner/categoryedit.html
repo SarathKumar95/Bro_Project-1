@@ -1,0 +1,20 @@
+{% extends 'owner/base.html' %} 
+
+
+{% block title %}Edit Category{% endblock %} 
+
+
+{% block content %}  
+
+<div class="main">
+    <form enctype="multipart/form-data" action="#" method="POST">
+        
+        {% csrf_token %}
+        {{form}}
+        <input class="btn btn-sm btn-secondary" type="submit" value="Update">
+    </form>
+</div>
+
+
+
+{% endblock %}
