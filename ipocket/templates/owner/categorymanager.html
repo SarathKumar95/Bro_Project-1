@@ -17,6 +17,29 @@
         {% endfor %}
     </div>
 
+    <div>
+
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Add New Category
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <form enctype="multipart/form-data" action="#" method="POST">
+                    {% csrf_token %}
+                    {{form}}
+                    <input class="btn btn-sm btn-success" type="submit" value="Add">
+                </form>
+                    
+
+              </li>
+            </ul>
+          </div>
+
+
+
+    </div>
+
 
     <div >
         <table class="table">

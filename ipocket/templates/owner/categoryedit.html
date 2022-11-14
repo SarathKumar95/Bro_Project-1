@@ -7,6 +7,14 @@
 {% block content %}  
 
 <div class="main">
+
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+            {{message}}
+        {% endfor %}
+    </div>
+
     <form enctype="multipart/form-data" action="#" method="POST">
         
         {% csrf_token %}

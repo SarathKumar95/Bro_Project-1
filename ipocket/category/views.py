@@ -57,10 +57,21 @@ def delete_product(request,product_id):
 
 
 def category_list(request):
+    form = CategoryForm()
     items = Categories.objects.all()
-    context = {'items':items}
+    context = {'items':items, 'form':form}
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category Added!")
+        else:
+            messages.error(request,form.errors)
     return render(request,'owner/categorymanager.html',context)
 
+'''
 
 def category_add(request):    
 
@@ -77,6 +88,9 @@ def category_add(request):
         else:
             messages.error(request,form.errors)
     return render(request,'owner/categoryadd.html',context)
+
+
+'''
 
 
 
@@ -104,5 +118,8 @@ def category_edit(request,category_id):
             form.save()
             messages.info(request,"Category updated.")
             return redirect("categorymanager")
+
+        else:
+            messages.error(request,form.errors)
 
     return render(request,'owner/categoryedit.html',context)    
