@@ -5,10 +5,11 @@
 {% block content %} 
 
 <div class="main">
-    <form action="" method="POST">
+    <form enctype="multipart/form-data" action="#" method="POST">
+        {% csrf_token %}
         {{form}} 
         <div class="mt-3 form-btn">
-            <input class="btn btn-secondary" type="submit" value="Update">
+            <input class="btn btn-success" type="submit" value="Add">
         </div>
     </form>
 </div>

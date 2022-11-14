@@ -11,14 +11,14 @@ class ProductForm(ModelForm):
             'product_name': TextInput(attrs={
                 'class': "form-control",
                 'style': "max-width: 300px;",
-                'placeholder' : "Product Name : "
+                'placeholder' : "iPhone"
             }),
 
             'generation' : TextInput(
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Generation :"
+                    'placeholder' : "12"
 
                 }
             ),
@@ -27,7 +27,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Series :"
+                    'placeholder' : "Mini"
 
                 }
             ),
@@ -36,7 +36,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Color :"
+                    'placeholder' : "Black"
 
                 }
             ),
@@ -45,7 +45,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Generation :"
+                    'placeholder' : "128GB"
 
                 }
             ),
@@ -54,7 +54,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Category :"
+                    'placeholder' : "Phones"
 
                 }
             ),
@@ -63,7 +63,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Price :"                   
+                    'placeholder' : "₹50000"                   
                 }
             ),
 
@@ -71,7 +71,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Quantity :"                   
+                    'placeholder' : "1"                   
                 }
             ),
 
@@ -79,6 +79,7 @@ class ProductForm(ModelForm):
                 attrs={
                     'class':"form-control",
                     'style': "max-width: 300px;",
+                    'placeholder' : "Used.Like New"
                 }
             ),
 
@@ -90,6 +91,19 @@ class ProductForm(ModelForm):
             ),
 
         }
+
+    def clean(self):
+        quantity = self.cleaned_data["quantity"]
+        price = self.cleaned_data["price"]
+        if quantity < 0:
+            raise forms.ValidationError("Quantity cannot be less than 0.") 
+        elif price < 0:
+            raise forms.ValidationError("Price cannot be less than 0.")
+
+        
+            
+
+
 
 
 class CategoryForm(ModelForm):

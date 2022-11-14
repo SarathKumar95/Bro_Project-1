@@ -50,7 +50,13 @@
                     <p>Condition : {{item.condition}}</p>
                 </div>
             </td>
-            <td><img src="{{item.images.url}}" alt="item-image" id="product-image-owner"></td>
+            <td>
+                {% if item.images %}
+                <img src="{{item.images.url}}" alt="item-image" id="product-image-owner">
+                {% else %} 
+                {{"No Image"}}
+                {% endif %}
+            </td>
             <td>{{item.description}}</td>
             <td>
                 {% if item.quantity == 0 %}
