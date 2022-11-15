@@ -13,3 +13,19 @@ Custom Css
 body{
     font-family: 'Open Sans', sans-serif;
 }
+
+#img-container{
+    z-index : 1;
+    max-width: 500px;
+    position: relative;
+}
+
+#lens{
+    z-index : 2;
+    position: absolute;
+    height:100px;
+    width:100px;
+    border:2px solid black;
+    border-radius: 75px;
+    cursor: none; 
+}

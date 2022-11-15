@@ -28,7 +28,9 @@
         {% for item in users %}
             {% if not item.is_superuser %}
             <tr>
-                <td>HeadImage</td>
+                <td>
+                    <img src="{% static 'images/user.png'%}" style="height:30px;" alt="head">
+                </td>
                 <td>{{item.email}}</td>
                 <td>{{item.first_name}} {{item.last_name}}</td>
                 <td>{{item.mobile_number}}</td>

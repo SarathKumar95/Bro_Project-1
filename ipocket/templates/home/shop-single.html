@@ -5,16 +5,15 @@
 {% block content %}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/home/slick.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/home/slick-theme.css' %}">
-<link rel="stylesheet" href="{% static 'css/home/slick-theme.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/home/custom.css' %}">
     <!-- Open Content -->
     <section class="bg-light">
         <div class="container pb-5">
             <div class="row">
                 {% for item in product %} 
                 <div class="col-lg-5 mt-5">
-                    <div class="card mb-3">
+                    <div class="card mb-3" id="img-container">
+                        <div id="lens"></div>
                         {% if item.images|default_if_none:'#' %} 
                         <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Card image cap" id="product-detail">
                         {% endif %} 
@@ -164,6 +163,7 @@
            
     </section>
     <!-- End Article -->
-    {% endfor %}
-<script src="{% static 'js/home/slick.min.js' %}"></script>
+    {% endfor %} 
+
+
 {% endblock %}
