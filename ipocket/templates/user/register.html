@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Us</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/user/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user/register.css' %}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">	
 </head>
 <body>
+
     <div id="container" class="container">
 		<!-- FORM SECTION -->
 		<div class="row">
@@ -16,25 +18,36 @@
 			<div class="col align-items-center flex-col sign-up">
 				<div class="form-wrapper align-items-center">
 					<div class="form sign-up">
-						<div class="input-group">
-							<i class='bx bxs-user'></i>
-							<input type="text" placeholder="Username">
-						</div>
-						<div class="input-group">
-							<i class='bx bx-mail-send'></i>
-							<input type="email" placeholder="Email">
-						</div>
-						<div class="input-group">
-							<i class='bx bxs-lock-alt'></i>
-							<input type="password" placeholder="Password">
-						</div>
-						<div class="input-group">
-							<i class='bx bxs-lock-alt'></i>
-							<input type="password" placeholder="Confirm password">
-						</div>
-						<button>
-							Sign up
-						</button>
+						<form action="" method="POST">
+							{% csrf_token %}
+							<div class="mb-2">
+								{{form.first_name}}
+							</div>
+
+							<div class="mb-2">
+								{{form.last_name}}
+							</div>
+							
+							<div class="mb-2">
+								{{form.mobile_number}}
+							</div>
+							
+							<div class="mb-2">
+								{{form.email}}
+							</div>
+
+							<div class="mb-2">
+								{{form.password1}}
+							</div>
+							
+							
+							<div class="mb-2">
+								{{form.password2}}
+							</div>
+							<input type="submit" class="btn btn-lg btn-dark"  value="Sign Up">		
+						</form>
+						
+					
 						<p>
 							<span>
 								Already have an account?
@@ -116,7 +129,8 @@
 		</div>
 		<!-- END CONTENT SECTION -->
 	</div>
-    
-<script src="{% static 'js/user/register.js'%}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+	<script src="{% static 'js/user/register.js' %}"></script>
 </body>
 </html>
