@@ -126,15 +126,18 @@ def unblock_user(request,id):
 
 def products(request):
     product = Products.objects.all()
-    context = {'product':product}
+    category = Categories.objects.all() 
+    context = {'product':product, 'category':category}
     print(product)
-    return render(request,'home/productpage.html',context)
+    return render(request,'home/shop.html',context)
 
 
 def item(request,product_id):
     product = Products.objects.filter(product_id=product_id)
-    context = {'product':product}
-    return render(request,'home/productdesc.html',context)
+    products = Products.objects.all()
+
+    context = {'product':product,'products':products}
+    return render(request,'home/shop-single.html',context)
 
 
 def signin_Otp(request):

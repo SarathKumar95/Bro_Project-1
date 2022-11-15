@@ -83,12 +83,23 @@ class ProductForm(ModelForm):
                 }
             ),
 
+
+             'brand' : TextInput(
+                attrs = {
+                    'class':"form-control",
+                    'style': "max-width: 300px;",
+                    'placeholder' : "Apple"
+                }
+            ),
+
             'description' : Textarea(
                 attrs = {
                     'class':"form-control",
                     'style': "max-width: 300px;",
                 }
             ),
+
+           
 
         }
 

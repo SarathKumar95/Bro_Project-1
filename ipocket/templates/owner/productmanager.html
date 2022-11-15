@@ -51,8 +51,8 @@
                 </div>
             </td>
             <td>
-                {% if item.images %}
-                <img src="{{item.images.url}}" alt="item-image" id="product-image-owner">
+                {% if item.main_image %}
+                <img src="{{item.main_image.url}}" alt="item-image" id="product-image-owner">
                 {% else %} 
                 {{"No Image"}}
                 {% endif %}

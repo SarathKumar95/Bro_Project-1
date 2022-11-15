@@ -15,6 +15,7 @@ class Categories(models.Model):
         return self.category_name        
 
 
+
 class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=50)
@@ -27,8 +28,10 @@ class Products(models.Model):
     quantity = models.IntegerField(default=0)
     condition = models.CharField(max_length=30,null=True,blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
-    images = models.ImageField(upload_to = 'images/products',null=True, blank=True)
-    
+    main_image = models.ImageField(upload_to = 'images/products',null=True, blank=True)
+    second_image = models.ImageField(upload_to = 'images/products',null=True, blank=True)
+    third_image = models.ImageField(upload_to = 'images/products',null=True, blank=True)
+    brand = models.CharField(max_length=25,null=True,blank=True)
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
@@ -38,4 +41,3 @@ class Products(models.Model):
     def __str__(self):
         return self.product_name + str(self.generation) + self.series
 
-    
