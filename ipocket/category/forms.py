@@ -9,92 +9,81 @@ class ProductForm(ModelForm):
         fields = "__all__"
         widgets = {
             'product_name': TextInput(attrs={
-                'class': "form-control",
+                'class': "form-control text-primary",
                 'style': "max-width: 300px;",
-                'placeholder' : "iPhone"
             }),
 
             'generation' : TextInput(
                 attrs={
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "12"
 
                 }
             ),
 
             'series' : TextInput(
                 attrs={
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Mini"
 
                 }
             ),
 
             'color' : TextInput(
                 attrs={
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Black"
 
                 }
             ),
 
             'internal_storage' : TextInput(
                 attrs={
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "128GB"
 
                 }
             ),
 
             'category' : Select(
                 attrs={
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Phones"
-
                 }
             ),
 
             'price' : NumberInput(
                 attrs={
-                    'class':"form-control",
-                    'style': "max-width: 300px;",
-                    'placeholder' : "₹50000"                   
+                    'class':"form-control text-primary",
+                    'style': "max-width: 300px;",                  
                 }
             ),
 
             'quantity': NumberInput(
                 attrs={
-                    'class':"form-control",
-                    'style': "max-width: 300px;",
-                    'placeholder' : "1"                   
+                    'class':"form-control text-primary",
+                    'style': "max-width: 300px;",                   
                 }
             ),
 
             'condition': TextInput(
                 attrs={
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Used.Like New"
                 }
             ),
 
 
              'brand' : TextInput(
                 attrs = {
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
-                    'placeholder' : "Apple"
                 }
             ),
 
             'description' : Textarea(
                 attrs = {
-                    'class':"form-control",
+                    'class':"form-control text-primary",
                     'style': "max-width: 300px;",
                 }
             ),
@@ -112,11 +101,7 @@ class ProductForm(ModelForm):
             raise forms.ValidationError("Price cannot be less than 0.")
 
         
-            
-
-
-
-
+        
 class CategoryForm(ModelForm):
     class Meta:
         model = Categories

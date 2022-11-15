@@ -1,0 +1,55 @@
+<div class="d-flex mb-3">
+            <div class="me-3">
+                <span><label for="">Brand : </label>{{form.brand}}</span>
+            </div>
+            <div class="me-3">
+                <span><label for="">Category : </label>{{form.category}}</span>
+            </div>
+            <div class="me-3">
+                <span><label for="">Product Name : </label>{{form.product_name}}</span>
+            </div>
+            
+            <div class="me-3">
+                <span><label for="">Generation : </label>{{form.generation}}</span>
+            </div>
+            </div>
+        
+        <div class="d-flex mb-2">
+
+                <div class="me-3">
+                    <span><label for="">Series : </label>{{form.series}}</span>
+                </div>
+
+            
+            <div class="me-3">
+                <span><label for="">Internal Storage: </label>{{form.internal_storage}}</span>
+            </div>
+
+            <div class="me-3">
+                <span><label for="">Quantity : </label>{{form.quantity}}</span>
+            </div>
+        </div>
+
+
+        <div class="d-flex mb-2">
+            <div class="me-3">
+                <span><label for="">Color : </label>{{form.color}}</span>
+            </div>
+            <div class="me-3">
+                <span><label for="">Price : </label>{{form.price}}</span>
+            </div>     
+        </div>
+
+        <div class="d-flex mb-2">
+            <div class="me-3">
+                <span><label for="">Main Image </label>{{form.main_image}}</span>
+            </div>
+            <div class="me-3">
+                <span><label for="">Second Image </label>{{form.second_image}}</span>
+            </div> 
+            <div class="me-3">
+                <span><label for="">Third Image </label>{{form.third_image}}</span>
+            </div>  
+        </div>
+        
+        
