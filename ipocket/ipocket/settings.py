@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "easy_thumbnails",
-    "image_cropping",    
+    "image_cropping",
+    "cart"    
     ]
 
     
