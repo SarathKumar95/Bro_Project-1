@@ -3,7 +3,7 @@ from category.models import Products
 # Create your models here.
 
 class Cart(models.Model):
-    cart_id = models.CharField(max_length=25,primary_key=True)
+    cart_id = models.CharField(max_length=255,primary_key=True)
     date_added = models.DateField(auto_now_add=True) 
 
     def __str__(self):
