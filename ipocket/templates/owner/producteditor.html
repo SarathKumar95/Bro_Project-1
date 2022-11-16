@@ -6,6 +6,16 @@
 
 {% block content %}
 {% load crispy_forms_tags %}
+{% load static %} 
+<link rel="stylesheet" href="{% static 'css/owner/owner.css' %}">
+
+<style>
+    
+.asteriskField{
+  display: none;
+}
+
+</style>
 
 <div class="message-wrapper text-center mb-2">
     {% for message in messages %}  
