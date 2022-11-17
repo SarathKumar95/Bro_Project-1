@@ -7,6 +7,7 @@ from django.contrib import messages
 
 # Create your views here.
 
+
 def product_manager(request):
     products = Products.objects.all()
     form = ProductForm()
