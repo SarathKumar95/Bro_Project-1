@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from category.models import *
 from cart.models import *
 from django.http import HttpResponse
@@ -44,19 +44,14 @@ def cart_list(request,total=0,quantity=0,cart_items=None):
         cart_items = CartItem.objects.filter(cart=cart, is_active=True) 
         no_of_items = CartItem.objects.filter(cart=cart, is_active=True).count()
 
-        # delivery cost
-
-        standard_delivery = 50
-        two_day_delivery = 130
-        one_day_delivery = 300
-        
-
         for cart_item in cart_items:
             total += (cart_item.product.price * cart_item.quantity) 
             quantity += cart_item.quantity
-            print("The cart item is", cart_item.product)
-            print("The number of items in the cart is", no_of_items)
-    except object.NotExist:
+            #print("The cart item is", cart_item.product)
+            #print("The number of items in the cart is", no_of_items)
+            #print("Id of cart item is", cart_item.id)
+            #print("Cart items is",cart_item.product.product_name,cart_item.product.generation, "and the quantity is", cart_item.quantity)
+    except Cart.DoesNotExist:
         pass
 
     context = {
@@ -66,5 +61,30 @@ def cart_list(request,total=0,quantity=0,cart_items=None):
         'no_of_items' : no_of_items
     }
 
+    
+    # delivery cost
+
+    standard_delivery = 50
+    two_day_delivery = 130
+    one_day_delivery = 300
+
+    if request.method == "POST":
+        option = request.POST.get('delivery-options')
+        return HttpResponse(option)    
     return render(request, 'cart/viewcart.html', context)
 
+
+def remove(request,product_id):
+    cart = Cart.objects.get(cart_id = _cart_id(request))
+    product = get_object_or_404(Products, product_id = product_id)
+    cart_item = CartItem.objects.get(product=product,cart=cart) 
+
+    if cart_item.quantity > 1:
+        cart_item -= 1
+        cart_item.save()
+
+    else:
+        cart_item.delete() 
+    return redirect('cart-list')        
+    
+    return redirect('cart-list')    
