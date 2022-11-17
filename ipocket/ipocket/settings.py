@@ -43,9 +43,6 @@ INSTALLED_APPS = [
     'category',
     "crispy_forms",
     "crispy_bootstrap5",
-    "easy_thumbnails",
-    "image_cropping",
-    "cart"    
     ]
 
     
