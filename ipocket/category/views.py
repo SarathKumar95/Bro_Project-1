@@ -72,29 +72,6 @@ def category_list(request):
             messages.error(request,form.errors)
     return render(request,'owner/categorymanager.html',context)
 
-'''
-
-def category_add(request):    
-
-    form = CategoryForm()
-    context = {'form':form}
-
-    if request.method == "POST":
-        form = CategoryForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Category Added!")
-            return redirect("categorymanager")
-        else:
-            messages.error(request,form.errors)
-    return render(request,'owner/categoryadd.html',context)
-
-
-'''
-
-
-
 
 def category_delete(request,category_id):
     category = Categories.objects.get(category_id=category_id)

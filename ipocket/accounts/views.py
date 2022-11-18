@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from category.models import * 
+from category.models import *
+from django.http import HttpResponse 
+
 # Create your views here.
 
 def home_page(request):
@@ -135,8 +137,13 @@ def products(request):
 def item(request,product_id):
     product = Products.objects.filter(product_id=product_id)
     products = Products.objects.all()
-
     context = {'product':product,'products':products}
+    
+    if request.method == 'POST':
+        quantity = request.POST.get('product-quantity')
+        user_in = request.session.get('username')
+        return HttpResponse(quantity)
+    
     return render(request,'home/shop-single.html',context)
 
 
