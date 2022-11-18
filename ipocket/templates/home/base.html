@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{% static 'css/home/custom.css' %}">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet" href="{% static 'css/home/fontawesome.min.css' %}">
     
 
 </head>
@@ -82,7 +81,7 @@
                 <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
-                <a class="nav-icon position-relative text-decoration-none" href="">
+                <a class="nav-icon position-relative text-decoration-none" href="{% url 'cart-list' %}">
                     <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                     <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">zerop</span>
                 </a>
@@ -206,7 +205,8 @@
 <script src="{% static 'js/home/templatemo.js' %}"></script>
 <script src="{% static 'js/home/custom.js' %}"></script>
 <script src="https://kit.fontawesome.com/1ab0e88673.js" crossorigin="anonymous"></script> 
-<!-- End Script -->
+<!-- End Script --> 
+
 </body>
 
 </html>

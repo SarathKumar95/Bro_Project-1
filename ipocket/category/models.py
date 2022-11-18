@@ -2,6 +2,10 @@ from django.db import models
 
 # Create your models here.
 
+class SubCategory(models.Model):
+    sub_category_id = models.AutoField(primary_key=True) 
+    
+
 class Categories(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_image = models.ImageField(upload_to='images/categories', null=True, blank=True)
@@ -31,7 +35,7 @@ class Products(models.Model):
     main_image = models.ImageField(upload_to = 'images/products',null=True, blank=True)
     second_image = models.ImageField(upload_to = 'images/products',null=True, blank=True)
     third_image = models.ImageField(upload_to = 'images/products',null=True, blank=True)
-    brand = models.CharField(max_length=25,null=True,blank=True)
+    
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
@@ -40,4 +44,3 @@ class Products(models.Model):
     
     def __str__(self):
         return self.product_name + str(self.generation) + self.series
-
