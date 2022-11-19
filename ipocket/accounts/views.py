@@ -8,9 +8,9 @@ from django.http import HttpResponse
 # Create your views here.
 
 def home_page(request):
-    category = Categories.objects.all()
+    #category = Categories.objects.all()
     product = Products.objects.all()
-    context = {'category':category, 'product':product}
+    context = {'product':product}
     return render(request,'home/index.html',context)
 
 

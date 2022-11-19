@@ -2,6 +2,7 @@ from django.forms import ModelForm,TextInput,NumberInput,Select,Textarea,FileInp
 from django import forms
 from category.models import *
 
+'''
 
 class ProductForm(ModelForm):
     class Meta:
@@ -106,3 +107,6 @@ class CategoryForm(ModelForm):
     class Meta:
         model = Categories
         fields = "__all__"        
+
+
+'''
