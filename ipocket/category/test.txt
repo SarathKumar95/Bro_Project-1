@@ -1,0 +1,9 @@
+    generation = models.IntegerField(default=11) 
+    series = models.CharField(max_length=50,blank=True) 
+    ram = models.IntegerField(default=4,blank=True) 
+    internal_memory = models.IntegerField(default=32,blank=True) 
+    screen_size = models.DecimalField(max_digits=5,decimal_places=2,blank=True,null=True)
+    type_of_display = models.CharField(max_length=100,blank=True)
+    processor = models.CharField(max_length=100,blank=True)
+    camera_spec = models.IntegerField(default=12,blank=True) 
+    
