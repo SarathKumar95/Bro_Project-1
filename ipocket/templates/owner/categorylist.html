@@ -1,0 +1,82 @@
+{% extends 'owner/base.html' %}  
+
+{% block title %} Product Manager {% endblock %}  
+
+
+{% block content %}
+{% load static %} 
+<div class="main">
+
+    <div class="page-title text-center mb-3">
+        <h5>Category List</h5>
+    </div>
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+            {{message}}
+        {% endfor %}
+    </div>
+
+    <div class="add-category">
+        
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Add New Category
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    {{form}}
+                    <input class="btn btn-sm btn-success" type="submit" value="Add">
+                </form>
+                    
+
+              </li>
+            </ul>
+          </div>
+
+    </div>
+    
+<table class="table">
+    <div class="table-buttons d-flex justify-content-between mt-1 mb-3">
+        
+                
+        <div class="button-left">
+            <a href="{% url 'product-type-list' %}" class="btn btn-warning">Add New Product Type</a>
+        </div>
+        
+        <div class="button-right">
+            <a href="" onclick="window.location.reload()"><img src="{% static 'images/refresh.png' %}" alt="refresh button" style="height:16px;"></a>
+        </div>
+    </div>
+
+    <tr>
+        <th>Condition</th>
+        <th>Product Type</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for item in category %}
+
+        <tr>
+           <td>{{item.condition}}</td>
+           <td>{{item.product_type}}</td>
+           <td>
+            <div class="mb-2">
+                <a href="{% url 'category-edit' item.category_id  %}">
+                    <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                </a>    
+            </div>
+                            
+            <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteCategory()" id="deletecategory-btn"
+            data-url="{% url 'category-delete' item.category_id %}" style="height:25px;">
+           </td> 
+        </tr>
+
+    {% endfor %}
+
+
+</table>
+
+{% endblock %}

@@ -8,7 +8,7 @@ from django.http import HttpResponse
 # Create your views here.
 
 def home_page(request):
-    #category = Categories.objects.all()
+    #category = Category.objects.all()
     product = Products.objects.all()
     context = {'product':product}
     return render(request,'home/index.html',context)
@@ -128,7 +128,7 @@ def unblock_user(request,id):
 
 def products(request):
     product = Products.objects.all()
-    category = Categories.objects.all() 
+    category = Category.objects.all() 
     context = {'product':product, 'category':category}
     print(product)
     return render(request,'home/shop.html',context)

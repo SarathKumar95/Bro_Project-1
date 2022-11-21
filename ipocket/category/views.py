@@ -57,47 +57,84 @@ def delete_product(request,product_id):
     return redirect('productmanager')
 
 
-def category_list(request):
+def list_categories(request):
+    category = Categories.objects.all()
     form = CategoryForm()
-    items = Categories.objects.all()
-    context = {'items':items, 'form':form}
+    context = {'category':category,'form':form}
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST) 
 
-    if request.method == "POST":
-        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save() 
+            messages.info(request, "Category added")
+        else:
+            messages.error(request,form.error)    
+    return render(request,'owner/categorylist.html',context)
+
+
+def producttype_list(request):
+    product_type = SubCategories.objects.all() 
+    form = SubCategoryForm()
+    context = {'product_type': product_type, 'form':form} 
+
+    if request.method == 'POST':
+        form = SubCategoryForm(request.POST,request.FILES) 
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Category Added!")
+            messages.info(request, "Product Type Added")
+
         else:
             messages.error(request,form.errors)
-    return render(request,'owner/categorymanager.html',context)
+    return render(request,'owner/producttypelist.html',context)
+
+def producttype_delete(request,sub_cat_id):
+    product_type = SubCategories.objects.get(sub_cat_id=sub_cat_id) 
+    product_type.delete()
+    messages.success(request,"Deleted Product Type")
+    return redirect('product-type-list')
 
 
-def category_delete(request,category_id):
-    category = Categories.objects.get(category_id=category_id)
+def producttype_edit(request,sub_cat_id):
+    product_type = SubCategories.objects.get(sub_cat_id=sub_cat_id) 
+    form = SubCategoryForm(instance=product_type) 
+    context = {'product_type':product_type, 'form':form}
+    
+    if request.method == 'POST':
+        form = SubCategoryForm(request.POST,request.FILES,instance=product_type)
+
+        if form.is_valid():
+            form.save() 
+            messages.success(request,"Product Type Updated")
+            return redirect('product-type-list')
+
+        else:
+            messages.error(request,form.errors) 
+
+    return render(request,'owner/producttypeedit.html',context)        
+
+
+def edit_categories(request,category_id):
+    category = Categories.objects.get(category_id=category_id) 
+    form = CategoryForm(instance=category) 
+    context = {'form':form}
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST,instance=category)
+
+        if form.is_valid():
+            form.save() 
+            messages.success(request,"Category Updated") 
+            return redirect('category-list')
+        else:
+            messages.error(request,form.errors) 
+    return render(request,'owner/categoryedit.html',context)           
+
+
+def delete_categories(request,category_id):
+    category = Categories.objects.get(category_id=category_id) 
     category.delete()
-    name_of_cat = category.category_name
-    messages.info(request,"Deleted " + str(name_of_cat))
-    return redirect('categorymanager')
+    messages.success(request,"Deleted Category") 
 
-
-
-
-
-def category_edit(request,category_id):
-    category = Categories.objects.get(category_id=category_id)
-    form = CategoryForm(instance=category)
-    context = {'category':category, 'form':form}
-
-    if request.method == "POST":
-        form = CategoryForm(request.POST, request.FILES, instance=category)
-
-        if form.is_valid():
-            form.save()
-            messages.info(request,"Category updated.")
-            return redirect("categorymanager")
-
-        else:
-            messages.error(request,form.errors)
-
-    return render(request,'owner/categoryedit.html',context)    
+    return redirect('category-list')

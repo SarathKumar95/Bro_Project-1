@@ -1,16 +1,15 @@
 {% extends 'owner/base.html' %} 
 
-{% block title %}Edit Category{% endblock %} 
+{% block title %}Edit Product Type{% endblock %} 
 
 
-{% block content %} 
+{% block content %}  
 {% load static %} 
 
-
 <div class="main">
-
+    
     <div class="page-title text-center mb-3">
-        <h5>Edit Category</h5>
+        <h5>Edit Product Types</h5>
     </div>
     
     <div class="message-wrapper text-center mb-2">
@@ -19,17 +18,22 @@
         {% endfor %}
     </div>
 
-    <div class="form-wrapper">
-
-        <form action="" method="POST">
+    <div>
+        <form enctype="multipart/form-data" action="#" method="POST">
             {% csrf_token %}
-            {{form}}
+            {{form}} 
             <input type="submit" value="Update">
         </form>
 
     </div>
 
-    </div>
-    
+
+
+
+
+</div>
+
+
+
 
 {% endblock %}
