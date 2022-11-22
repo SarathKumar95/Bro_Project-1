@@ -1,4 +1,4 @@
-
+console.log("In owner.js");
 
 
 function blockUser(){
@@ -59,3 +59,6 @@ function deleteCategory(){
 }
 
 
+const imageBox = document.getElementById('image-box')
+const imageForm = document.getElementById('image-form')
+const confirmBtn = document.getElementById('confirm-btn')

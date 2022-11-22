@@ -94,10 +94,10 @@
                 <div class="row">
                     {% for item in product %}
                     <div class="col-md-4">
-                        <div class="card mb-4 product-wap rounded-0">
+                        <div class="card mb-4 product-wap rounded-0" >
                             <div class="card rounded-0">
                                 {% if item.main_image %}
-                                <img class="card-img rounded-0 img-fluid" src="{{item.main_image.url}}">
+                                <img class="card-img rounded-0 img-fluid" src="{{item.main_image.url}}" style="width:260px;">
                                 {% else %}
                                 {{'NO IMAGE'}}
                                 {% endif %}

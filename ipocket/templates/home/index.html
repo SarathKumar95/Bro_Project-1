@@ -141,7 +141,7 @@
                     <div class="card h-100">
                         <a href="{% url 'itempage' item.product_id %}">
                             {% if item.main_image|default_if_none:"#" %}
-                            <img src="{{item.main_image.url}}" class="card-img-top"  alt="product image">
+                            <img src="{{item.main_image.url}}" class="card-img-top" style="height:100%;"  alt="product image">
                             {% endif %}
                         </a>
                         <div class="card-body">
@@ -153,11 +153,22 @@
                                     <i class="text-muted fa fa-star"></i>
                                     <i class="text-muted fa fa-star"></i>
                                 </li>
-                                <li class="text-muted text-right">₹{{item.price}}</li>
+                                <li class="text-dark text-right">₹{{item.price}}</li>
                             </ul>
+                            
+                            {% if item.generation == None and item.series == None %}
+                            <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
+                                {{item.product_name}}
+                            </a>
+                            {% elif item.series == None %}
+                            <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
+                                {{item.product_name}} {{item.generation}}
+                            </a>
+                            {% else %}
                             <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
                                 {{item.product_name}} {{item.generation}} {{item.series}}
                             </a>
+                            {% endif %}
                             <p class="card-text">
                                 {{item.color}} - {{item.internal_storage}}
                             </p>

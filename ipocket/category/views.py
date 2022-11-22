@@ -74,12 +74,12 @@ def list_categories(request):
 
 
 def producttype_list(request):
-    product_type = SubCategories.objects.all() 
-    form = SubCategoryForm()
+    product_type = ProductType.objects.all() 
+    form = ProductTypeForm()
     context = {'product_type': product_type, 'form':form} 
 
     if request.method == 'POST':
-        form = SubCategoryForm(request.POST,request.FILES) 
+        form = ProductTypeForm(request.POST,request.FILES) 
 
         if form.is_valid():
             form.save()
@@ -90,19 +90,19 @@ def producttype_list(request):
     return render(request,'owner/producttypelist.html',context)
 
 def producttype_delete(request,sub_cat_id):
-    product_type = SubCategories.objects.get(sub_cat_id=sub_cat_id) 
+    product_type = ProductType.objects.get(sub_cat_id=sub_cat_id) 
     product_type.delete()
     messages.success(request,"Deleted Product Type")
     return redirect('product-type-list')
 
 
 def producttype_edit(request,sub_cat_id):
-    product_type = SubCategories.objects.get(sub_cat_id=sub_cat_id) 
-    form = SubCategoryForm(instance=product_type) 
+    product_type = ProductType.objects.get(sub_cat_id=sub_cat_id) 
+    form = ProductTypeForm(instance=product_type) 
     context = {'product_type':product_type, 'form':form}
     
     if request.method == 'POST':
-        form = SubCategoryForm(request.POST,request.FILES,instance=product_type)
+        form = ProductTypeForm(request.POST,request.FILES,instance=product_type)
 
         if form.is_valid():
             form.save() 

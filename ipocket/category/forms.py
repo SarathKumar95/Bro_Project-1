@@ -3,10 +3,10 @@ from django import forms
 from category.models import *
 
 
-class SubCategoryForm(ModelForm):
+class ProductTypeForm(ModelForm):
     
     class Meta:
-        model = SubCategories
+        model = ProductType
         fields = '__all__'
 
 
@@ -22,5 +22,5 @@ class ProductForm(ModelForm):
 
     class Meta:
         model = Products
-        fields = '__all__' 
+        fields = '__all__'
 
