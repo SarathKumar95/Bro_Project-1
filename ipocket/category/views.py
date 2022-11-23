@@ -137,4 +137,8 @@ def delete_categories(request,category_id):
     category.delete()
     messages.success(request,"Deleted Category") 
 
-    return redirect('category-list')
+    return redirect('category-list') 
+
+
+def cart_list(request):
+    return render(request,'home/cartlist.html')    

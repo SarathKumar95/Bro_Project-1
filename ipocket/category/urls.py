@@ -13,7 +13,7 @@ urlpatterns = [
     path('category/list',views.list_categories,name='category-list'),
     path('category/add', views.list_categories,name='category-add'),
     path('category/edit/<int:category_id>', views.edit_categories,name='category-edit'),
-    path('category/delete/<int:category_id>', views.delete_categories,name='category-delete')
-    
+    path('category/delete/<int:category_id>', views.delete_categories,name='category-delete'),
+    path('cart/list',views.cart_list,name='cart-list'),
 ]
     
