@@ -156,9 +156,9 @@
                                 <li class="text-dark text-right">₹{{item.price}}</li>
                             </ul>
                             
-                            {% if item.generation == None and item.series == None %}
+                            {% if item.generation == None %}
                             <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
-                                {{item.product_name}}
+                                {{item.product_name}} {{item.series}}
                             </a>
                             {% elif item.series == None %}
                             <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
@@ -166,7 +166,7 @@
                             </a>
                             {% else %}
                             <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
-                                {{item.product_name}} {{item.generation}} {{item.series}}
+                                {{item.product_name}} 
                             </a>
                             {% endif %}
                             <p class="card-text">

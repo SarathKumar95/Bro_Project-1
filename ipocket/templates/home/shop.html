@@ -110,9 +110,25 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <a href="shop-single.html" class="h3 text-decoration-none">{{item.product_name}} {{item.generation}} {{item.series}}</a>
+                                {% if item.generation == None %}
+                                <a href="shop-single.html" class="h3 text-decoration-none">
+                                    {{item.product_name}} {{item.series}}
+                                </a>
+                               {% elif item.series == None %}
+                                <a href="shop-single.html" class="h3 text-decoration-none">
+                                    {{item.product_name}} {{item.generation}}
+                                </a>
+                                {% else %}
+                                <a href="shop-single.html" class="h3 text-decoration-none">
+                                    {{item.product_name}} {{item.generation}} {{item.series}}
+                                </a>
+                               {% endif %}
                                 <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
+                                    {% if item.internal_storage == None %}
+                                    <li>{{item.color}}</li>
+                                    {% else %}
                                     <li>{{item.color}} {{item.internal_storage}}</li>
+                                    {% endif %}
                                     <li class="pt-2">
                                         <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
                                         <span class="product-color-dot color-dot-blue float-left rounded-circle ml-1"></span>

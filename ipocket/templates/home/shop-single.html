@@ -101,10 +101,27 @@
 
                             <h6>Specification:</h6>
                             <ul class="list-unstyled pb-3">
+                                {% if item.processor %}
+                                <li>Processor:</strong> {{item.processor}}</li>
+                                {% endif %}
+                                {% if item.weight %}
+                                <li>Weight:</strong> {{item.weight}}g</li>
+                                {% endif %}
+                                {% if item.screen_size %}
                                 <li><strong>Screen Size:</strong> {{item.screen_size}}inches</li>
+                                {% endif %} 
+                                {% if item.ram %}
                                 <li><strong>Ram:</strong> {{item.ram}}gb</li>
+                                {% endif %} 
+                                {% if item.internal_storage %}
                                 <li><strong>Internal Storage:</strong> {{item.internal_storage}}gb</li>
+                                {% endif %}
+                                {% if item.camera %}
                                 <li><strong>Back Camera:</strong> {{item.camera}}</li>
+                                {% endif %} 
+                                {% if item.battery %}
+                                <li>Battery Capacity:</strong> {{item.battery}}mah</li>
+                                {% endif %}
 
                             </ul>
                             <form action="" method="POST">
