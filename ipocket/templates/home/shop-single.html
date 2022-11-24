@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="{% static 'css/home/custom.css' %}"> 
     <!-- Open Content -->
     <section class="bg-light">
-        <div class="container pb-5">
+        <div class="container pb-5 ">
             <div class="row">
                 {% for item in product %} 
-                <div class="col-lg-5 mt-5">
+                <div class="col-lg-5 mt-5 product_data">
                     <div class="card mb-3" id="img-container">
                         <div id="lens"></div>
                         {% if item.images|default_if_none:'#' %} 
@@ -124,33 +124,37 @@
                                 {% endif %}
 
                             </ul>
-                            <form action="" method="POST">
+                            <div>
                                 {% csrf_token %}
-                                <div class="row">
-                                    <div class="col-auto">
-                                    </div>
-                                    <div class="col-auto">
-                                        <ul class="list-inline pb-3">
-                                            <li class="list-inline-item text-right">
-                                                Quantity
-                                                <input type="hidden" name="product-quanity" id="product-quanity" value="1">
-                                            </li>
-                                            <li class="list-inline-item"><span class="btn btn-dark" id="btn-minus">-</span></li>
-                                            <li class="list-inline-item"><span class="badge btn-warning" id="var-value">1</span></li>
-                                            <li class="list-inline-item"><span class="btn btn-dark" id="btn-plus">+</span></li>
-                                        </ul>
-                                    </div>
+                                <input type="hidden" value="{{item.product_id}}" id="prod_id">
+                                {% if item.quantity > 0 %}
+                                <div class="col-auto">
+                                    <ul class="list-inline pb-3">
+                                        <li class="list-inline-item text-right">
+                                            Quantity
+                                        </li>
+                                        <li class="list-inline-item"><span class="btn btn-dark" id="btn-minus">-</span></li>
+                                        <li class="list-inline-item"><span class="badge btn-warning" id="var-value">1</span></li>
+                                        <li class="list-inline-item"><span class="btn btn-dark" id="btn-plus">+</span></li>
+                                    </ul>
                                 </div>
                                 <div class="row pb-3">
                                     <div class="col d-grid">
-                                        <button class="btn btn-success btn-lg" name="submit" value="buy">Buy</button>
+                                        <button class="btn btn-success btn-lg addtoCartBtn" name="submit" value="buy">Add to Cart</button>
                                     </div>
                                     <div class="col d-grid">
-                                        <!--<button type="submit" class="btn btn-warning btn-lg">Add To Cart</button>--->
-                                        <a href="" class="btn btn-warning btn-lg">Add To Cart</a>
+                                        <button type="submit" class="btn btn-warning btn-lg">Add To Wishlist</button>
                                     </div>
                                 </div>
-                            </form>    
+                                {% else %}
+                                <div>
+                                    <p class="text-danger">Out of Stock!</p>
+                                </div>
+                                <div>
+                                    <p class="text-dark">We don't know when the product will be back.Click <span class="text-primary">here</span> to get notified</p>
+                                </div>
+                                {% endif %}        
+                            </div>
                                 
                         </div>
                     </div>
@@ -170,5 +174,4 @@
     </section>
     <!-- End Article -->
     {% endfor %} 
-
 {% endblock %}

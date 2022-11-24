@@ -3,8 +3,8 @@ from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from category.models import *
-from django.http import HttpResponse 
-
+from django.http import HttpResponse,JsonResponse 
+from cart.models import *
 # Create your views here.
 
 def home_page(request):
@@ -139,15 +139,37 @@ def products(request):
 def item(request,product_id):
     product = Products.objects.filter(product_id=product_id)
     products = Products.objects.all()
-    context = {'product':product,'products':products}
-    
-    if request.method == 'POST':
-        quantity = request.POST.get('product-quantity')
-        user_in = request.session.get('username')
-        return HttpResponse(quantity)
-    
+    context = {'product':product,'products':products}    
     return render(request,'home/shop-single.html',context)
 
-
 def signin_Otp(request):
-    pass
+    pass 
+
+
+
+def cart_add(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            prod_id = int(request.POST.get('product_id'))
+            product_check = Products.objects.get(product_id=prod_id)
+
+            if (product_check):
+                if(Cart.objects.filter(user = request.user.id, product_id=prod_id)):
+                    return JsonResponse({"status":"Product already in cart!"})
+
+                else:
+                    prod_qty = int(request.POST.get('product_qty'))
+
+                    if product_check.quantity  >= prod_qty:
+                        Cart.objects.create(user=request.user,product_id=prod_id, product_qty=prod_qty)
+                        return JsonResponse({"status":"Product added successfully"})  
+
+                    else:
+                        return JsonResponse({'status': "Only" + str(product_check.quantity) + "quantity available" })      
+            else:
+                return JsonResponse({"Status":"No such product!"})   
+
+        else:
+            return JsonResponse({'status': "Login to continue"})    
+    
+        return redirect('/')    

@@ -140,5 +140,4 @@ def delete_categories(request,category_id):
     return redirect('category-list') 
 
 
-def cart_list(request):
-    return render(request,'home/cartlist.html')    
+

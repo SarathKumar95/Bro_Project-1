@@ -1,4 +1,4 @@
-//console.log("In custom.js ");
+console.log("In custom.js ");
 
 document.getElementById('img-container').addEventListener('mouseover', function(){
     imageZoom('product-detail')
@@ -68,3 +68,25 @@ function imageZoom(imgID){
 }
 
 imageZoom('product-detail')
+
+
+$('.addtoCartBtn').click(function (){
+    var product_id = document.getElementById('prod_id').value;
+    var product_qty = document.getElementById('var-value').innerHTML;
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+    
+    $.ajax({
+        method: "POST",
+        url: "cart/add",
+        data: {
+            'product_id' : product_id,
+            'product_qty' : product_qty,
+            csrfmiddlewaretoken: token
+
+        },
+        success: function (response) {
+          console.log(response)  
+        }
+    });
+
+});
