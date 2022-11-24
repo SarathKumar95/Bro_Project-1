@@ -1,5 +1,5 @@
 from django.db import models
-from image_cropping import ImageRatioField
+
 # Create your models here.
 
 #sub category on phones/watches/airpods 
@@ -23,7 +23,7 @@ class ProductType(models.Model):
 class Categories(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_img = models.ImageField(upload_to='images/categories',null=True,blank=True)
-    condition = models.CharField(max_length=25) 
+    condition = models.CharField(max_length=25,null=True) 
     product_type = models.ForeignKey(ProductType,on_delete=models.CASCADE,null=True)
 
     class Meta:
@@ -42,12 +42,15 @@ class Products(models.Model):
     product_name = models.CharField(max_length=50)
     condition = models.ForeignKey(Categories,on_delete=models.CASCADE,null=True)
     product_type = models.ForeignKey(ProductType,on_delete=models.CASCADE,default=True)
-    generation = models.IntegerField(null=True)
+    generation = models.IntegerField(null=True,blank=True)
     series = models.CharField(max_length=25, null=True, blank=True)
     ram = models.IntegerField(null=True, blank=True) 
     internal_storage = models.IntegerField(null=True,blank=True)
+    processor = models.CharField(max_length=25,null=True,blank=True)
+    battery=models.CharField(max_length=20,null=True)
+    weight=models.IntegerField(null=True,blank=True)
     screen_size = models.DecimalField(decimal_places=2,max_digits=4,null=True,blank=True)
-    camera = models.CharField(max_length=100,default='12 MP')
+    camera = models.CharField(max_length=100,default='12 MP',null=True,blank=True)
     color = models.CharField(max_length=20,default='white')
     price = models.IntegerField(default=100) 
     quantity = models.IntegerField(default=0)

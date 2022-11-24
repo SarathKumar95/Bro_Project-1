@@ -47,7 +47,7 @@ def product_add (request):
         return redirect('productmanager')
 
     else:
-        print(form.errors)    
+        messages.info(request,form.errors)    
     return render(request,'owner/addproducts.html',context)
 
 def delete_product(request,product_id):

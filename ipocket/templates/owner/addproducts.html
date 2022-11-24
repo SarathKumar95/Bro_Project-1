@@ -8,19 +8,13 @@
 <link rel="stylesheet" href="{% static 'css/owner/owner.css' %}">
 
 <div class="main">
-    <div id="image-box">
-        <form enctype="multipart/form-data" action="#" method="POST" id="image-form">
+        <form enctype="multipart/form-data" action="#" method="POST">
             {% csrf_token %}
             {{form|crispy}}
             <div class="mt-3 form-btn">
                 <input class="btn btn-success" type="submit" value="Add">
             </div>
         </form>
-        <button class="btn btn-primary mt-3 not-visible" id="confirm-btn">Confirm</button>
-    </div>
-        
-        
-    
 </div>
 
 

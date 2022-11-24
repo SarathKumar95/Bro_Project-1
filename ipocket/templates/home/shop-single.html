@@ -39,9 +39,7 @@
                                         <div class="col-4">
                                             <a href="#">
                                                 {% if item.second_image %}
-                                                    <img class="card-img img-fluid" src="{{item.second_image.url}}" alt="Product Image 2">
-                                                    {% else %}
-                                                    {{"No Image"}}    
+                                                    <img class="card-img img-fluid" src="{{item.second_image.url}}" alt="Product Image 2">    
                                                 {% endif %}
     
                                             </a>
@@ -50,8 +48,6 @@
                                             <a href="#">
                                                 {% if item.third_image %}
                                                     <img class="card-img img-fluid" src="{{item.third_image.url}}" alt="Product Image 2">
-                                                    {% else %}
-                                                    {{"No Image"}}    
                                                 {% endif %}
                                             </a>
                                         </div>   
@@ -69,10 +65,14 @@
                 <div class="col-lg-7 mt-5">
                     <div class="card">
                         <div class="card-body">
-                                {% if item.series == None %}
-                                <h1 class="h2">{{item.product_name}} {{item.generation}}</h1>
-                                {% else %}
+                                {% if item.generation and item.series != None %}
                                 <h1 class="h2">{{item.product_name}} {{item.generation}} {{item.series}}</h1>
+                                {% elif item.series == None %} 
+                                <h1 class="h2">{{item.product_name}} {{item.generation}}</h1>
+                                {% elif item.generation == None %} 
+                                <h1 class="h2">{{item.product_name}} {{item.series}}</h1>
+                                {% else %}
+                                <h1 class="h2">{{item.product_name}}</h1>
                                 {% endif %}
                             <p class="h3 py-2">₹{{item.price}}.00/-</p>
                             <p class="py-2">

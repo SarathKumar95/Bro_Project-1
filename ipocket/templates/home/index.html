@@ -170,7 +170,11 @@
                             </a>
                             {% endif %}
                             <p class="card-text">
-                                {{item.color}} - {{item.internal_storage}}
+                                {% if item.internal_storage == None %}
+                                {{item.color}}
+                                {% else %}
+                                {{item.color}} - {{item.internal_storage}}gb
+                                {% endif %}
                             </p>
                             <p class="card-subtext">
                                 {{item.description}}
