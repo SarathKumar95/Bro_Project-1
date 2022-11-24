@@ -59,7 +59,9 @@ def signout(request):
 
 def myaccount(request):
     if 'username' in request.session:
-        return render(request, 'user/userhome.html')
+        user_in = request.session['username']
+        context = {'user_in':user_in}
+        return render(request, 'user/userhome.html',context)
     return redirect('signin')
 
 
