@@ -5,5 +5,7 @@ from cart.models import *
 # Create your views here.
 
 def cart_list(request):
+    print(request.session['username'])
+    #cart_objects = Cart.objects.filter(user = )
     return render(request,'home/cartlist.html')
 

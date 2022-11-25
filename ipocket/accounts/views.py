@@ -141,11 +141,11 @@ def cart_add(request):
                             return JsonResponse({'status':'Product added succesfully'})
 
                          else:
-                            return JsonResponse({'Status':'Only' + str(product_check.quantity) + 'quantity is available.'})       
+                            return JsonResponse({'status':'Only' + str(product_check.quantity) + 'quantity is available.'})       
             else:
                 return JsonResponse({'status':"No such product found"})    
 
         else:
-            return JsonResponse({'STATUS': "Login to continue"})    
+            return JsonResponse({'status': "Login to continue"})    
             
     return redirect('/')    

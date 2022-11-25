@@ -87,7 +87,8 @@ $('.addtoCartBtn').click(function (){
        },
 
         success: function (response) {
-          console.log(response)  
+          console.log(response) 
+          alertify.success(response.status) 
         }
     });
 

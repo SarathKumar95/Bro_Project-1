@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="{% static 'css/home/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/templatemo.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/custom.css' %}">
+    <!-- Alertify -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
 
     <!-- Load fonts style after rendering the layout styles -->
     
@@ -224,7 +228,14 @@
 <script src="{% static 'js/home/templatemo.js' %}"></script>
 <script src="{% static 'js/home/custom.js' %}"></script>
 <script src="https://kit.fontawesome.com/1ab0e88673.js" crossorigin="anonymous"></script> 
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 <!-- End Script --> 
+
+<script>
+    alertify.set('notifier','position', 'top-right'); 
+</script>
+
+
 
 </body>
 
