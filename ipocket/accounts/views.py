@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 from category.models import *
 from django.http import HttpResponse,JsonResponse 
 from cart.models import *
@@ -10,7 +11,7 @@ from cart.models import *
 def home_page(request):
     category = Categories.objects.all()
     product = Products.objects.all()
-    context = {'product':product}
+    context = {'product':product,'category':category}
     return render(request,'home/index.html',context)
 
 
@@ -33,18 +34,18 @@ def register(request):
 
 def signin(request):
 
-    if 'username' in request.session:
-        return redirect('userhome')
-
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        
         user = authenticate(username=email, password=password)
-        print(user)
+        request.session['username'] = email
+        
         if user is not None and user.is_active == True:
-            request.session['username'] = email
-            return redirect('home')
-
+            if user.is_superuser:
+                return redirect('dashboard')
+            else:
+                return redirect('home')    
         else:
             messages.error(request, 'Check credentials or contact admin.')
 
@@ -53,7 +54,7 @@ def signin(request):
 
 def signout(request):
     if 'username' in request.session:
-        del request.session['username']
+        request.session.flush()
         return redirect('/')   
 
 
@@ -65,46 +66,18 @@ def myaccount(request):
     return redirect('signin')
 
 
-def owner(request):
-    if 'admin' in request.session:
-        return redirect('dashboard')
-
-    if request.method == 'POST':
-        username = request.POST.get('adminuser')
-        password = request.POST.get('adminpass')
-
-        admin = authenticate(username=username, password=password)
-
-        if admin is not None:
-            request.session['admin'] = username
-            return redirect('dashboard')
-
-        else:
-            messages.error(request,"Fatal! You don't seem to be an admin")
-
-    return render(request, 'owner/signin.html')
-
-
 def dashboard(request):
-    if 'admin' in request.session:
-        return render(request, 'owner/dashboard.html')
-
+    if 'username' in request.session:
+            return render(request, 'owner/dashboard.html')    
     else:
-        return redirect('owner')
-
-def owner_out(request):
-    del request.session['admin']
-    messages.info(request,"Thank you for spending time with us.")
-    return redirect('owner')
-
+        return redirect('signin')
 
 def user_manager(request):
-    if 'admin' in request.session:
+    if 'username' in request.session:
         users = MyUser.objects.all()
         no_of_users = MyUser.objects.filter().count()
         no_of_superuser = MyUser.objects.filter(is_superuser=True).count()
         no_of_filtered_users = no_of_users - no_of_superuser
-        # print("No of users to the front end is : ", no_of_filtered_users)
         context = {'users': users , 'no_of_filtered_users': no_of_filtered_users}
         return render(request,'owner/usermanager.html',context)
 
@@ -149,27 +122,30 @@ def signin_Otp(request):
 
 def cart_add(request):
     if request.method == 'POST':
-        if request.user.is_authenticated:
-            prod_id = int(request.POST.get('product_id'))
-            product_check = Products.objects.get(product_id=prod_id)
+        if 'username' in request.session:
+            email = request.session['username']
+            product_id = request.POST['product_id']
+            product_quantity = int(request.POST['product_qty'])
+            product_check = Products.objects.get(product_id=product_id) 
+            print("Product name is ", product_check)
+            print("Stock is", product_check.quantity)
+            print("Ordered qty is",product_quantity)
 
-            if (product_check):
-                if(Cart.objects.filter(user = request.user.id, product_id=prod_id)):
-                    return JsonResponse({"status":"Product already in cart!"})
+            if(product_check):
+                    if(Cart.objects.filter(user=email,product_id=product_id)):
+                        return JsonResponse({'status':"product already in cart"})         
 
-                else:
-                    prod_qty = int(request.POST.get('product_qty'))
+                    else:  
+                         if product_check.quantity >= product_quantity:
+                            Cart.objects.create(user=email,product_id=product_id,product_qty=product_quantity)
+                            return JsonResponse({'status':'Product added succesfully'})
 
-                    if product_check.quantity  >= prod_qty:
-                        Cart.objects.create(user=request.user,product_id=prod_id, product_qty=prod_qty)
-                        return JsonResponse({"status":"Product added successfully"})  
-
-                    else:
-                        return JsonResponse({'status': "Only" + str(product_check.quantity) + "quantity available" })      
+                         else:
+                            return JsonResponse({'Status':'Only' + str(product_check.quantity) + 'quantity is available.'})       
             else:
-                return JsonResponse({"Status":"No such product!"})   
+                return JsonResponse({'status':"No such product found"})    
 
         else:
-            return JsonResponse({'status': "Login to continue"})    
-    
-        return redirect('/')    
+            return JsonResponse({'STATUS': "Login to continue"})    
+            
+    return redirect('/')    

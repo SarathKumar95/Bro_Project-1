@@ -74,6 +74,8 @@ $('.addtoCartBtn').click(function (){
     var product_id = document.getElementById('prod_id').value;
     var product_qty = document.getElementById('var-value').innerHTML;
     var token = $('input[name=csrfmiddlewaretoken]').val();
+    console.log("Product id is ", product_id)
+    console.log("Product qty is ", product_qty)
     
     $.ajax({
         method: "POST",
@@ -81,9 +83,9 @@ $('.addtoCartBtn').click(function (){
         data: {
             'product_id' : product_id,
             'product_qty' : product_qty,
-            csrfmiddlewaretoken: token
+            csrfmiddlewaretoken: token     
+       },
 
-        },
         success: function (response) {
           console.log(response)  
         }

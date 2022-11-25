@@ -5,7 +5,7 @@ from category.models import *
 # Create your models here.
 
 class Cart(models.Model):
-    email = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    user = models.CharField(max_length=255,null=True,blank=True)
     product = models.ForeignKey(Products,on_delete=models.CASCADE)
     product_qty = models.IntegerField(null=False,blank=False)
     created_at = models.DateTimeField(auto_now_add=True)

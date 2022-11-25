@@ -47,7 +47,7 @@ class Products(models.Model):
     ram = models.IntegerField(null=True, blank=True) 
     internal_storage = models.IntegerField(null=True,blank=True)
     processor = models.CharField(max_length=25,null=True,blank=True)
-    battery=models.CharField(max_length=20,null=True)
+    battery=models.CharField(max_length=20,null=True,blank=True)
     weight=models.IntegerField(null=True,blank=True)
     screen_size = models.DecimalField(decimal_places=2,max_digits=4,null=True,blank=True)
     camera = models.CharField(max_length=100,default='12 MP',null=True,blank=True)
@@ -63,4 +63,4 @@ class Products(models.Model):
         verbose_name_plural = 'Products' 
 
     def __str__(self):
-        return self.product_name
+        return self.product_name 

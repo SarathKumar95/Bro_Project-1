@@ -111,11 +111,21 @@
         <div class="row">
             {% for item in category %}
             <div class="col-12 col-md-4 p-5 mt-3">
-                {% if item.category_image|default_if_none:" " %}
-                <a href="#"><img src="{{item.category_image.url}}" class="rounded-circle img-fluid border" style="height:115px; width: 110px; position:relative; left:85px; " alt="phone image"></a>
+                {% if item.category_img|default_if_none:" " %}
+                <a href="#"><img src="{{item.category_img.url}}" class="rounded-circle img-fluid border" style="height:115px; width: 110px; position:relative; left:85px; " alt="category-image"></a>
                 {% endif %}
-                <h5 class="text-center mt-3 mb-3">{{item.category_name}}</h5>
+
+                {% if item.condition == 'New' %}
+                    <h5 class="text-center mt-3 mb-3">Get a new apple product</h5>
+                    <p class="text-center"><a class="btn btn-dark">Go Shop</a></p>
+                {% elif item.condition == 'Used' %}
+                    <h5 class="text-center mt-3 mb-3">Get a pre owned apple product</h5>
+                    <p class="text-center"><a class="btn btn-dark">Go Shop</a></p>
+                {% else %}
+                <h5 class="text-center mt-3 mb-3">Accessories</h5>
                 <p class="text-center"><a class="btn btn-dark">Go Shop</a></p>
+                {% endif %}
+
             </div>
             {% endfor %}
         </div>

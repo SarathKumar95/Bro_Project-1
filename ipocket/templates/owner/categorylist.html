@@ -25,7 +25,7 @@
             </button>
             <ul class="dropdown-menu">
               <li>
-                <form action="#" method="POST">
+                <form enctype="multipart/form-data" action="#" method="POST">
                     {% csrf_token %}
                     {{form}}
                     <input class="btn btn-sm btn-success" type="submit" value="Add">

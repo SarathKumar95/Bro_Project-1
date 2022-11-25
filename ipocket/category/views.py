@@ -63,7 +63,7 @@ def list_categories(request):
     context = {'category':category,'form':form}
     
     if request.method == 'POST':
-        form = CategoryForm(request.POST) 
+        form = CategoryForm(request.POST,request.FILES) 
 
         if form.is_valid():
             form.save() 
@@ -121,7 +121,7 @@ def edit_categories(request,category_id):
     context = {'form':form}
     
     if request.method == 'POST':
-        form = CategoryForm(request.POST,instance=category)
+        form = CategoryForm(request.POST, request.FILES, instance=category)
 
         if form.is_valid():
             form.save() 

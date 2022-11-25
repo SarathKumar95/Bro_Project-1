@@ -90,15 +90,16 @@
                             </ul>
 
                             <h6>Description:</h6>
-                              <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <p class="text-dark"><strong>Color:</strong></p>
-                                </li>
-                                <li class="list-inline-item">
-                                    <p class="text-dark">{{item.color}}</p>
-                                </li>
-                            </ul>
 
+                            <div id="color-tag">
+                                <p class="text-dark"><strong>Color : </strong>{{item.color}}</p>
+                            </div>
+
+                            <div id="condition-tag">
+                                <p><strong>Conditon : </strong>{{item.condition}}</p>
+                            </div>
+                              
+                            
                             <h6>Specification:</h6>
                             <ul class="list-unstyled pb-3">
                                 {% if item.processor %}
