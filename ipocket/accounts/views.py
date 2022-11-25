@@ -149,3 +149,12 @@ def cart_add(request):
             return JsonResponse({'status': "Login to continue"})    
             
     return redirect('/')    
+
+
+
+def cart_list(request):
+    user_in = request.session['username']
+    cart = Cart.objects.filter(user = user_in)
+    print("Cart items are",cart)
+    context = {'cart': cart}
+    return render(request,'home/cartlist.html',context)

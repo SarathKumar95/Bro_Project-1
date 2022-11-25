@@ -15,6 +15,7 @@ urlpatterns = [
     path('unblockuser/<int:id>', views.unblock_user, name='unblockuser'),
     path('products/',views.products,name="productspage"),
     path('item/<int:product_id>',views.item,name="itempage"),
-    path('item/cart/add',views.cart_add,name="sec-cart-add"),
+    path('item/cart/add',views.cart_add,name="cart-add"),
+    path('item/cart/list',views.cart_list,name="cart-list"),
 
 ]
