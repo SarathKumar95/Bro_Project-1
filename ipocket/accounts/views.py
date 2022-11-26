@@ -129,6 +129,7 @@ def cart_add(request):
             product_check = Products.objects.get(product_id=product_id) 
             print("Product name is ", product_check)
             print("Stock is", product_check.quantity)
+            print("Price of the product is", product_check.price)
             print("Ordered qty is",product_quantity)
 
             if(product_check):
@@ -155,6 +156,22 @@ def cart_add(request):
 def cart_list(request):
     user_in = request.session['username']
     cart = Cart.objects.filter(user = user_in)
-    print("Cart items are",cart)
-    context = {'cart': cart}
+    no_of_cart_items = cart.count()
+    # print("Cart items are",cart)
+    # print("No of Cart items are",no_of_cart_items)
+    context = {'cart': cart,'no_of_cart_items':no_of_cart_items }
     return render(request,'home/cartlist.html',context)
+
+
+def cart_delete(request):
+
+    user_in = request.session['username']
+    if request.method=='POST':
+        prod_id = int(request.POST['product_id'])
+        if(Cart.objects.get(user=user_in,product_id=prod_id)):
+            cart_item = Cart.objects.get(product_id=prod_id,user=user_in)
+            cart_item.delete()
+        return JsonResponse({"status": "Deleted Product Successfully!"}) 
+    else:
+        print("here!")
+    return redirect('cart-list')        

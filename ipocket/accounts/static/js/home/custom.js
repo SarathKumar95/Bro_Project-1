@@ -93,3 +93,26 @@ $('.addtoCartBtn').click(function (){
     });
 
 });
+
+
+function deleteCartItem() {   
+    var product_id = document.getElementById('cart-prod-id').value;
+    console.log("Product id is",product_id);
+
+    var token = $('input[name=csrfmiddlewaretoken]').val(); 
+    
+    $.ajax({
+        method: "POST",
+        url: "list/delete",
+        data: {
+            'product_id':product_id,
+            csrfmiddlewaretoken: token
+        },
+        success: function (response) {
+            alertify.success(response.status)            
+        }
+    });
+}
+
+
+

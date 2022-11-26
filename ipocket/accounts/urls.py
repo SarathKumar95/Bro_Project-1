@@ -17,5 +17,5 @@ urlpatterns = [
     path('item/<int:product_id>',views.item,name="itempage"),
     path('item/cart/add',views.cart_add,name="cart-add"),
     path('item/cart/list',views.cart_list,name="cart-list"),
-
+    path('item/cart/list/delete',views.cart_delete,name="cart-delete"),
 ]
