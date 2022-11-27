@@ -104,8 +104,8 @@ def unblock_user(request,id):
 def products(request):
     product = Products.objects.all()
     category = Categories.objects.all() 
-    context = {'product':product, 'category':category}
-    print(product)
+    subCategory = ProductType.objects.all()
+    context = {'product':product, 'category':category, 'subCategory':subCategory}
     return render(request,'home/shop.html',context)
 
 
@@ -147,6 +147,7 @@ def cart_add(request):
                 return JsonResponse({'status':"No such product found"})    
 
         else:
+
             return JsonResponse({'status': "Login to continue"})    
             
     return redirect('/')    
