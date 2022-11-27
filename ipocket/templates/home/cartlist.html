@@ -140,33 +140,12 @@
                   class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                   <strong> Total : </strong><span>₹{{sub_total}}.00</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                  Shipping
-                  {% if shipping == 0 %}
-                  <span>Free</span>
-                  {% else %}
-                  <span>₹{{shipping}}.00</span>
-                  {% endif %}
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                  <strong> Tax : </strong><span>{{tax}}%</span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-                  <div>
-                    <strong>Total amount</strong>
-                    <strong>
-                      <p class="mb-0">(including VAT)</p>
-                    </strong>
-                  </div>
-                  <span><strong> ₹ {{grand_total}}</strong></span>
-                </li>
+                <hr>
               </ul>
   
-              <button type="button" class="btn btn-secondary btn-lg btn-block mb-2">
+              <a href="{% url 'checkout' %}"   class="btn btn-secondary btn-lg btn-block mb-2">
                 Make Payment and checkout
-              </button>
+              </a>
               <a href="{% url 'productspage' %}" class="btn btn-warning btn-lg btn-block">
                 Continue Shopping
               </a>

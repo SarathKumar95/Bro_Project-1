@@ -156,30 +156,18 @@ def cart_add(request):
 def cart_list(request):
     user_in = request.session['username']
     cart = Cart.objects.filter(user = user_in)
+    user_filt = MyUser.objects.filter(email=user_in) 
+
+    
     sub_total = 0
     tax = 0
     for item in cart:
         Item_total = item.product.price * item.product_qty
         sub_total+=Item_total
     
-    if sub_total <= 100000:
-        shipping = 150
 
-    else:
-        shipping = 0       
-        tax = 5
-
-    sub_total+=shipping
-
-    grand_total_with_tax = sub_total * tax/100
-    grand_total = sub_total + grand_total_with_tax
-
-    print("Sub total with shipping ",sub_total)    
-    print("Tax charged",grand_total_with_tax)
-    print("Grand total with tax",grand_total)    
-    
     no_of_cart_items = cart.count()
-    context = {'cart': cart,'no_of_cart_items':no_of_cart_items, 'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total}
+    context = {'cart': cart,'no_of_cart_items':no_of_cart_items,'sub_total':sub_total}
     
     return render(request,'home/cartlist.html',context)
 
@@ -195,3 +183,65 @@ def cart_delete(request):
     else:
         print("here!")
     return redirect('cart-list')        
+
+
+
+
+
+
+# Checkout page view 
+
+def checkout(request):
+    user_in = request.session['username']
+    cart = Cart.objects.filter(user = user_in)
+    user_filt = MyUser.objects.filter(email=user_in) 
+
+    
+    sub_total = 0
+    tax = 0
+    for item in cart:
+        Item_total = item.product.price * item.product_qty
+        sub_total+=Item_total
+    
+    if sub_total <= 100000:
+        shipping = 150
+
+    else:
+        shipping = 0       
+        tax = 5
+
+    
+
+    grand_total_with_tax = sub_total * tax/100
+    grand_total = sub_total + shipping + grand_total_with_tax
+
+    # print("Sub total with shipping ",sub_total)    
+    # print("Tax charged",grand_total_with_tax)
+    # print("Grand total with tax",grand_total)    
+    # print("User in is", user_in)
+    # print("User filtered in is", user_filt)
+
+
+    # if request.method == 'POST':
+    #     coupon = request.POST.get('coupon')   
+        
+    #     if coupon == 'NEW50':
+    #         coupon_price = grand_total * 5/100
+        
+    #     grand_total-=coupon_price
+
+    #     print("Grand total is", grand_total) 
+
+
+
+    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total}    
+    return render(request,'home/checkout.html',context) 
+
+
+
+
+def orderPage(request):
+    user_in = request.session['username']
+    cart = Cart.objects.filter(user = user_in) 
+    context = {'cart':cart}
+    return render(request,'home/orderplaced.html',context) 
