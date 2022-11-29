@@ -1,5 +1,7 @@
 from django.db import models
 
+from accounts.models import MyUser
+
 # Create your models here.
 
 #sub category on phones/watches/airpods 
@@ -64,3 +66,49 @@ class Products(models.Model):
 
     def __str__(self):
         return self.product_name 
+
+
+class Order(models.Model):
+    user = models.CharField(max_length=150,null=True)
+    first_name = models.CharField(max_length=150,null=False) 
+    last_name = models.CharField(max_length=150,null=False) 
+    email = models.CharField(max_length=150,null=False) 
+    phone = models.BigIntegerField()
+    address_line1 = models.TextField(max_length=200,null=True)
+    address_line2 = models.TextField(max_length=100,null=True)
+    state = models.CharField(max_length=100,null=True)
+    city = models.CharField(max_length=100,null=True)
+    pincode = models.IntegerField(null=True)
+    total_price = models.FloatField(null=True)
+    payment_mode = models.CharField(max_length=150,null=True)
+    payment_id = models.CharField(max_length=255,null=True,blank=True)
+    orderstatus = [
+        ('Order Placed','Order Placed'),
+        ('Order Confirmed','Order Confirmed'),
+        ('Pending','Pending'),
+        ('Shipped','Shipped'),
+        ('In Transit','In Transit'),
+        ('Completed','Completed'),
+        ('Awaiting Payment','Awaiting Payment'),
+        ('Out for Delivery','Out for Delivery'),
+        ('Cancelled','Cancelled'),
+    ]
+    status = models.CharField(max_length=150,choices=orderstatus,default='Order Placed')
+    message = models.TextField(null=True,blank=True)
+    tracking_no = models.CharField(max_length=150,null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True) 
+
+
+    def __str__(self):
+        return '{} - {}'.format(self.user,str(self.tracking_no) )
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    price = models.FloatField(null=True)
+    quantity = models.IntegerField(null=True) 
+
+    def __str__(self):
+        return '{} - {} - {} - {}'.format(self.order.user,str(self.product.product_name),str(self.product.generation),str(self.product.series))

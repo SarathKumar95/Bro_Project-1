@@ -24,3 +24,17 @@ class ProductForm(ModelForm):
         model = Products
         fields = '__all__'
     
+
+class OrderForm(ModelForm):
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+
+class OrderItemForm(ModelForm):
+
+    class Meta:
+        model = OrderItem
+        fields = '__all__'

@@ -26,7 +26,8 @@ input[type=number] {
 
     <div class="row mt-5">
       <div class="col-md-4 order-md-2 mb-4">
-        <h4 class="d-flex justify-content-between align-items-center mb-4-5">
+        <form action="" method="POST">        
+          <h4 class="d-flex justify-content-between align-items-center mb-4-5">
           <span class="text-dark"><strong>Your cart</strong></span>
           <span class="badge badge-primary badge-pill">3</span>
         </h4>
@@ -49,8 +50,6 @@ input[type=number] {
          
          {% endfor %}
         </ul>
-  
-        <form class="card p-2">
             <ul class="list-group list-group-flush">
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
@@ -76,11 +75,10 @@ input[type=number] {
                       <p class="mb-0">(including VAT)</p>
                     </strong>
                   </div>
-                  <span><strong> ₹ {{grand_total}}</strong></span>
+                  <span> ₹ <strong>{{grand_total}}</strong></span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                     <div class="input-group">
-                            {% csrf_token %}
                             <input type="text" class="form-control" name="coupon" placeholder="Promo code">
                             <div class="input-group-append">
                               <input type="submit" class="btn btn-primary btn-md my-0 ml-0" value="Redeem">
@@ -88,17 +86,16 @@ input[type=number] {
                       </div>
                 </li>
               </ul>
-
-        </form>
       </div>
       <div class="col-md-8 order-md-1">
         <h4 class="mb-3"><strong>Billing address</strong></h4>
-        <form class="needs-validation" novalidate>
-            {% for item in user_filt %}
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <div class="md-form md-outline my-2">
-                <input type="text" id="firstName" class="form-control" value="{{item.first_name}}" required>
+          {% for item in user_filt %}
+          
+            {% csrf_token %}
+             <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="md-form md-outline my-2">
+                <input type="text" id="firstName" name="fname" class="form-control" value="{{item.first_name}}" required>
                 <label for="firstName">First name</label>
               </div>
               <div class="invalid-feedback">
@@ -107,7 +104,7 @@ input[type=number] {
             </div>
             <div class="col-md-6 mb-3">
               <div class="md-form md-outline my-2">
-                <input type="text" id="lastName" class="form-control" value="{{item.last_name}}"  required>
+                <input type="text" id="lastName" name="lname" class="form-control" value="{{item.last_name}}"  required>
                 <label for="lastName">Last name</label>
               </div>
               <div class="invalid-feedback">
@@ -118,7 +115,7 @@ input[type=number] {
   
           <div class="mb-3">
             <div class="md-form md-outline my-2">
-              <input type="number" id="phnno" class="form-control" value="{{item.mobile_number}}" required>
+              <input type="number" id="phnno" name="phno" class="form-control" value="{{item.mobile_number}}" required>
               <label for="phnno">Phone Number</label>
             </div>
             <div class="invalid-feedback">
@@ -129,7 +126,7 @@ input[type=number] {
           <div class="row">
             <div class="col-12 mb-3">
               <div class="md-form md-outline my-2">
-                <input type="email" id="email" class="form-control" value="{{item.email}}">
+                <input type="email" id="email" name="email" class="form-control" value="{{item.email}}">
                 <label for="email">Email</label>
               </div>
               <div class="invalid-feedback">
@@ -139,8 +136,8 @@ input[type=number] {
   
             <div class="col-12 mb-3">
               <div class="md-form md-outline my-2">
-                <input type="text" id="address" class="form-control" required>
-                <label for="address">Address</label>
+                <input type="text" id="address" name="add1" class="form-control" required>
+                <label for="address">Address Line 1</label>
               </div>
               <div class="invalid-feedback">
                 Please enter your shipping address.
@@ -149,24 +146,24 @@ input[type=number] {
   
             <div class="col-12 mb-3">
               <div class="md-form md-outline my-2">
-                <input type="text" id="address2" class="form-control" required>
-                <label for="address2">Address 2 (Optional)</label>
+                <input type="text" id="address2" name="add2" class="form-control" required>
+                <label for="address2">Address Line 2 (Optional)</label>
               </div>
             </div>
           </div>
   
           <div class="row">
             <div class="col-md-5 mb-3">
-              <select class="custom-select d-block w-100 mt-2" id="country" required>
+              <select class="custom-select d-block w-100 mt-2" id="country" name="country" required>
                 <option value="">Country</option>
-                <option>United States</option>
+                <option>India</option>
               </select>
               <div class="invalid-feedback">
                 Please select a valid country.
               </div>
             </div>
             <div class="col-md-4 mb-3">
-              <select class="custom-select d-block w-100 mt-2" id="state" required>
+              <select class="custom-select d-block w-100 mt-2" id="state" name="state" required>
                 <option value="">State</option>
                 <option>Kerala</option>
                 <option>Karnataka</option>
@@ -176,13 +173,15 @@ input[type=number] {
                 Please provide a valid state.
               </div>
             </div>
+          </div>
+          <div class="row">
             <div class="col-md-3 mb-3">
               <div class="md-form md-outline mt-2 mb-0">
-                <input type="text" id="zip" class="form-control mb-0" required>
-                <label for="zip">Zip</label>
+                <input type="text" id="zip" name="zip" class="form-control mb-0" required>
+                <label for="zip">Pin Code</label>
               </div>
               <div class="invalid-feedback">
-                Zip code required.
+                Pin code required.
               </div>
             </div>
           </div>
@@ -202,11 +201,11 @@ input[type=number] {
   
           <div class="d-block my-3">
             <div class="form-check pl-0">
-                <input id="cod" name="paymentMethod" type="radio" class="form-check-input" checked required>
+                <input id="cod" name="paymentMethod" type="radio" class="form-check-input" required>
                 <label class="form-check-label" for="credit">Cash On Delivery</label>
               </div>
             <div class="form-check pl-0">
-              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
+              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" required>
               <label class="form-check-label" for="credit">Credit card</label>
             </div>
             <div class="form-check pl-0">
@@ -261,9 +260,9 @@ input[type=number] {
           </div>
           --->
           <hr class="mb-4">
-          <button class="btn btn-primary btn-lg btn-block mb-4" type="submit">Continue to checkout</button>
-          {% endfor %}
+          <input type="submit" class="btn btn-warning btn-lg btn-block mb-4" value="Place Order">
         </form>
+        {% endfor %}
       </div>
     </div>
   

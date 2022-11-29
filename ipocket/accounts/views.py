@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
@@ -6,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from category.models import *
 from django.http import HttpResponse,JsonResponse 
 from cart.models import *
+from category.forms import *
 # Create your views here.
 
 def home_page(request):
@@ -122,7 +124,10 @@ def signin_Otp(request):
 
 def cart_add(request):
     if request.method == 'POST':
-        if 'username' in request.session:
+        if 'username' not in request.session:
+            return redirect('guest-add')
+
+        elif 'username' in request.session:   
             email = request.session['username']
             product_id = request.POST['product_id']
             product_quantity = int(request.POST['product_qty'])
@@ -177,12 +182,10 @@ def cart_delete(request):
     user_in = request.session['username']
     if request.method=='POST':
         prod_id = int(request.POST['product_id'])
-        if(Cart.objects.get(user=user_in,product_id=prod_id)):
-            cart_item = Cart.objects.get(product_id=prod_id,user=user_in)
+        if(Cart.objects.filter(user=user_in,product_id=prod_id)):
+            cart_item = Cart.objects.filter(product_id=prod_id,user=user_in)
             cart_item.delete()
-        return JsonResponse({"status": "Deleted Product Successfully!"}) 
-    else:
-        print("here!")
+        return JsonResponse({"status": "Deleted Product Successfully!"})  
     return redirect('cart-list')        
 
 
@@ -223,26 +226,127 @@ def checkout(request):
     # print("User filtered in is", user_filt)
 
 
-    # if request.method == 'POST':
-    #     coupon = request.POST.get('coupon')   
-        
-    #     if coupon == 'NEW50':
-    #         coupon_price = grand_total * 5/100
-        
-    #     grand_total-=coupon_price
+    if request.method == 'POST':
+        neworder = Order()
+        neworder.user = request.session['username']
+        neworder.first_name = request.POST['fname'] 
+        neworder.last_name = request.POST['lname']
+        neworder.email = request.POST['email']
+        neworder.phone = request.POST['phno'] 
+        neworder.address_line1 = request.POST['add1'] 
+        neworder.address_line2 = request.POST['add2']
+        neworder.city = request.POST['country']
+        neworder.state = request.POST['state']
+        neworder.pincode = request.POST['zip']
+        neworder.total_price = grand_total
+        neworder.payment_mode = request.POST['paymentMethod']
+        neworderItems = Cart.objects.filter(user=user_in) 
 
-    #     print("Grand total is", grand_total) 
+        track_no = 'IPOrder' + str(random.randint(111111,999999)) 
+        while Order.objects.filter(tracking_no=track_no) is None:
+            track_no = 'IPOrder' + str(random.randint(111111,999999))
+
+        neworder.tracking_no = track_no
+        neworder.save() 
+
+        for item in neworderItems:
+            OrderItem.objects.create(
+                order = neworder,
+                product = item.product,
+                price = item.product.price,
+                quantity = item.product_qty
+            )
 
 
+            print("ORDERED ITEMS ARE",neworderItems)
+            # decrease qty of product
+            OrderProduct = Products.objects.filter(product_id=item.product_id).first()
+            OrderProduct.quantity-=item.product_qty 
+            OrderProduct.save()
+
+            print("Ordered product is",OrderProduct.quantity)   
+
+            #clear cart
+            cart = Cart.objects.filter(user=user_in).delete() 
+            
+            return redirect('order-page')
 
     context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total}    
     return render(request,'home/checkout.html',context) 
 
 
+#guest-cart-add 
+
+def guestAdd(request):
+    pass    
 
 
-def orderPage(request):
-    user_in = request.session['username']
-    cart = Cart.objects.filter(user = user_in) 
-    context = {'cart':cart}
-    return render(request,'home/orderplaced.html',context) 
+
+
+def order_manager(request):
+    orders = Order.objects.all()
+    context = {'orders':orders}
+    return render(request,'owner/ordermanager.html',context)    
+
+
+def order_edit(request, id):
+    order = Order.objects.filter(id=id).first() 
+    orderitem = OrderItem.objects.filter(order_id=order.id).first() 
+    print("Ordered item is",orderitem.id)
+
+    form = OrderForm(instance=order)
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST,instance=order) 
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Order Updated") 
+            return redirect('order-list')
+        else:
+            messages.error(request,form.errors) 
+
+    context = {'form':form} 
+    return render(request,'owner/orderedit.html',context) 
+
+
+def OrderPage(request,tracking_no):
+    order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username'])
+     
+
+
+    for item in order:
+        order_id = item.id
+        total = item.total_price 
+
+    
+    if total <= 100000:
+        shipping = 150
+        tax = 0
+        discount = 0 
+    else:
+        shipping = 0       
+        tax = 5
+        discount = 0
+
+
+    total_before_deductions = total - shipping - tax - discount
+    tax_amount = (total - discount + shipping) * tax/100
+    grand_total = total + shipping + tax 
+
+    print("Order ID is", order_id)
+
+    print("Total - Ship - tax is", total)
+    print("Tax amount is", tax_amount)
+    print("Shipping amount is", shipping)
+    
+    orderitem = OrderItem.objects.filter(order_id = order_id)
+
+    print("Order item is", orderitem)
+    
+    for item in orderitem:
+        print(item.product.product_name, item.product.generation, item.product.series )
+
+    context = {'order':order, 'orderitem':orderitem,'total':total_before_deductions,'tax':tax,'shipping':shipping,
+     'discount':discount, 'grand_total':grand_total}
+    return render(request,'home/orderplaced.html',context)
