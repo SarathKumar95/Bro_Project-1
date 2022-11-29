@@ -336,7 +336,7 @@ def OrderPage(request,tracking_no):
 
     total_before_deductions = total - shipping - tax - discount
     tax_amount = (total - discount + shipping) * tax/100
-    grand_total = total + shipping + tax_amount 
+    
 
     print("Order ID is", order_id)
 
@@ -348,12 +348,14 @@ def OrderPage(request,tracking_no):
 
     print("Order item is", orderitem)
 
+    print("Grand total is", total)
+
     
     for item in orderitem:
         print(item.product.product_name, item.product.generation, item.product.series )
 
-    context = {'order':order, 'orderitem':orderitem,'total':total_before_deductions,'tax_amount':tax_amount,'shipping':shipping,
-     'discount':discount, 'grand_total':grand_total}
+    context = {'order':order, 'orderitem':orderitem,'total_before_d':total_before_deductions,'tax_amount':tax_amount,'shipping':shipping,
+     'discount':discount, 'total':total}
     return render(request,'home/orderplaced.html',context)
 
 def cart_update(request):
