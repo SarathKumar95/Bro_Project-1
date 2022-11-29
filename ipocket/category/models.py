@@ -80,7 +80,11 @@ class Order(models.Model):
     city = models.CharField(max_length=100,null=True)
     pincode = models.IntegerField(null=True)
     total_price = models.FloatField(null=True)
+    tax_amount = models.FloatField(null=True)
+    ship_amount = models.FloatField(null=True)
+    coupon_amount = models.FloatField(null=True)
     payment_mode = models.CharField(max_length=150,null=True)
+    price_before_tax = models.FloatField(null=True)
     payment_id = models.CharField(max_length=255,null=True,blank=True)
     orderstatus = [
         ('Order Placed','Order Placed'),

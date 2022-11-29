@@ -10,6 +10,21 @@ from cart.models import *
 from category.forms import *
 # Create your views here.
 
+
+
+def guest(request):
+    guest_user = request.session.session_key 
+
+    if not guest_user:
+        guest_user = request.session.create()
+
+    print("User in is", guest_user)
+    return guest_user
+
+
+
+
+
 def home_page(request):
     category = Categories.objects.all()
     product = Products.objects.all()
@@ -125,7 +140,23 @@ def signin_Otp(request):
 def cart_add(request):
     if request.method == 'POST':
         if 'username' not in request.session:
-            return redirect('guest-add')
+            prod_id = request.POST['product_id']
+            prod_qty = request.POST['product_qty']
+            product = Products.objects.filter(product_id=prod_id).first()
+            print("Prod id is",prod_id)
+            print("Prod qty is",prod_qty)
+
+            cart = Cart.objects.filter(user=guest(request),product_id=prod_id) 
+
+            if cart:
+                print("Get cart", cart) 
+
+            else:
+                print("create guest cart")
+                cart = Cart.objects.create(user=guest(request),product_id=prod_id,product_qty=prod_qty)
+                return JsonResponse({'status':'Product added succesfully'})    
+
+            return redirect('/')
 
         elif 'username' in request.session:   
             email = request.session['username']
@@ -151,18 +182,23 @@ def cart_add(request):
             else:
                 return JsonResponse({'status':"No such product found"})    
 
-        else:
-
-            return JsonResponse({'status': "Login to continue"})    
+        # else:
+        #     return JsonResponse({'status': "Login to continue"})    
             
     return redirect('/')    
 
 
 
 def cart_list(request):
-    user_in = request.session['username']
-    cart = Cart.objects.filter(user = user_in)
-    user_filt = MyUser.objects.filter(email=user_in) 
+    if 'username' not in request.session:
+        guest_user = guest(request)
+        cart = Cart.objects.filter(user=guest_user) 
+        print("Cart items are",cart)
+
+    elif 'username' in request.session:
+        user_in = request.session['username']
+        cart = Cart.objects.filter(user = user_in)
+        user_filt = MyUser.objects.filter(email=user_in) 
 
     
     sub_total = 0
@@ -170,11 +206,11 @@ def cart_list(request):
     for item in cart:
         Item_total = item.product.price * item.product_qty
         sub_total+=Item_total
-    
+        
 
     no_of_cart_items = cart.count()
     context = {'cart': cart,'no_of_cart_items':no_of_cart_items,'sub_total':sub_total}
-    
+        
     return render(request,'home/cartlist.html',context)
 
 def cart_delete(request):
@@ -203,23 +239,30 @@ def checkout(request):
     
     sub_total = 0
     tax = 0
+    coupon = 0
     for item in cart:
         Item_total = item.product.price * item.product_qty
         sub_total+=Item_total
     
     if sub_total <= 100000:
         shipping = 150
-
+        
     else:
         shipping = 0       
         tax = 5
+        
 
     
 
     grand_total_with_tax = sub_total * tax/100
     grand_total = sub_total + shipping + grand_total_with_tax
 
-
+    print("Sub total is",sub_total)
+    print("Shipping is",shipping)
+    print("Tax is",tax) 
+    print("Tax amount is",grand_total_with_tax)
+    print("Coupon is",coupon)
+    print("Grand total is",grand_total) 
     if request.method == 'POST':
         neworder = Order()
         neworder.user = request.session['username']
@@ -233,6 +276,10 @@ def checkout(request):
         neworder.state = request.POST['state']
         neworder.pincode = request.POST['zip']
         neworder.total_price = grand_total
+        neworder.price_before_tax = sub_total 
+        neworder.tax_amount = grand_total_with_tax
+        neworder.ship_amount = shipping
+        neworder.coupon_amount = coupon
         neworder.payment_mode = request.POST['paymentMethod']
          
 
@@ -283,11 +330,28 @@ def checkout(request):
 
 #guest-cart-add 
 
-def guestAdd(request):
-    pass    
 
-
-
+def guestAdd(request,product_id):
+    pass
+    # product = Products.objects.filter(product_id=product_id).first().product_id
+    # cart = Cart.objects.filter(user=guest(request))
+    
+    # print("In guest",product) 
+    
+    
+    # if cart:
+    #     print("cart exists")
+        
+        
+    
+    # else:
+    #     print("create cart")
+    #     # cart = Cart.objects.create(
+        #     user=guest(request),
+        #     product_id=product
+        # )    
+    
+    return redirect('/')
 
 def order_manager(request):
     orders = Order.objects.all()
@@ -317,45 +381,18 @@ def order_edit(request, id):
 
 
 def OrderPage(request,tracking_no):
-    order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username'])
-     
+    order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username']).all()     
+    
+    print("Order is",order) 
+
     for item in order:
-        order_id = item.id
-        total = item.total_price 
+        orderid = item.id 
 
-    
-    if total <= 100000:
-        shipping = 150
-        tax = 0
-        discount = 0 
-    else:
-        shipping = 0       
-        tax = 5
-        discount = 0
-
-
-    total_before_deductions = total - shipping - tax - discount
-    tax_amount = (total - discount + shipping) * tax/100
-    
-
-    print("Order ID is", order_id)
-
-    print("Total - Ship - tax is", total)
-    print("Tax amount is", tax_amount)
-    print("Shipping amount is", shipping)
-    
-    orderitem = OrderItem.objects.filter(order_id = order_id)
+    orderitem = OrderItem.objects.filter(order_id = orderid)
 
     print("Order item is", orderitem)
 
-    print("Grand total is", total)
-
-    
-    for item in orderitem:
-        print(item.product.product_name, item.product.generation, item.product.series )
-
-    context = {'order':order, 'orderitem':orderitem,'total_before_d':total_before_deductions,'tax_amount':tax_amount,'shipping':shipping,
-     'discount':discount, 'total':total}
+    context = {'order':order, 'orderitem':orderitem}
     return render(request,'home/orderplaced.html',context)
 
 def cart_update(request):
@@ -372,6 +409,8 @@ def cart_update(request):
         cart.product_qty = product_qty 
         cart.save()
 
-        print("After update qty is", cart.product_qty)
+        print("After update qty is", cart.product_qty) 
+
+        return JsonResponse({'status':'Updated cart!'})
 
     return redirect('/')        
