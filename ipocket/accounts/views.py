@@ -356,3 +356,20 @@ def OrderPage(request,tracking_no):
      'discount':discount, 'grand_total':grand_total}
     return render(request,'home/orderplaced.html',context)
 
+def cart_update(request):
+    user_in = request.session['username']
+    if request.method == 'POST':
+        product_id = request.POST.get('cart_id')
+        cart = Cart.objects.filter(user=user_in,product=product_id).first()
+        product_qty = request.POST['cart_qty']
+        
+        print("Product in cart is",cart.product.product_name)
+        print("Qty is",product_qty)
+        print("Qty of product in cart is",cart.product_qty)
+        
+        cart.product_qty = product_qty 
+        cart.save()
+
+        print("After update qty is", cart.product_qty)
+
+    return redirect('/')        

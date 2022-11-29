@@ -23,7 +23,7 @@
             <div class="card-body">
               <!-- Single item -->
               {% for item in cart %}
-              <input type="hidden" value="{{item.product_id}}" id="cart-prod-id">
+              <input type="" value="{{item.product_id}}" id="cart-prod-id">
               
               <div class="row">
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
@@ -73,17 +73,17 @@
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
                     <button class="btn btn-primary px-3 me-2"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty('{{item.product_id}}')">
                       <i class="fas fa-minus"></i>
                     </button>
   
                     <div class="form-outline">
-                      <input id="form1" min="0" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
+                      <input id="cart-prod-qty" min="0" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
   
                     <button class="btn btn-primary px-3 ms-2"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQty()">
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
@@ -105,12 +105,12 @@
               {% endfor %}
             </div>
           </div>
-          <div class="card mb-4">
+          <!--<div class="card mb-4">
             <div class="card-body">
               <p><strong>Expected shipping delivery</strong></p>
               <p class="mb-0">12.10.2020 - 14.10.2020</p>
             </div>
-          </div>
+          </div>-->
           <div class="card mb-4 mb-lg-0">
             <div class="card-body">
               <p><strong>We accept</strong></p>
@@ -156,5 +156,8 @@
     </div>
   </section>
 
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="crossorigin="anonymous"></script>
+  <script>  
+  </script>
 
 {% endblock %}
