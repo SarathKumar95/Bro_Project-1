@@ -142,59 +142,36 @@
                 </div>
             </div>
             <div class="row">
-                {% for item in product %}
-                <div class="col-12 col-md-4 mb-4">
-                    <div class="card h-100">
-                        <a href="{% url 'itempage' item.product_id %}">
-                            {% if item.main_image|default_if_none:"#" %}
-                            <img src="{{item.main_image.url}}" class="card-img-top" style="height:100%;"  alt="product image">
-                            {% endif %}
-                        </a>
-                        <div class="card-body">
-                            <ul class="list-unstyled d-flex justify-content-between">
-                                <li>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-warning fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                    <i class="text-muted fa fa-star"></i>
-                                </li>
-                                <li class="text-dark text-right">₹{{item.price}}</li>
-                            </ul>
-                            
-                            {% if item.generation == None %}
-                            <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
-                                {{item.product_name}} {{item.series}}
-                            </a>
-                            {% elif item.series == None %}
-                            <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
-                                {{item.product_name}} {{item.generation}}
-                            </a>
-                            {% else %}
-                            <a href="{% url 'itempage' item.product_id %}" class="h2 text-decoration-none text-dark">
-                                {{item.product_name}} 
-                            </a>
-                            {% endif %}
-                            <p class="card-text">
-                                {% if item.internal_storage == None %}
-                                {{item.color}}
-                                {% else %}
-                                {{item.color}} - {{item.internal_storage}}gb
-                                {% endif %}
-                            </p>
-                            <p class="card-subtext">
-                                {{item.description}}
-                            </p>
-                            <p class="text-muted">Reviews (24)</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+                
+                    {% for item in product %}
+                    
+                    {% endfor %}
+                
+                
                 </div>
             </div>
         </div>
     </section>
     <!-- End Featured Product -->
+
+    <script>
+        $('.owl-carousel').owlCarousel({
+    loop:true,
+    margin:10,
+    nav:true,
+    responsive:{
+        0:{
+            items:1
+        },
+        600:{
+            items:3
+        },
+        1000:{
+            items:5
+        }
+    }
+})
+    </script>
 
 {% endblock %}
     

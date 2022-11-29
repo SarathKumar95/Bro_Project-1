@@ -111,4 +111,4 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(null=True) 
 
     def __str__(self):
-        return '{} - {} - {} - {}'.format(self.order.user,str(self.product.product_name),str(self.product.generation),str(self.product.series))
+        return '{} - {}'.format(self.order.user,self.order.tracking_no)

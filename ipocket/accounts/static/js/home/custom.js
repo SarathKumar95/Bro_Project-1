@@ -71,6 +71,7 @@ imageZoom('product-detail')
 
 
 $('.addtoCartBtn').click(function (){
+    console.log("Here in add!");
     var product_id = document.getElementById('prod_id').value;
     var product_qty = document.getElementById('var-value').innerHTML;
     var token = $('input[name=csrfmiddlewaretoken]').val();
@@ -113,6 +114,8 @@ function deleteCartItem() {
         }
     });
 }
+
+
 
 
 

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from category.models import *
-from django.http import HttpResponse,JsonResponse 
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse 
 from cart.models import *
 from category.forms import *
 # Create your views here.
@@ -219,12 +219,6 @@ def checkout(request):
     grand_total_with_tax = sub_total * tax/100
     grand_total = sub_total + shipping + grand_total_with_tax
 
-    # print("Sub total with shipping ",sub_total)    
-    # print("Tax charged",grand_total_with_tax)
-    # print("Grand total with tax",grand_total)    
-    # print("User in is", user_in)
-    # print("User filtered in is", user_filt)
-
 
     if request.method == 'POST':
         neworder = Order()
@@ -240,7 +234,7 @@ def checkout(request):
         neworder.pincode = request.POST['zip']
         neworder.total_price = grand_total
         neworder.payment_mode = request.POST['paymentMethod']
-        neworderItems = Cart.objects.filter(user=user_in) 
+         
 
         track_no = 'IPOrder' + str(random.randint(111111,999999)) 
         while Order.objects.filter(tracking_no=track_no) is None:
@@ -249,28 +243,40 @@ def checkout(request):
         neworder.tracking_no = track_no
         neworder.save() 
 
+        neworderItems = Cart.objects.filter(user=user_in)
+
+        print("Items in cart are",neworderItems)
+
+        print("No of Items in cart are",neworderItems.count())
+
+
         for item in neworderItems:
             OrderItem.objects.create(
                 order = neworder,
-                product = item.product,
-                price = item.product.price,
-                quantity = item.product_qty
+                product=item.product,
+                price=item.product.price,
+                quantity=item.product_qty
+
             )
 
-
-            print("ORDERED ITEMS ARE",neworderItems)
-            # decrease qty of product
-            OrderProduct = Products.objects.filter(product_id=item.product_id).first()
-            OrderProduct.quantity-=item.product_qty 
-            OrderProduct.save()
-
-            print("Ordered product is",OrderProduct.quantity)   
-
-            #clear cart
-            cart = Cart.objects.filter(user=user_in).delete() 
             
-            return redirect('order-page')
+            print("Item added is",item.product.product_name)
+            print("Item price added is",item.product.price)
+            print("Item qty added is",item.product_qty)
 
+
+            orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
+            print("Ordered product quantity is", orderproduct.quantity) 
+            orderproduct.quantity -= item.product_qty 
+            orderproduct.save()
+            print("Ordered product quantity after ordering is", orderproduct.quantity) 
+
+            
+        cart = Cart.objects.filter(user=user_in) 
+        cart.delete()
+            
+        return redirect('/')    
+            
     context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total}    
     return render(request,'home/checkout.html',context) 
 
@@ -343,6 +349,7 @@ def OrderPage(request,tracking_no):
     orderitem = OrderItem.objects.filter(order_id = order_id)
 
     print("Order item is", orderitem)
+
     
     for item in orderitem:
         print(item.product.product_name, item.product.generation, item.product.series )
@@ -350,3 +357,4 @@ def OrderPage(request,tracking_no):
     context = {'order':order, 'orderitem':orderitem,'total':total_before_deductions,'tax':tax,'shipping':shipping,
      'discount':discount, 'grand_total':grand_total}
     return render(request,'home/orderplaced.html',context)
+

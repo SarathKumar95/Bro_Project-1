@@ -95,6 +95,7 @@
                 <div class="row">
                     {% for item in product %}
                     <div class="col-md-4">
+                        <input type="hidden" name="id" id="" value="{{item.product_id}}">
                         <div class="card mb-4 product-wap rounded-0" >
                             <div class="card rounded-0">
                                 {% if item.main_image %}
@@ -106,7 +107,7 @@
                                     <ul class="list-unstyled">
                                         <li><a class="btn btn-success text-white" href="shop-single.html"><i class="far fa-heart"></i></a></li>
                                         <li><a class="btn btn-success text-white mt-2" href="{% url 'itempage' item.product_id %}"><i class="far fa-eye"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2" href="shop-single.html"><i class="fas fa-cart-plus"></i></a></li>
+                                        <li><button class="btn btn-success text-white mt-2 btn-lg"><i class="fas fa-cart-plus"></i></button></li>
                                     </ul>
                                 </div>
                             </div>
@@ -195,5 +196,6 @@
     </section>
     <!--End Brands-->
 
+    
 
 {% endblock %}
