@@ -7,7 +7,15 @@
 {% load static %} 
 {% load crispy_forms_tags %}
 
-<div class="main">
+
+<style>
+    .asteriskField {
+    display: none;
+}
+</style>
+
+
+<div class="main mt-3">
 
     <div class="page-title text-center mb-3">
         <h5>Edit Order</h5>
@@ -18,17 +26,16 @@
             {{message}}
         {% endfor %}
     </div>
+        <div class="form-wrapper ms-3 me-3">
 
-    <div class="form-wrapper ms-3 me-3">
-
-        <form enctype="multipart/form-data" action="" method="POST">
-            {% csrf_token %}
-            {{form|crispy}}
-            <input type="submit" value="Update">
-        </form>
-
-    </div>
-
+            <form enctype="multipart/form-data" action="" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <input type="submit" value="Update">
+            </form>
+    
+        </div>
+        
     </div>
     
 

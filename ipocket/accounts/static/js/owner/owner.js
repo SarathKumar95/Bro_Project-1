@@ -59,6 +59,44 @@ function deleteCategory(){
 }
 
 
+function deleteOrder(){
+    let confirmAction = confirm("Are you sure you want to delete this order ? ");
+    if(confirmAction){
+        console.log("Inside confirm");
+        let url = $("#deleteOrder-btn").attr("data-url");
+        window.location = url;
+    }
+    else{
+        console.log("Do nothing!");
+    }
+
+}
+
+
+function deleteOrderItem(){
+    var product = document.getElementById('deleteOrderItem-btn').value 
+    console.log("Product id  is", product);
+    
+    let confirmAction = confirm("Are you sure you want to remove this product from the order ? ");
+    if(confirmAction){
+        let url = $("#deleteOrderItem-btn").attr("data-url");
+        window.location = url;
+    }
+    else{
+        console.log("Do nothing!");
+    }
+
+    }
+
+
+
+
+
+
+
+
+
+
 const imageBox = document.getElementById('image-box')
 const imageForm = document.getElementById('image-form')
 const confirmBtn = document.getElementById('confirm-btn')

@@ -4,19 +4,18 @@
 
 
 {% block content %}
-{% load static %} 
+{% load static %}
+
 
 
 <style>
-    .asteriskField {
-    display: none;
-}
+    .d-flex{
+        gap:10px;
+    }
 </style>
 
-
-
 <div class="main ms-4 me-4">
-    <div class="page-title text-center mt-3 mb-3">
+    <div class="page-title text-center mt-3 mb-5">
         <h5>Order List</h5>
     </div>
 
@@ -29,37 +28,54 @@
     <div>
         <table class="table">
             <tr>
-                <th>Order Id</th>
-                <th>Order Date</th> 
-                <th>Order Modified</th>
                 <th>Tracking No</th>
+                <th>Order Date</th> 
                 <th>Ordered by</th>
-                <th>Payment Mode</th>
-                <th>Total</th>
                 <th>Order Status</th>
+                <th>Total</th>
+                <th>Tax</th>
+                <th>Shipping Charges</th>
+                <th>Grand Total</th>
+                <th>Payment Mode</th>
                 <th>Actions</th>
             </tr>
 
             {% for item in orders %}
 
             <tr>
-                <td>{{item.id}}</td>
-                <td>{{item.created_at}}</td>
-                <td>{{item.updated_at}}</td>
-                <td>{{item.tracking_no}}</td>
-                <td>{{item.email}}</td>
-                <td>{{item.payment_mode}}</td>
-                <td>{{item.total_price}}</td>
-                <td>{{item.status}}</td>
                 <td>
-                    <div class="mb-2">
-                        <a href="{% url 'order-edit' item.id %}">
-                            <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
-                          </a>    
+                    <strong>{{item.tracking_no}}</strong>
+                </td>
+                <td>{{item.created_at}}</td>
+                <td>{{item.email}}</td>
+                <td>{{item.status}}</td>
+                <td>{{item.price_before_tax}}</td>
+                <td>{{item.tax_amount}}</td>
+                <td>{{item.ship_amount}}</td>
+                <td>{{item.total_price}}</td>
+                <td>{{item.payment_mode}}</td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <div class="mb-2">
+                            <a href="{% url 'order-edit' item.id %}">
+                                <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                              </a>    
+                        </div>
+
+                        <div class="mb-2">
+                            
+                        <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrder()" id="deleteOrder-btn"
+                            data-url="{% url 'order-delete' item.id %}" style="height:25px;">
+                        </div>
+
+                        <div class="mb-2">
+                            <a href="{% url 'order-info' item.id %}">
+                                <img src="{% static 'images/info.png' %}" alt="infobutton" style="height:25px;">
+                              </a>    
+                        </div>
+
                     </div>
-                                    
-                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteCategory()" id="deletecategory-btn"
-                    data-url="" style="height:25px;">
+                    
                 </td>  
                 
             </tr>    

@@ -100,6 +100,7 @@ class Order(models.Model):
     status = models.CharField(max_length=150,choices=orderstatus,default='Order Placed')
     message = models.TextField(null=True,blank=True)
     tracking_no = models.CharField(max_length=150,null=True)
+    #tracking_no = models.CharField(max_length=150,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True) 
 

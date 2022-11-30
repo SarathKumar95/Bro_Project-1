@@ -361,8 +361,11 @@ def order_manager(request):
 
 def order_edit(request, id):
     order = Order.objects.filter(id=id).first() 
-    orderitem = OrderItem.objects.filter(order_id=order.id).first() 
-    print("Ordered item is",orderitem.id)
+    orderitem = OrderItem.objects.filter(order_id=order.id).all() 
+    print("Order item is", orderitem)
+
+    for item in orderitem:
+        print("Product in order", item.product.product_name) 
 
     form = OrderForm(instance=order)
 
@@ -376,8 +379,46 @@ def order_edit(request, id):
         else:
             messages.error(request,form.errors) 
 
-    context = {'form':form} 
+    context = {'form':form, 'orderitem': orderitem} 
     return render(request,'owner/orderedit.html',context) 
+
+def order_info(request, id):
+    order = Order.objects.filter(id=id).first() 
+    orderitem = OrderItem.objects.filter(order_id=order.id).all() 
+    print("Order item is", orderitem)
+
+    for item in orderitem:
+        print("Product in order", item.product.product_name) 
+
+    context = {'orderitem': orderitem} 
+    return render(request,'owner/orderinfo.html',context) 
+
+
+
+def order_delete(request, id):
+    order = Order.objects.filter(id=id).first()  
+    order.delete()
+    messages.info(request, "Removed Order")
+    return redirect('order-list')
+    
+
+
+def orderitem_delete(request,id):
+    orderitem = OrderItem.objects.filter(id=id) 
+
+    for item in orderitem:
+        print("Item id is", item.id) 
+        orderid = item.order.id
+
+    print("Order id is", orderid)
+
+    
+    orderitem.delete()
+    messages.info(request, "Removed Product")
+    return redirect("order-info",id=orderid)    
+        
+
+
 
 
 def OrderPage(request,tracking_no):

@@ -1,0 +1,81 @@
+{% extends 'owner/base.html' %} 
+
+{% block title %}Order Items{% endblock %}  
+
+
+{% block content %}
+{% load static %} 
+
+
+<style>
+    .d-flex{
+        gap:20px;
+    }
+</style>
+<div class="main ms-4 me-4">
+    <div class="page-title text-center mt-3 mb-5">
+        <h5>Products in Order</h5> 
+    </div>
+
+    <div>
+
+        <table class="table">
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th> 
+                <th>Ordered Quantity</th>
+                <th>Order Status</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for item in orderitem %}
+               {% csrf_token %}
+            <tr>
+                {% if item.product.generation and item.product.series  %}
+                <td>
+                    {{item.product.product_name}} {{item.product.generation}} {{item.product.series}}
+                </td>
+                {% elif item.product.generation == None %}
+                <td>
+                    {{item.product.product_name}} {{item.product.series}}
+                </td>
+                {% elif item.product.series == None %}
+                <td>
+                    {{item.product.product_name}} {{item.product.generation}}
+                </td>
+                {% else %}
+                <td>
+                    {{item.product.product_name}}
+                </td>
+                {% endif %}
+                <td>{{item.product.price}}</td>
+                <td>{{item.quantity}}</td>
+                <td>{{item.order.status}}</td>
+                <td>
+                    <div class="d-flex ">
+                        <div class="mb-2">
+                            <a href="{% url 'order-edit' item.id %}">
+                                <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                              </a>    
+                        </div>
+                        
+                        <div class="mb-2">
+                            <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrderItem()" id="deleteOrderItem-btn"
+                            data-url="{% url 'orderitem-delete' item.id %}" value="{{item.id}}" style="height:25px;">
+                        </div>
+
+                    </div>
+                    
+                </td>  
+                
+            </tr>    
+
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
