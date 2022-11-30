@@ -135,4 +135,24 @@ class OrderItemForm(ModelForm):
 
     class Meta:
         model = OrderItem
-        fields = '__all__'
+        fields = '__all__' 
+
+        widgets= {
+            'order': Select(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),            
+            'product': Select(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),            
+            'price': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),            
+            'quantity': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),            
+            
+        }

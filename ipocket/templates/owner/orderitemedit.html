@@ -1,0 +1,35 @@
+{% extends 'owner/base.html' %} 
+
+{% block title %}Edit Order Item{% endblock %} 
+
+
+{% block content %} 
+{% load static %} 
+{% load crispy_forms_tags %}
+
+<div class="main ms-4 me-4">
+
+    <div class="page-title text-center mt-3 mb-5">
+        <h5>Edit Product</h5>
+    </div>
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+            {{message}}
+        {% endfor %}
+    </div>
+
+    <div class="form-wrapper">
+
+        <form enctype="multipart/form-data" action="" method="POST">
+            {% csrf_token %}
+            {{form|crispy}}
+            <input type="submit" value="Update">
+        </form>
+
+    </div>
+
+    </div>
+    
+
+{% endblock %}

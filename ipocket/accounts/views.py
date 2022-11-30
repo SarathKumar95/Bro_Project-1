@@ -417,7 +417,13 @@ def orderitem_delete(request,id):
     messages.info(request, "Removed Product")
     return redirect("order-info",id=orderid)    
         
-
+def orderitem_edit(request,id):
+    print("Id is", id)
+    orderitem = OrderItem.objects.filter(id=id) 
+    
+    form = OrderItemForm()
+    context = {'form':form}
+    return render(request, 'owner/orderitemedit.html',context)
 
 
 

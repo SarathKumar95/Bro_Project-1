@@ -24,6 +24,7 @@ urlpatterns = [
     path('ordermanager/edit/<int:id>',views.order_edit, name='order-edit'),
     path('ordermanager/info/<int:id>',views.order_info, name='order-info'),
     path('ordermanager/delete/<int:id>',views.order_delete, name='order-delete'),
+    path('orderitem/edit/<int:id>',views.orderitem_edit, name='orderitem-edit'),
     path('orderitem/info/delete/<int:id>',views.orderitem_delete, name='orderitem-delete'),
     path('orderpage/<str:tracking_no>',views.OrderPage, name='order-page'),
     path('guest',views.guest,name='guest')
