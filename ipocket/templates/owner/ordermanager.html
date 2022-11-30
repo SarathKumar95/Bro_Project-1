@@ -6,6 +6,15 @@
 {% block content %}
 {% load static %} 
 
+
+<style>
+    .asteriskField {
+    display: none;
+}
+</style>
+
+
+
 <div class="main ms-4 me-4">
     <div class="page-title text-center mt-3 mb-3">
         <h5>Order List</h5>
@@ -17,7 +26,7 @@
         {% endfor %}
     </div>
 
-    <div >
+    <div>
         <table class="table">
             <tr>
                 <th>Order Id</th>
@@ -61,8 +70,5 @@
 
 
 </div>
-
-
-
 
 {% endblock %}

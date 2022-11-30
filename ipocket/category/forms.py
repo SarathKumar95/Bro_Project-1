@@ -31,6 +31,104 @@ class OrderForm(ModelForm):
         model = Order
         fields = '__all__'
 
+        widgets= {
+            'user': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'first_name': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'last_name': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'email': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'phone': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'address_line1': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'address_line2': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'state': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'city': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'pincode': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'total_price': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'tax_amount' : TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            'ship_amount': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            
+            'coupon_amount': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+
+            
+            'payment_mode': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+            
+            'price_before_tax': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+
+            'payment_id': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }
+            ),
+            
+            'tracking_no': TextInput(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }
+            ),
+
+            'message' : Textarea(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
+
+            
+            'status' : Select(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            })
+
+            
+            
+            
+        }
+
 
 
 class OrderItemForm(ModelForm):
