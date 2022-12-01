@@ -86,7 +86,24 @@ function deleteOrderItem(){
         console.log("Do nothing!");
     }
 
+}
+
+function cancelOrderItem(){
+    var product = document.getElementById('cancelOrderItem-btn').value 
+    console.log("Product id  is", product);
+    
+    let confirmAction = confirm("Are you sure you want to cancel this product from the order  ? ");
+    if(confirmAction){
+        let url = $("#cancelOrderItem-btn").attr("data-url");
+        window.location = url;
     }
+    else{
+        console.log("Do nothing!");
+    }
+
+    }
+
+
 
 
 

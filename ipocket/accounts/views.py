@@ -398,7 +398,9 @@ def order_manager(request):
 
 def order_edit(request, id):
     order = Order.objects.filter(id=id).first() 
-    orderitem = OrderItem.objects.filter(order_id=order.id).all() 
+    orderitem = OrderItem.objects.filter(order_id=order.id).all()
+
+    print("Order is", order) 
     print("Order item is", orderitem)
 
     for item in orderitem:
@@ -453,12 +455,41 @@ def orderitem_delete(request,id):
     orderitem.delete()
     messages.info(request, "Removed Product")
     return redirect("order-info",id=orderid)    
-        
+
+
+
+def orderitem_cancel(request,id):
+    orderitem = OrderItem.objects.filter(id=id) 
+
+    for item in orderitem:
+        status = item.item_status
+        print("Item status is", status) 
+
+
+
+    messages.info(request, "Removed Product")
+    return HttpResponse(item)
+    #return redirect("order-info",id=orderid)    
+
+
+
+
 def orderitem_edit(request,id):
     print("Id is", id)
-    orderitem = OrderItem.objects.filter(id=id) 
+    orderitem = OrderItem.objects.filter(id=id).first() 
     
-    form = OrderItemForm()
+    form = OrderItemForm(instance=orderitem) 
+
+    if request.method == 'POST':
+        form = OrderItemForm(request.POST,instance=orderitem) 
+
+        if form.is_valid():
+            form.save() 
+            messages.success(request,"Order Item updated")
+            
+        else:
+            messages.error(request,form.errors)
+
     context = {'form':form}
     return render(request, 'owner/orderitemedit.html',context)
 

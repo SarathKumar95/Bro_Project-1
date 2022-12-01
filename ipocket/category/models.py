@@ -115,8 +115,15 @@ class OrderItem(models.Model):
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True) 
     order_itemstatus = [
-        ('Cancel Order','Cancel Order'),
-        ('Return','Return'),
+          ('Order Placed','Order Placed'),
+        ('Order Confirmed','Order Confirmed'),
+        ('Pending','Pending'),
+        ('Shipped','Shipped'),
+        ('In Transit','In Transit'),
+        ('Completed','Completed'),
+        ('Awaiting Payment','Awaiting Payment'),
+        ('Out for Delivery','Out for Delivery'),
+        ('Cancelled','Cancelled'),
     ]
     item_status = models.CharField(max_length=50,choices=order_itemstatus, default='Order Placed', null=True)
 

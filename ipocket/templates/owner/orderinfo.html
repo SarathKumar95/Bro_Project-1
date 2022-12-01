@@ -53,14 +53,22 @@
                 <td>{{item.order.status}}</td>
                 <td>
                     <div class="d-flex ">
+                        <!---
+                        <div class="mb-2">
+                            <input type="image" src="{% static 'images/cancel.png' %}" title="Cancel Order Item" onclick="cancelOrderItem()" id="cancelOrderItem-btn"
+                            data-url="{% url 'orderitem-cancel' item.id %}" value="{{item.id}}" style="height:25px;">   
+                        </div>                        
+
+                        -->
+                                                
                         <div class="mb-2">
                             <a href="{% url 'orderitem-edit' item.id %}">
-                                <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                                <img src="{% static 'images/edit.png' %}" alt="editbutton" title="Edit Order Item" style="height:25px;">
                               </a>    
                         </div>
                         
                         <div class="mb-2">
-                            <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrderItem()" id="deleteOrderItem-btn"
+                            <input type="image" src="{% static 'images/delete.png' %}" title="Delete Order Item" onclick="deleteOrderItem()" id="deleteOrderItem-btn"
                             data-url="{% url 'orderitem-delete' item.id %}" value="{{item.id}}" style="height:25px;">
                         </div>
 
