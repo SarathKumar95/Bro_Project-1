@@ -155,4 +155,8 @@ class OrderItemForm(ModelForm):
                 'style' : "max-width: 300px",
             }),            
             
+             'item_status': Select(attrs={
+                'class': "form-control",
+                'style' : "max-width: 300px",
+            }),
         }

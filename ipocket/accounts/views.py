@@ -10,6 +10,9 @@ from cart.models import *
 from category.forms import *
 # Create your views here.
 
+#global vars here 
+
+orderid = 0;
 
 
 def guest(request):
@@ -85,23 +88,21 @@ def myaccount(request):
 
 
 def myorder(request):
+    global orderid
+    
     if 'username' in request.session:
         user_in = request.session['username']
         order = Order.objects.filter(user=user_in)
-        print("Order is", order)
 
         for item in order:
-            orderid = item.id
-
+            orderid = item.id 
 
         orderitem = OrderItem.objects.filter(order_id=orderid) 
 
-        print("Order item is", orderitem) 
+        print("Order item is", orderitem)  
 
-        for item in orderitem:
-            print("Order item id is", item.id)    
 
-        context = {'user_in':user_in,'order':order, 'orderitem': orderitem}
+        context = {'user_in':user_in,'order':order, 'orderitem':orderitem}
         return render(request, 'user/myorders.html',context)
     return redirect('signin')
 
@@ -464,9 +465,13 @@ def orderitem_edit(request,id):
 
 def ordered(request,id):
     orderitem = OrderItem.objects.filter(id=id)
+    
+    item = OrderItem.objects.filter(id=id).first()
+
+    
+    if request.method == 'POST':
+        item.item_status = 'Cancelled' 
+        item.save()
+
     context = {'orderitem':orderitem}
-
-    for item in orderitem:
-        print("Item status is", item.order.status)
-
     return render(request,'user/myorderitems.html',context)

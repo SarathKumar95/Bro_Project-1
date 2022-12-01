@@ -114,7 +114,11 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True) 
-    item_status = models.CharField(null=True,blank=True)
+    order_itemstatus = [
+        ('Cancel Order','Cancel Order'),
+        ('Return','Return'),
+    ]
+    item_status = models.CharField(max_length=50,choices=order_itemstatus, default='Order Placed', null=True)
 
     def __str__(self):
         return '{} - {}'.format(self.order.user,self.order.tracking_no)

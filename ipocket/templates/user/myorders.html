@@ -28,9 +28,13 @@
     <div class="popup">
         <span class="popuptext" id="myPopup">Popup text...</span>
       </div> 
-    
-
+      
     <div>
+        
+    {% if order.count == 0 %} 
+    <p>No Orders</p>  
+    {% else %}
+    
         <table class="table">
             <tr>
                 <th>Tracking Number</th>
@@ -74,7 +78,7 @@
 
         </table>
 
-
+        {% endif %}
 
     </div>
 
