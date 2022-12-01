@@ -77,7 +77,7 @@ function deleteOrderItem(){
     var product = document.getElementById('deleteOrderItem-btn').value 
     console.log("Product id  is", product);
     
-    let confirmAction = confirm("Are you sure you want to remove this product from the order ? ");
+    let confirmAction = confirm("Are you sure you want to remove this product from the order  ? ");
     if(confirmAction){
         let url = $("#deleteOrderItem-btn").attr("data-url");
         window.location = url;

@@ -83,6 +83,32 @@ def myaccount(request):
     return redirect('signin')
 
 
+
+def myorder(request):
+    if 'username' in request.session:
+        user_in = request.session['username']
+        order = Order.objects.filter(user=user_in)
+        print("Order is", order)
+
+        for item in order:
+            orderid = item.id
+
+
+        orderitem = OrderItem.objects.filter(order_id=orderid) 
+
+        print("Order item is", orderitem) 
+
+        for item in orderitem:
+            print("Order item id is", item.id)    
+
+        context = {'user_in':user_in,'order':order, 'orderitem': orderitem}
+        return render(request, 'user/myorders.html',context)
+    return redirect('signin')
+
+
+
+
+
 def dashboard(request):
     if 'username' in request.session:
             return render(request, 'owner/dashboard.html')    
@@ -136,6 +162,7 @@ def signin_Otp(request):
     pass 
 
 
+# Cart functions here
 
 def cart_add(request):
     if request.method == 'POST':
@@ -191,8 +218,7 @@ def cart_add(request):
 
 def cart_list(request):
     if 'username' not in request.session:
-        guest_user = guest(request)
-        cart = Cart.objects.filter(user=guest_user) 
+        cart = Cart.objects.filter(user=guest(request)) 
         print("Cart items are",cart)
 
     elif 'username' in request.session:
@@ -213,6 +239,26 @@ def cart_list(request):
         
     return render(request,'home/cartlist.html',context)
 
+def cart_update(request):
+    user_in = request.session['username']
+    if request.method == 'POST':
+        product_id = request.POST.get('cart_id')
+        cart = Cart.objects.filter(user=user_in,product=product_id).first()
+        product_qty = request.POST['cart_qty']
+        
+        print("Product in cart is",cart.product.product_name)
+        print("Qty is",product_qty)
+        print("Qty of product in cart is",cart.product_qty)
+        
+        cart.product_qty = product_qty 
+        cart.save()
+
+        print("After update qty is", cart.product_qty) 
+
+        return JsonResponse({'status':'Updated cart!'})
+
+    return redirect('/')        
+
 def cart_delete(request):
 
     user_in = request.session['username']
@@ -223,10 +269,6 @@ def cart_delete(request):
             cart_item.delete()
         return JsonResponse({"status": "Deleted Product Successfully!"})  
     return redirect('cart-list')        
-
-
-
-
 
 
 # Checkout page view 
@@ -328,30 +370,24 @@ def checkout(request):
     return render(request,'home/checkout.html',context) 
 
 
-#guest-cart-add 
+# Order page
+def OrderPage(request,tracking_no):
+    order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username']).all()     
+    
+    print("Order is",order) 
+
+    for item in order:
+        orderid = item.id 
+
+    orderitem = OrderItem.objects.filter(order_id = orderid)
+
+    print("Order item is", orderitem)
+
+    context = {'order':order, 'orderitem':orderitem}
+    return render(request,'home/orderplaced.html',context)
 
 
-def guestAdd(request,product_id):
-    pass
-    # product = Products.objects.filter(product_id=product_id).first().product_id
-    # cart = Cart.objects.filter(user=guest(request))
-    
-    # print("In guest",product) 
-    
-    
-    # if cart:
-    #     print("cart exists")
-        
-        
-    
-    # else:
-    #     print("create cart")
-    #     # cart = Cart.objects.create(
-        #     user=guest(request),
-        #     product_id=product
-        # )    
-    
-    return redirect('/')
+
 
 def order_manager(request):
     orders = Order.objects.all()
@@ -426,38 +462,11 @@ def orderitem_edit(request,id):
     return render(request, 'owner/orderitemedit.html',context)
 
 
+def ordered(request,id):
+    orderitem = OrderItem.objects.filter(id=id)
+    context = {'orderitem':orderitem}
 
-def OrderPage(request,tracking_no):
-    order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username']).all()     
-    
-    print("Order is",order) 
+    for item in orderitem:
+        print("Item status is", item.order.status)
 
-    for item in order:
-        orderid = item.id 
-
-    orderitem = OrderItem.objects.filter(order_id = orderid)
-
-    print("Order item is", orderitem)
-
-    context = {'order':order, 'orderitem':orderitem}
-    return render(request,'home/orderplaced.html',context)
-
-def cart_update(request):
-    user_in = request.session['username']
-    if request.method == 'POST':
-        product_id = request.POST.get('cart_id')
-        cart = Cart.objects.filter(user=user_in,product=product_id).first()
-        product_qty = request.POST['cart_qty']
-        
-        print("Product in cart is",cart.product.product_name)
-        print("Qty is",product_qty)
-        print("Qty of product in cart is",cart.product_qty)
-        
-        cart.product_qty = product_qty 
-        cart.save()
-
-        print("After update qty is", cart.product_qty) 
-
-        return JsonResponse({'status':'Updated cart!'})
-
-    return redirect('/')        
+    return render(request,'user/myorderitems.html',context)

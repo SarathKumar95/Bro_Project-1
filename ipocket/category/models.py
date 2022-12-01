@@ -114,6 +114,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True) 
+    item_status = models.CharField(null=True,blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.order.user,self.order.tracking_no)

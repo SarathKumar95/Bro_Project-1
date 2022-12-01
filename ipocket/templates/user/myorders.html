@@ -1,0 +1,92 @@
+{% extends 'user/base.html' %}  
+
+
+{% block title %}My Orders{% endblock %} 
+
+{% block content %}
+{% load static %}
+
+
+<style>
+
+    .popup{
+        visibility: hidden;
+    }
+
+    
+</style>
+
+<div class="main text-center">
+    <div class="mt-5 mb-5">
+        <h5>My Orders</h5>
+    </div>
+
+    <div class="mt-5 mb-5">
+        <h5>Welcome {{user_in}}</h5>
+    </div>
+
+    <div class="popup">
+        <span class="popuptext" id="myPopup">Popup text...</span>
+      </div> 
+    
+
+    <div>
+        <table class="table">
+            <tr>
+                <th>Tracking Number</th>
+                <th>Ordered Items</th>
+                <th>Ordered Date</th>
+                <th>Tax Charged</th>
+                <th>Shipping Charges</th>
+                <th>Coupon Applied</th>
+                <th>Total</th>
+                <th>Status</th>
+                
+            </tr>
+
+            {% for item in order %}
+            <tr>
+                <td>{{item.tracking_no}}</td>
+                <td>
+                    {% for item in orderitem %} 
+                       
+                    <div>
+                        {% if item.product.generation %}
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}} {{item.product.generation}}</a>
+                        {% elif item.product.series %}
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}} {{item.product.series}}</a>
+                        {% elif item.product.series and item.product.generation %}
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}} {{item.product.generation}} {{item.product.series}}</a>
+                        {% else %}
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}}</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                </td>
+                <td>{{item.created_at}}</td>
+                <td><span>₹</span>{{item.tax_amount}}</td>
+                <td><span>₹</span>{{item.ship_amount}}</td>
+                <td><span>₹</span>{{item.coupon_amount}}</td>
+                <td><span>₹</span>{{item.total_price}}</td>
+                <td>{{item.status}}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+
+
+    </div>
+
+
+</div>
+
+<script>
+    function popup(){
+        var popdiv = document.getElementsByClassName('popup');
+        console.log("Pop div is", popdiv)
+    }
+</script>
+
+
+{% endblock %}
