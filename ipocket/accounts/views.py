@@ -25,9 +25,6 @@ def guest(request):
     return guest_user
 
 
-
-
-
 def home_page(request):
     category = Categories.objects.all()
     product = Products.objects.all()
@@ -160,7 +157,7 @@ def item(request,product_id):
     return render(request,'home/shop-single.html',context)
 
 def signin_Otp(request):
-    pass 
+    pass
 
 
 # Cart functions here
@@ -218,15 +215,40 @@ def cart_add(request):
 
 
 def cart_list(request):
-    if 'username' not in request.session:
-        cart = Cart.objects.filter(user=guest(request)) 
-        print("Cart items are",cart)
+    guest_cart = Cart.objects.filter(user=guest(request))
+    print("No of Cart items are",guest_cart.count())
 
+    if 'username' not in request.session:
+        cart = Cart.objects.filter(user=guest(request))  
+        
+
+     
     elif 'username' in request.session:
         user_in = request.session['username']
-        cart = Cart.objects.filter(user = user_in)
-        user_filt = MyUser.objects.filter(email=user_in) 
+        
+        if guest_cart.count == 0:
+            print("guest cart is empty") 
 
+
+        else:
+            print("guest cart is present") 
+
+            for item in guest_cart:
+                guest_product = item.product.product_id
+                guest_qty = item.product_qty
+                print("Item in cart is", guest_product)
+                print("Ordered qty is", guest_qty)
+
+            product_in_cart = Cart.objects.filter(user = user_in) 
+            print("Cart before adding guest cart is", product_in_cart)
+            cart = Cart.objects.create(user=user_in,product_id=guest_product,product_qty = guest_qty) #add the guest product
+    
+            cart = Cart.objects.filter(user = user_in)
+            user_filt = MyUser.objects.filter(email=user_in) 
+
+            product_in_cart_now = cart
+
+            print("Cart after adding guest cart is", product_in_cart_now)
     
     sub_total = 0
     tax = 0

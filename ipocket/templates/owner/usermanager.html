@@ -5,7 +5,7 @@
 {% load static %}
 
 <div class="main">
-  <div class="page-title">
+  <div class="page-title text-center mt-4 mb-3">
     <h5>User List</h5>
   </div>
 
@@ -14,9 +14,9 @@
   </div>
 
   
-  <div class="table-wrapper">
+  <div class="table-wrapper" id="user-table">
 
-    <table class="table">
+    <table class="table ms-4 me-3">
         <tr>
             <th>#</th>
             <th>Email ID</th>
@@ -44,21 +44,32 @@
 
                 <td>
                     {% if item.is_active %}
-                        <button class="btn btn-sm btn-danger" onclick="blockUser()" id="blockbtn" 
+                        <button class="btn btn-sm btn-danger" onclick="blockUser();refreshDiv()" id="blockbtn" 
                         data-url="{% url 'blockuser' item.id %}">Block User</button>
                     {% else %}
-                        <button class="btn btn-sm btn-success" onclick="unblockUser()" id="unblockbtn"
+                        <button class="btn btn-sm btn-success" onclick="unblockUser();refreshDiv()" id="unblockbtn"
                         data-url="{% url 'unblockuser' item.id %}">Unblock User</button>    
                     {% endif %}    
                 </td>
             </tr>
-            {% endif %}                
+            {% endif %}
+                           
         {% endfor %}
     </table>
 
 </div>
 
 </div>
+
+
+<script>
+    function refreshDiv(){
+        $('#user-table').load(location.href + "#user-table");
+        tab2 = document.getElementById('user-table');
+        console.log("Table selected is", tab2)
+    }
+</script>
+
 
 
 {% endblock %}
