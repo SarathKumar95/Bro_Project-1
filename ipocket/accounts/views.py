@@ -287,7 +287,12 @@ def cart_update(request):
 
 def cart_delete(request):
 
-    user_in = request.session['username']
+    if 'username' in request.session:
+        user_in = request.session['username']
+
+    else:
+        user_in = guest(request)    
+
     if request.method=='POST':
         prod_id = int(request.POST['product_id'])
         if(Cart.objects.filter(user=user_in,product_id=prod_id)):
