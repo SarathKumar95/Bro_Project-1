@@ -215,6 +215,7 @@ def cart_add(request):
 
 
 def cart_list(request):
+    
     guest_cart = Cart.objects.filter(user=guest(request))
     print("No of Cart items are",guest_cart.count())
 
@@ -227,7 +228,7 @@ def cart_list(request):
         user_in = request.session['username']
         
         if guest_cart.count == 0:
-            print("guest cart is empty") 
+            pass
 
 
         else:
@@ -239,16 +240,18 @@ def cart_list(request):
                 print("Item in cart is", guest_product)
                 print("Ordered qty is", guest_qty)
 
-            product_in_cart = Cart.objects.filter(user = user_in) 
-            print("Cart before adding guest cart is", product_in_cart)
-            cart = Cart.objects.create(user=user_in,product_id=guest_product,product_qty = guest_qty) #add the guest product
+                product_in_cart = Cart.objects.filter(user = user_in) 
+                print("Cart before adding guest cart is", product_in_cart)
+                cart = Cart.objects.create(user=user_in,product_id=guest_product,product_qty = guest_qty) #add the guest product
     
             cart = Cart.objects.filter(user = user_in)
-            user_filt = MyUser.objects.filter(email=user_in) 
+            
 
-            product_in_cart_now = cart
+            # product_in_cart_now = cart
 
-            print("Cart after adding guest cart is", product_in_cart_now)
+            # print("Cart after adding guest cart is", product_in_cart_now) 
+
+            guest_cart.delete()
     
     sub_total = 0
     tax = 0
