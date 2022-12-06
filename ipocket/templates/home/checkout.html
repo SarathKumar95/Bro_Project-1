@@ -21,7 +21,6 @@ input[type=number] {
   </style>
 
 
-
 <div class="container">
 
     <div class="row mt-5">
@@ -196,8 +195,12 @@ input[type=number] {
           </div>
   
           <hr class="mb-4">
-  
+            
           <h4 class="mb-3"><strong>Payment</strong></h4>
+
+          {% if cart.count == 0 %} 
+          <p>Add some items to the cart to make an order.</p>
+          {% else %}
           <div class="d-block my-3"> 
             <div>
               <button onclick="placeOrder()" type="submit" name="paymentMethod" value="Cash On Delivery" class="btn btn-dark btn-sm">Cash On Delivery</button>
@@ -206,12 +209,15 @@ input[type=number] {
 
 
             
-          </div>  
+          </div>
+          {% endif %}  
       
           <hr class="mb-4">
-          <input type="submit" class="btn btn-warning btn-lg btn-block mb-4" value="Place Order">
+          
         </form>
         {% endfor %}
+
+        
       </div>
     </div>
   
@@ -257,7 +263,8 @@ input[type=number] {
 
       var url = "{% url 'checkout' %}"
       var cartIn = document.getElementById('cart').value;
-      
+    
+
       console.log("Cart id is", cartIn)
       
       $.ajax({
@@ -275,9 +282,19 @@ input[type=number] {
          csrfmiddlewaretoken : csrftoken,
         },
 
+
         success: function (response) {
-          alert("Order success!") 
+          var tracking_no = response.track_no
+          console.log("Tracking no is ", tracking_no);
+
+          window.location.href = "orderpage/"+tracking_no
+        },
+
+        error:function(response){
+          alert("Order Failed!")
         }
+
+        
       });
     }
 

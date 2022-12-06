@@ -324,7 +324,11 @@ def checkout(request):
     user_filt = MyUser.objects.filter(email=user_in) 
 
 
-    print("Cart in checkout is ", cart)
+    print("Cart in checkout is ", cart) 
+
+
+
+
     
     sub_total = 0
     tax = 0
@@ -339,8 +343,6 @@ def checkout(request):
     else:
         shipping = 0       
         tax = 5
-        
-
     
 
     grand_total_with_tax = sub_total * tax/100
@@ -353,65 +355,74 @@ def checkout(request):
     print("Coupon is",coupon)
     print("Grand total is",grand_total) 
     if request.method == 'POST':
-        neworder = Order()
-        neworder.user = request.session['username']
-        neworder.first_name = request.POST['fname']
-        neworder.last_name = request.POST['lname']
-        neworder.email = request.POST['email']
-        neworder.phone = request.POST['phno'] 
-        neworder.address = request.POST['add'] 
-        neworder.city = request.POST['city']
-        neworder.state = request.POST['state'] 
-        print("Here in post!!")
-        neworder.pincode = request.POST['zip']
-        neworder.total_price = grand_total
-        neworder.price_before_tax = sub_total 
-        neworder.tax_amount = grand_total_with_tax
-        neworder.ship_amount = shipping
-        neworder.coupon_amount = coupon
-        neworder.payment_mode = request.POST['paymentMethod']
-         
-
-        track_no = 'IPOrder' + str(random.randint(111111,999999)) 
-        while Order.objects.filter(tracking_no=track_no) is None:
-            track_no = 'IPOrder' + str(random.randint(111111,999999))
-
-        neworder.tracking_no = track_no
-        neworder.save() 
-
-        neworderItems = Cart.objects.filter(user=user_in)
-
-        print("Items in cart are",neworderItems)
-
-        print("No of Items in cart are",neworderItems.count())
+        
+        if cart.count() == 0:
+            messages.info( request, "Cannot create an order as the cart is empty!")
+             
+        else:
+        
+            neworder = Order()
+            neworder.user = request.session['username']
+            neworder.first_name = request.POST['fname']
+            neworder.last_name = request.POST['lname']
+            neworder.email = request.POST['email']
+            neworder.phone = request.POST['phno'] 
+            neworder.address = request.POST['add'] 
+            neworder.city = request.POST['city']
+            neworder.state = request.POST['state'] 
+            neworder.pincode = request.POST['zip']
+            neworder.total_price = grand_total
+            neworder.price_before_tax = sub_total 
+            neworder.tax_amount = grand_total_with_tax
+            neworder.ship_amount = shipping
+            neworder.coupon_amount = coupon
+            neworder.payment_mode = request.POST['paymentMethod']
 
 
-        for item in neworderItems:
-            OrderItem.objects.create(
-                order = neworder,
-                product=item.product,
-                price=item.product.price,
-                quantity=item.product_qty
 
-            )
 
+            track_no = 'IPOrder' + str(random.randint(111111,999999)) 
+            while Order.objects.filter(tracking_no=track_no) is None:
+                track_no = 'IPOrder' + str(random.randint(111111,999999))
+
+            neworder.tracking_no = track_no
+            neworder.save() 
+
+            neworderItems = Cart.objects.filter(user=user_in)
+
+            print("Items in cart are",neworderItems)
+
+            print("No of Items in cart are",neworderItems.count())
+
+
+            for item in neworderItems:
+                OrderItem.objects.create(
+                    order = neworder,
+                    product=item.product,
+                    price=item.product.price,
+                    quantity=item.product_qty
+
+                )
+
+                
+                print("Item added is",item.product.product_name)
+                print("Item price added is",item.product.price)
+                print("Item qty added is",item.product_qty)
+
+
+                orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
+                print("Ordered product quantity is", orderproduct.quantity) 
+                orderproduct.quantity -= item.product_qty 
+                orderproduct.save()
+                print("Ordered product quantity after ordering is", orderproduct.quantity) 
+
+                
+                cart = Cart.objects.filter(user=user_in) 
+                cart.delete()     
+                
+                return JsonResponse({"track_no" : track_no })
             
-            print("Item added is",item.product.product_name)
-            print("Item price added is",item.product.price)
-            print("Item qty added is",item.product_qty)
-
-
-            orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
-            print("Ordered product quantity is", orderproduct.quantity) 
-            orderproduct.quantity -= item.product_qty 
-            orderproduct.save()
-            print("Ordered product quantity after ordering is", orderproduct.quantity) 
-
-            
-        cart = Cart.objects.filter(user=user_in) 
-        cart.delete()
-
-        return redirect('order-page',tracking_no=neworder.tracking_no)    
+            return redirect('order-page',tracking_no=neworder.tracking_no)    
             
     context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total}    
     return render(request,'home/checkout.html',context) 
@@ -554,13 +565,13 @@ def ordered(request,id):
     return render(request,'user/myorderitems.html',context)
 
 
-def payment_complete(request):
-    print("Paypal view hit!")
-    body = json.loads(request.body)
-    print("body: ",body) 
+# def payment_complete(request):
+#     print("Paypal view hit!")
+#     body = json.loads(request.body)
+#     print("body: ",body) 
 
-    cart = body['cartIn']
+#     cart = body['cartIn']
 
-    print("Cart is", cart)
+#     print("Cart is", cart)
 
-    return JsonResponse('Payment Completed!', safe=False) 
+#     return JsonResponse('Payment Completed!', safe=False) 

@@ -19,7 +19,7 @@ urlpatterns = [
     path('item/cart/list/delete',views.cart_delete,name="cart-delete"),
     path('item/cart/list/update',views.cart_update,name="cart-update"),
     path('checkout',views.checkout,name='checkout'),
-    path('complete',views.payment_complete,name='complete'),
+    #path('complete',views.payment_complete,name='complete'),
     #path('order/<str:t_no>',views.orderPage,name='order-placed'),
     path('ordermanager',views.order_manager, name='order-list'),
     path('ordermanager/edit/<int:id>',views.order_edit, name='order-edit'),
@@ -29,6 +29,6 @@ urlpatterns = [
     path('orderitem/info/delete/<int:id>',views.orderitem_delete, name='orderitem-delete'),
     path('orderitem/info/cancel/<int:id>',views.orderitem_cancel, name='orderitem-cancel'),
     path('orderpage/<str:tracking_no>',views.OrderPage, name='order-page'),
-    #path('guest',views.guest,name='guest')
+    #path('guest',views.guest,name='guest')     
     path('ordereditem/<int:id>',views.ordered, name='ordered-items'),
 ]
