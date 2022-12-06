@@ -12,5 +12,5 @@ class Cart(models.Model):
     
 
     def __str__(self):
-        return self.user + str(self.id)
+        return '{} - {}'.format(self.user, self.id)
 

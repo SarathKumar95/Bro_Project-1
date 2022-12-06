@@ -29,12 +29,15 @@ input[type=number] {
         <form action="" method="POST">        
           <h4 class="d-flex justify-content-between align-items-center mb-4-5">
           <span class="text-dark"><strong>Your cart</strong></span>
+          <input type="hidden" value="{{cart}}" id="cart"> 
           <span class="badge badge-primary badge-pill">3</span>
         </h4>
         <ul class="list-group mb-3">
-          {% for item in cart %}  
+          {% for item in cart %}
+          <input type="hidden" value="{{item.id}}" id="cartId">  
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <div>
+                <input type="hidden" value="{{item.product.product_id}}" id="product_id">
                 {% if item.product.series == None %}
                 <h6 class="my-0">{{item.product.product_name}} {{item.product.generation}} </h6>
                 {% elif item.product.generation == None %}
@@ -70,7 +73,7 @@ input[type=number] {
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                   <div>
-                    <strong>Total amount</strong>
+                    <strong>Grand Total</strong>
                     <strong>
                       <p class="mb-0">(including VAT)</p>
                     </strong>
@@ -136,32 +139,17 @@ input[type=number] {
   
             <div class="col-12 mb-3">
               <div class="md-form md-outline my-2">
-                <input type="text" id="address" name="add1" class="form-control" required>
-                <label for="address">Street Address : Line 1</label>
+                <input type="text" id="address" name="add" class="form-control" required>
+                <label for="address">Address</label>
               </div>
               <div class="invalid-feedback">
                 Please enter your shipping address.
               </div>
             </div>
   
-            <div class="col-12 mb-3">
-              <div class="md-form md-outline my-2">
-                <input type="text" id="address2" name="add2" class="form-control" required>
-                <label for="address2">Street Address : Line 2</label>
-              </div>
-            </div>
           </div>
   
           <div class="row">
-            <div class="col-md-5 mb-3">
-              <select class="custom-select d-block w-100 mt-2" id="country" name="country" required>
-                <option value="">Country</option>
-                <option>India</option>
-              </select>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
-            </div>
             <div class="col-md-4 mb-3">
               <select class="custom-select d-block w-100 mt-2" id="state" name="state" required>
                 <option value="">State</option>
@@ -173,6 +161,18 @@ input[type=number] {
                 Please provide a valid state.
               </div>
             </div>
+            
+            <div class="col-md-5 mb-3">
+              <select class="custom-select d-block w-100 mt-2" id="city" name="city" required>
+                <option value="">City</option>
+                <option>Ernakulam</option>
+                <option>Kottayam</option>
+              </select>
+              <div class="invalid-feedback">
+                Please select a valid city.
+              </div>
+            </div>
+            
           </div>
           <div class="row">
             <div class="col-md-3 mb-3">
@@ -198,67 +198,16 @@ input[type=number] {
           <hr class="mb-4">
   
           <h4 class="mb-3"><strong>Payment</strong></h4>
-  
-          <div class="d-block my-3">
-            <div class="form-check pl-0">
-                <input id="cod" name="paymentMethod" type="radio" class="form-check-input" checked required>
-                <label class="form-check-label" for="cash">Cash On Delivery</label>
-              </div>
-            <div class="form-check pl-0">
-              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="credit">Credit card</label>
+          <div class="d-block my-3"> 
+            <div>
+              <button onclick="placeOrder()" type="submit" name="paymentMethod" value="Cash On Delivery" class="btn btn-dark btn-sm">Cash On Delivery</button>
             </div>
-            <div class="form-check pl-0">
-              <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="debit">Debit card</label>
-            </div>
-            <div class="form-check pl-0">
-              <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="paypal">PayPal</label>
-            </div>
-          </div>
-          <!---<div class="row">
-            <div class="col-md-6 mb-2">
-              <div class="md-form md-outline my-2">
-                <input type="text" id="cc-name" class="form-control" required>
-                <label for="cc-name">Name on card</label>
-                <small class="text-muted">Full name as displayed on card</small>
-              </div>
-              <div class="invalid-feedback">
-                Name on card is required
-              </div>
-            </div>
-            <div class="col-md-6 mb-2">
-              <div class="md-form md-outline my-2">
-                <input type="text" id="cc-number" class="form-control" required>
-                <label for="cc-number">Credit card number</label>
-              </div>
-              <div class="invalid-feedback">
-                Credit card number is required
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-3 mb-2">
-              <div class="md-form md-outline my-2">
-                <input type="text" id="cc-expiration" class="form-control" required>
-                <label for="cc-expiration">Expiration</label>
-              </div>
-              <div class="invalid-feedback">
-                Expiration date required
-              </div>
-            </div>
-            <div class="col-md-3 mb-2">
-              <div class="md-form md-outline my-2">
-                <input type="text" id="cc-cvv" class="form-control" required>
-                <label for="cc-cvv">CVV</label>
-              </div>
-              <div class="invalid-feedback">
-                Security code required
-              </div>
-            </div>
-          </div>
-          --->
+            <div id="paypal-button-container" class="btn btn-sm"></div>
+
+
+            
+          </div>  
+      
           <hr class="mb-4">
           <input type="submit" class="btn btn-warning btn-lg btn-block mb-4" value="Place Order">
         </form>
@@ -268,6 +217,118 @@ input[type=number] {
   
     
   </div>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AaFTApw-aQlXqVUXWJR8JBZ87Tlc-ToRZuGoQyUJtXCSclWgrrTv8WkFt-V9YXD_xEqWx4XnOqU6ZCGe&currency=USD&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
 
-  
+  <script>
+
+    
+    function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      var csrftoken = getCookie('csrftoken');
+    
+    
+    function completeOrder(){
+
+      var fname = document.querySelector("[name='fname']").value;
+      var lname = document.querySelector("[name='lname']").value; 
+      var email = document.querySelector("[name='email']").value; 
+      var phone = document.querySelector("[name='phno']").value;
+      var address = document.querySelector("[name = 'add' ]").value;
+      var state = document.querySelector("[name = 'state' ]").value;
+      var city = document.querySelector("[name = 'city' ]").value;
+      var zip = document.querySelector("[name = 'zip' ]").value;
+      var payment_mode = 'Paid by Paypal' ;
+
+      console.log("Zip is", zip)
+
+      var url = "{% url 'checkout' %}"
+      var cartIn = document.getElementById('cart').value;
+      
+      console.log("Cart id is", cartIn)
+      
+      $.ajax({
+        method : 'POST',
+        url: url,
+        data: {"fname" : fname,
+        "lname" : lname,
+        "email" : email,
+        "phno" : phone,
+        "add" : address,
+        "city" : city,
+        "state" : state,
+        "zip" : zip,
+        "paymentMethod":payment_mode,
+         csrfmiddlewaretoken : csrftoken,
+        },
+
+        success: function (response) {
+          alert("Order success!") 
+        }
+      });
+    }
+
+    
+     const paypalButtonsComponent = paypal.Buttons({
+              // optional styling for buttons
+              // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
+              style: {
+                color: "black",
+                shape: "pill",
+                layout: "vertical"
+              },
+
+              // set up the transaction
+              createOrder: (data, actions) => {
+                  // pass in any options from the v2 orders create call:
+                  // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
+                  const createOrderPayload = {
+                      purchase_units: [
+                          {
+                              amount: {
+                                  value: '10.00'
+                              }
+                          }
+                      ]
+                  };
+
+                  return actions.order.create(createOrderPayload);
+              },
+
+              // finalize the transaction
+              onApprove: function(data, actions){
+                  return actions.order.capture().then(function(details){
+                    completeOrder()
+                    alert("Transaction Completed by " + details.payer.name.given_name + "!");
+                  });
+                  
+              },
+
+              // handle unrecoverable errors
+              onError: (err) => {
+                  alert('An error prevented the buyer from checking out with PayPal');
+                  console.log(err);
+              }
+          });
+
+          paypalButtonsComponent
+              .render("#paypal-button-container")
+              .catch((err) => {
+                  console.error('PayPal Buttons failed to render');
+              });
+
+  </script>
   {% endblock %}

@@ -65,7 +65,7 @@ class Products(models.Model):
         verbose_name_plural = 'Products' 
 
     def __str__(self):
-        return self.product_name 
+        return '{} - {} - {}'.format(self.product_name, self.generation, self.series) 
 
 
 class Order(models.Model):
@@ -74,8 +74,7 @@ class Order(models.Model):
     last_name = models.CharField(max_length=150,null=False) 
     email = models.CharField(max_length=150,null=False) 
     phone = models.BigIntegerField()
-    address_line1 = models.TextField(max_length=200,null=True)
-    address_line2 = models.TextField(max_length=100,null=True)
+    address = models.TextField(max_length=200,null=True)
     state = models.CharField(max_length=100,null=True)
     city = models.CharField(max_length=100,null=True)
     pincode = models.IntegerField(null=True)
@@ -115,7 +114,7 @@ class OrderItem(models.Model):
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True) 
     order_itemstatus = [
-          ('Order Placed','Order Placed'),
+        ('Order Placed','Order Placed'),
         ('Order Confirmed','Order Confirmed'),
         ('Pending','Pending'),
         ('Shipped','Shipped'),

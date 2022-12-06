@@ -1,4 +1,4 @@
-import random
+import random,json
 from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
@@ -217,7 +217,7 @@ def cart_add(request):
 def cart_list(request):
     
     guest_cart = Cart.objects.filter(user=guest(request))
-    print("No of Cart items are",guest_cart.count())
+    print("No of guest cart items are",guest_cart.count())
 
     if 'username' not in request.session:
         cart = Cart.objects.filter(user=guest(request))  
@@ -241,7 +241,11 @@ def cart_list(request):
                 print("Ordered qty is", guest_qty)
 
                 product_in_cart = Cart.objects.filter(user = user_in) 
-                print("Cart before adding guest cart is", product_in_cart)
+                print("Cart before adding guest cart is", product_in_cart) 
+
+                # if guest_product in cart:
+                #     cart = Cart.objects.filter(user=user_in) 
+                    
                 cart = Cart.objects.create(user=user_in,product_id=guest_product,product_qty = guest_qty) #add the guest product
     
             cart = Cart.objects.filter(user = user_in)
@@ -266,7 +270,13 @@ def cart_list(request):
     return render(request,'home/cartlist.html',context)
 
 def cart_update(request):
-    user_in = request.session['username']
+
+    if 'username' not in request.session:
+        user_in = guest(request)
+
+    elif 'username' in request.session:
+        user_in = request.session['username']
+    
     if request.method == 'POST':
         product_id = request.POST.get('cart_id')
         cart = Cart.objects.filter(user=user_in,product=product_id).first()
@@ -305,10 +315,16 @@ def cart_delete(request):
 # Checkout page view 
 
 def checkout(request):
+    if 'username' not in request.session:
+        messages.info(request,"Please Login")
+        return redirect('signin')
+        
     user_in = request.session['username']
     cart = Cart.objects.filter(user = user_in)
     user_filt = MyUser.objects.filter(email=user_in) 
 
+
+    print("Cart in checkout is ", cart)
     
     sub_total = 0
     tax = 0
@@ -339,14 +355,14 @@ def checkout(request):
     if request.method == 'POST':
         neworder = Order()
         neworder.user = request.session['username']
-        neworder.first_name = request.POST['fname'] 
+        neworder.first_name = request.POST['fname']
         neworder.last_name = request.POST['lname']
         neworder.email = request.POST['email']
         neworder.phone = request.POST['phno'] 
-        neworder.address_line1 = request.POST['add1'] 
-        neworder.address_line2 = request.POST['add2']
-        neworder.city = request.POST['country']
-        neworder.state = request.POST['state']
+        neworder.address = request.POST['add'] 
+        neworder.city = request.POST['city']
+        neworder.state = request.POST['state'] 
+        print("Here in post!!")
         neworder.pincode = request.POST['zip']
         neworder.total_price = grand_total
         neworder.price_before_tax = sub_total 
@@ -536,3 +552,15 @@ def ordered(request,id):
 
     context = {'orderitem':orderitem}
     return render(request,'user/myorderitems.html',context)
+
+
+def payment_complete(request):
+    print("Paypal view hit!")
+    body = json.loads(request.body)
+    print("body: ",body) 
+
+    cart = body['cartIn']
+
+    print("Cart is", cart)
+
+    return JsonResponse('Payment Completed!', safe=False) 
