@@ -8,7 +8,11 @@ from category.models import *
 from django.http import HttpResponse, HttpResponseRedirect,JsonResponse 
 from cart.models import *
 from category.forms import *
+import razorpay
+from ipocket.settings import RAZOR_KEY_ID,RAZOR_KEY_SECRET
 # Create your views here.
+client = razorpay.Client(auth=(RAZOR_KEY_ID,RAZOR_KEY_SECRET))
+
 
 #global vars here 
 
@@ -379,6 +383,7 @@ def checkout(request):
             neworder.payment_mode = request.POST['paymentMethod']
 
 
+            print("The payment mode used is ", request.POST['paymentMethod'])
 
 
             track_no = 'IPOrder' + str(random.randint(111111,999999)) 
@@ -422,9 +427,9 @@ def checkout(request):
                 
                 return JsonResponse({"track_no" : track_no })
             
-            return redirect('order-page',tracking_no=neworder.tracking_no)    
+            return redirect('order-page',tracking_no=neworder.tracking_no)     
             
-    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total}    
+    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID,}    
     return render(request,'home/checkout.html',context) 
 
 
@@ -575,3 +580,23 @@ def ordered(request,id):
 #     print("Cart is", cart)
 
 #     return JsonResponse('Payment Completed!', safe=False) 
+
+
+def razor_checkout(request):    
+    DATA = {
+        "amount": 10000,
+        "currency": "INR",
+        "receipt": "receipt#1",
+        "notes": {
+            "key1": "value3",
+            "key2": "value2"
+        }
+    }
+    payment_order = client.order.create(data=DATA)
+    payment_order_id = payment_order['id']  
+
+    context = {
+        'amount' : DATA['amount'], 'api_key' : RAZOR_KEY_ID, 'order_id': payment_order_id
+    }
+
+    return render(request, 'home/rpay.html', context) 

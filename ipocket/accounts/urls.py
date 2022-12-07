@@ -31,4 +31,6 @@ urlpatterns = [
     path('orderpage/<str:tracking_no>',views.OrderPage, name='order-page'),
     #path('guest',views.guest,name='guest')     
     path('ordereditem/<int:id>',views.ordered, name='ordered-items'),
+    path('razorpay',views.razor_checkout, name='razorpay'),
+
 ]
