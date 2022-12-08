@@ -193,13 +193,10 @@ def cart_add(request):
                 print("create guest cart")
                 cart = Cart.objects.create(session_id=guest(
                     request), product_id=prod_id, product_qty=prod_qty)
-                guest_cart = Cart.objects.filter(session_id=guest(request)).first()  
-                
-                print("Guest cart is", guest_cart.product.product_id)
             
                 return JsonResponse({'status': 'Product added succesfully'})
 
-        
+              
         elif 'username' in request.session:
             email = request.session['username']
             product_id = request.POST['product_id']
@@ -210,9 +207,6 @@ def cart_add(request):
             print("Price of the product is", product_check.price)
             print("Ordered qty is", product_quantity)
 
-
-            #Check if the product in guest cart is present in user's cart.If yes, update its quantity , otherwise add it as a new product 
-            #print("Guest cart is", guest_cart)
 
             if (product_check):
                     if (Cart.objects.filter(user=email, product_id=product_id)):
@@ -234,7 +228,7 @@ def cart_add(request):
 
 def cart_list(request):
 
-    guest_cart = Cart.objects.filter(session_id=guest(request))
+    guest_cart = Cart.objects.filter(session_id=guest(request)).all()
     print("No of guest cart items are",guest_cart.count())
 
     if 'username' not in request.session:
@@ -250,16 +244,33 @@ def cart_list(request):
         else:
             print("guest cart is present") 
 
-            for item in guest_cart:
-                guest_product = item.product.product_id
-                guest_qty = item.product_qty
-                print("The id of item in guest cart is", guest_product)
-                print("Ordered qty is", guest_qty)
+            print("Guest cart is", guest_cart)
 
-                # product_in_cart = Cart.objects.filter(user = user_in) 
-                # print("User Cart before adding guest cart is", product_in_cart)   
+            for item in guest_cart:
+                # if product in cart            
+                if(Cart.objects.filter(user=user_in,product = item.product)):
+                    print("True")
+                    cart = Cart.objects.filter(user=user_in,product=item.product).first()  #itterate and get the product
+
+                    cart.product_qty+=1 #increase its quantity
+                    cart.save()          
+
+                    print("The item which is in the cart is", cart, "The qty is", cart.product_qty) 
+
+                    #item.product.delete() # delete that product from guest cart  
+
+                    #print the guest cart to know if its deleted 
+
+                    print("Guest cart after deleting the product is", guest_cart)                
+
+                else:
+                    print("False")       #add the product
+
+                    cart = Cart.objects.create(user=user_in,product=item.product,product_qty=item.product_qty) 
+                    cart.save()
 
             cart = Cart.objects.filter(user = user_in)
+            
             #guest_cart.delete()
 
 
