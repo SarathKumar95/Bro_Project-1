@@ -86,17 +86,13 @@ class Order(models.Model):
     price_before_tax = models.FloatField(null=True)
     payment_id = models.CharField(max_length=255,null=True,blank=True)
     orderstatus = [
-        ('Order Placed','Order Placed'),
         ('Order Confirmed','Order Confirmed'),
-        ('Pending','Pending'),
         ('Shipped','Shipped'),
         ('In Transit','In Transit'),
-        ('Completed','Completed'),
-        ('Awaiting Payment','Awaiting Payment'),
         ('Out for Delivery','Out for Delivery'),
         ('Cancelled','Cancelled'),
     ]
-    status = models.CharField(max_length=150,choices=orderstatus,default='Order Placed')
+    status = models.CharField(max_length=150,choices=orderstatus,default='Order Confirmed')
     message = models.TextField(null=True,blank=True)
     tracking_no = models.CharField(max_length=150,null=True)
     #tracking_no = models.CharField(max_length=150,null=True)
@@ -114,17 +110,13 @@ class OrderItem(models.Model):
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True) 
     order_itemstatus = [
-        ('Order Placed','Order Placed'),
         ('Order Confirmed','Order Confirmed'),
-        ('Pending','Pending'),
         ('Shipped','Shipped'),
         ('In Transit','In Transit'),
-        ('Completed','Completed'),
-        ('Awaiting Payment','Awaiting Payment'),
         ('Out for Delivery','Out for Delivery'),
         ('Cancelled','Cancelled'),
     ]
-    item_status = models.CharField(max_length=50,choices=order_itemstatus, default='Order Placed', null=True)
+    item_status = models.CharField(max_length=50,choices=order_itemstatus,default="Order Confirmed", null=True)
 
     def __str__(self):
         return '{} - {}'.format(self.order.user,self.order.tracking_no)

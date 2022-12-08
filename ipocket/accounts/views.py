@@ -1,26 +1,27 @@
-import random,json
+import random
+import json
 from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from category.models import *
-from django.http import HttpResponse, HttpResponseRedirect,JsonResponse 
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from cart.models import *
 from category.forms import *
 import razorpay
-from ipocket.settings import RAZOR_KEY_ID,RAZOR_KEY_SECRET
+from ipocket.settings import RAZOR_KEY_ID, RAZOR_KEY_SECRET
 # Create your views here.
-client = razorpay.Client(auth=(RAZOR_KEY_ID,RAZOR_KEY_SECRET))
+client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
 
-#global vars here 
+# global vars here
 
 orderid = 0;
 
 
 def guest(request):
-    guest_user = request.session.session_key 
+    guest_user = request.session.session_key
 
     if not guest_user:
         guest_user = request.session.create()
@@ -32,8 +33,8 @@ def guest(request):
 def home_page(request):
     category = Categories.objects.all()
     product = Products.objects.all()
-    context = {'product':product,'category':category}
-    return render(request,'home/index.html',context)
+    context = {'product': product, 'category': category}
+    return render(request, 'home/index.html', context)
 
 
 def register(request):
@@ -58,15 +59,15 @@ def signin(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
+
         user = authenticate(username=email, password=password)
         request.session['username'] = email
-        
+
         if user is not None and user.is_active == True:
             if user.is_superuser:
                 return redirect('dashboard')
             else:
-                return redirect('home')    
+                return redirect('home')
         else:
             messages.error(request, 'Check credentials or contact admin.')
 
@@ -76,46 +77,42 @@ def signin(request):
 def signout(request):
     if 'username' in request.session:
         request.session.flush()
-        return redirect('/')   
+        return redirect('/')
 
 
 def myaccount(request):
     if 'username' in request.session:
         user_in = request.session['username']
-        context = {'user_in':user_in}
-        return render(request, 'user/userhome.html',context)
+        context = {'user_in': user_in}
+        return render(request, 'user/userhome.html', context)
     return redirect('signin')
-
 
 
 def myorder(request):
     global orderid
-    
+
     if 'username' in request.session:
         user_in = request.session['username']
         order = Order.objects.filter(user=user_in)
 
         for item in order:
-            orderid = item.id 
+            orderid = item.id
 
-        orderitem = OrderItem.objects.filter(order_id=orderid) 
+        orderitem = OrderItem.objects.filter(order_id=orderid)
 
-        print("Order item is", orderitem)  
+        print("Order item is", orderitem)
 
-
-        context = {'user_in':user_in,'order':order, 'orderitem':orderitem}
-        return render(request, 'user/myorders.html',context)
+        context = {'user_in': user_in, 'order': order, 'orderitem': orderitem}
+        return render(request, 'user/myorders.html', context)
     return redirect('signin')
-
-
-
 
 
 def dashboard(request):
     if 'username' in request.session:
-            return render(request, 'owner/dashboard.html')    
+            return render(request, 'owner/dashboard.html')
     else:
         return redirect('signin')
+
 
 def user_manager(request):
     if 'username' in request.session:
@@ -123,22 +120,24 @@ def user_manager(request):
         no_of_users = MyUser.objects.filter().count()
         no_of_superuser = MyUser.objects.filter(is_superuser=True).count()
         no_of_filtered_users = no_of_users - no_of_superuser
-        context = {'users': users , 'no_of_filtered_users': no_of_filtered_users}
-        return render(request,'owner/usermanager.html',context)
+        context = {'users': users,
+            'no_of_filtered_users': no_of_filtered_users}
+        return render(request, 'owner/usermanager.html', context)
 
     else:
         return redirect(request.path)
 
 
-def block_user(request,id):
+def block_user(request, id):
     blocked_user = MyUser.objects.get(id=id)
     blocked_user.is_active = False
     blocked_user.save()
-    print("Blocked user is",blocked_user)
-    print("Is active status of blocked user is",blocked_user.is_active)
+    print("Blocked user is", blocked_user)
+    print("Is active status of blocked user is", blocked_user.is_active)
     return redirect("usermanager")
 
-def unblock_user(request,id):
+
+def unblock_user(request, id):
     user_to_unblock = MyUser.objects.get(id=id)
     user_to_unblock.is_active = True
     user_to_unblock.save()
@@ -146,19 +145,22 @@ def unblock_user(request,id):
     print("Is active status of blocked user is", user_to_unblock.is_active)
     return redirect("usermanager")
 
+
 def products(request):
     product = Products.objects.all()
-    category = Categories.objects.all() 
+    category = Categories.objects.all()
     subCategory = ProductType.objects.all()
-    context = {'product':product, 'category':category, 'subCategory':subCategory}
-    return render(request,'home/shop.html',context)
+    context = {'product': product, 'category': category,
+        'subCategory': subCategory}
+    return render(request, 'home/shop.html', context)
 
 
-def item(request,product_id):
+def item(request, product_id):
     product = Products.objects.filter(product_id=product_id)
     products = Products.objects.all()
-    context = {'product':product,'products':products}    
-    return render(request,'home/shop-single.html',context)
+    context = {'product': product, 'products': products}
+    return render(request, 'home/shop-single.html', context)
+
 
 def signin_Otp(request):
     pass
@@ -172,95 +174,89 @@ def cart_add(request):
             prod_id = request.POST['product_id']
             prod_qty = request.POST['product_qty']
             product = Products.objects.filter(product_id=prod_id).first()
-            print("Prod id is",prod_id)
-            print("Prod qty is",prod_qty)
+            print("Prod id is", prod_id)
+            print("Prod qty is", prod_qty)
+            
 
-            cart = Cart.objects.filter(user=guest(request),product_id=prod_id) 
+            cart = Cart.objects.filter(session_id=guest(request))
 
-            if cart:
-                print("Get cart", cart) 
+            for item in cart:
+                cart_product_ID = item.product.product_id 
+        
 
+            #if same product in cart
+            if (Cart.objects.filter(session_id=guest(request), product_id=prod_id)):
+                    return JsonResponse({'status': "Product already in cart"})
+            
             else:
                 print("create guest cart")
-                cart = Cart.objects.create(user=guest(request),product_id=prod_id,product_qty=prod_qty)
-                return JsonResponse({'status':'Product added succesfully'})    
+                cart = Cart.objects.create(session_id=guest(
+                    request), product_id=prod_id, product_qty=prod_qty)
+                return JsonResponse({'status': 'Product added succesfully'})
 
             return redirect('/')
 
-        elif 'username' in request.session:   
+        elif 'username' in request.session:
             email = request.session['username']
             product_id = request.POST['product_id']
             product_quantity = int(request.POST['product_qty'])
-            product_check = Products.objects.get(product_id=product_id) 
+            product_check = Products.objects.get(product_id=product_id)
             print("Product name is ", product_check)
             print("Stock is", product_check.quantity)
             print("Price of the product is", product_check.price)
-            print("Ordered qty is",product_quantity)
+            print("Ordered qty is", product_quantity)
 
-            if(product_check):
-                    if(Cart.objects.filter(user=email,product_id=product_id)):
-                        return JsonResponse({'status':"product already in cart"})         
+            if (product_check):
+                    if (Cart.objects.filter(user=email, product_id=product_id)):
+                        return JsonResponse({'status': "Product already in cart"})
 
-                    else:  
+                    else:
                          if product_check.quantity >= product_quantity:
-                            Cart.objects.create(user=email,product_id=product_id,product_qty=product_quantity)
-                            return JsonResponse({'status':'Product added succesfully'})
+                            Cart.objects.create(
+                                user=email, product_id=product_id, product_qty=product_quantity)
+                            return JsonResponse({'status': 'Product added succesfully'})
 
                          else:
-                            return JsonResponse({'status':'Only' + str(product_check.quantity) + 'quantity is available.'})       
+                            return JsonResponse({'status': 'Only' + str(product_check.quantity) + 'quantity is available.'})
             else:
-                return JsonResponse({'status':"No such product found"})    
+                return JsonResponse({'status': "No such product found"})
 
         # else:
-        #     return JsonResponse({'status': "Login to continue"})    
-            
-    return redirect('/')    
+        #     return JsonResponse({'status': "Login to continue"})
 
+    return redirect('/')
 
 
 def cart_list(request):
-    
-    guest_cart = Cart.objects.filter(user=guest(request))
+    guest_cart = Cart.objects.filter(session_id=guest(request))
     print("No of guest cart items are",guest_cart.count())
 
     if 'username' not in request.session:
-        cart = Cart.objects.filter(user=guest(request))  
+        cart = Cart.objects.filter(session_id=guest(request))  
         
-
-     
     elif 'username' in request.session:
         user_in = request.session['username']
-        
+
         if guest_cart.count == 0:
             pass
 
-
+        
         else:
             print("guest cart is present") 
 
             for item in guest_cart:
                 guest_product = item.product.product_id
                 guest_qty = item.product_qty
-                print("Item in cart is", guest_product)
+                print("The id of item in guest cart is", guest_product)
                 print("Ordered qty is", guest_qty)
 
                 product_in_cart = Cart.objects.filter(user = user_in) 
-                print("Cart before adding guest cart is", product_in_cart) 
+                print("User Cart before adding guest cart is", product_in_cart)   
 
-                # if guest_product in cart:
-                #     cart = Cart.objects.filter(user=user_in) 
-                    
-                cart = Cart.objects.create(user=user_in,product_id=guest_product,product_qty = guest_qty) #add the guest product
-    
             cart = Cart.objects.filter(user = user_in)
-            
+            #guest_cart.delete()
 
-            # product_in_cart_now = cart
 
-            # print("Cart after adding guest cart is", product_in_cart_now) 
-
-            guest_cart.delete()
-    
     sub_total = 0
     tax = 0
     for item in cart:
@@ -271,7 +267,11 @@ def cart_list(request):
     no_of_cart_items = cart.count()
     context = {'cart': cart,'no_of_cart_items':no_of_cart_items,'sub_total':sub_total}
         
-    return render(request,'home/cartlist.html',context)
+    return render(request,'home/cartlist.html',context)    
+
+
+
+
 
 def cart_update(request):
 
@@ -300,19 +300,20 @@ def cart_update(request):
     return redirect('/')        
 
 def cart_delete(request):
-
-    if 'username' in request.session:
-        user_in = request.session['username']
-
-    else:
-        user_in = guest(request)    
-
     if request.method=='POST':
         prod_id = int(request.POST['product_id'])
-        if(Cart.objects.filter(user=user_in,product_id=prod_id)):
-            cart_item = Cart.objects.filter(product_id=prod_id,user=user_in)
+
+        if 'username' not in request.session:
+                cart_item = Cart.objects.filter(session_id = guest(request), product_id=prod_id)
+                cart_item.delete()        
+                
+
+        else:
+            user_in = request.session['username']
+            cart_item = Cart.objects.filter(user = user_in, product_id=prod_id)
             cart_item.delete()
-        return JsonResponse({"status": "Deleted Product Successfully!"})  
+
+        return JsonResponse({"status": "Deleted Product Successfully!"})        
     return redirect('cart-list')        
 
 
@@ -329,9 +330,6 @@ def checkout(request):
 
 
     print("Cart in checkout is ", cart) 
-
-
-
 
     
     sub_total = 0
@@ -460,13 +458,10 @@ def order_manager(request):
 
 def order_edit(request, id):
     order = Order.objects.filter(id=id).first() 
-    orderitem = OrderItem.objects.filter(order_id=order.id).all()
+    orderitem = OrderItem.objects.filter(order_id=order.id).first()
 
     print("Order is", order) 
     print("Order item is", orderitem)
-
-    for item in orderitem:
-        print("Product in order", item.product.product_name) 
 
     form = OrderForm(instance=order)
 
@@ -474,6 +469,9 @@ def order_edit(request, id):
         form = OrderForm(request.POST,instance=order) 
 
         if form.is_valid():
+            print("The order status before is", order.status, "The order item status before is", orderitem.item_status)
+            orderitem.item_status = order.status
+            print("The order status after is", order.status, "The order item status after is", orderitem.item_status)   
             form.save()
             messages.success(request,"Order Updated") 
             return redirect('order-list')
