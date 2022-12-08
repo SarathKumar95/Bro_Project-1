@@ -169,6 +169,7 @@ def signin_Otp(request):
 # Cart functions here
 
 def cart_add(request):
+    
     if request.method == 'POST':
         if 'username' not in request.session:
             prod_id = request.POST['product_id']
@@ -186,16 +187,19 @@ def cart_add(request):
 
             #if same product in cart
             if (Cart.objects.filter(session_id=guest(request), product_id=prod_id)):
-                    return JsonResponse({'status': "Product already in cart"})
+                    return JsonResponse({'status': "Product already in cart, Please increase the quantity from cart"})
             
             else:
                 print("create guest cart")
                 cart = Cart.objects.create(session_id=guest(
                     request), product_id=prod_id, product_qty=prod_qty)
+                guest_cart = Cart.objects.filter(session_id=guest(request)).first()  
+                
+                print("Guest cart is", guest_cart.product.product_id)
+            
                 return JsonResponse({'status': 'Product added succesfully'})
 
-            return redirect('/')
-
+        
         elif 'username' in request.session:
             email = request.session['username']
             product_id = request.POST['product_id']
@@ -205,6 +209,10 @@ def cart_add(request):
             print("Stock is", product_check.quantity)
             print("Price of the product is", product_check.price)
             print("Ordered qty is", product_quantity)
+
+
+            #Check if the product in guest cart is present in user's cart.If yes, update its quantity , otherwise add it as a new product 
+            #print("Guest cart is", guest_cart)
 
             if (product_check):
                     if (Cart.objects.filter(user=email, product_id=product_id)):
@@ -221,13 +229,11 @@ def cart_add(request):
             else:
                 return JsonResponse({'status': "No such product found"})
 
-        # else:
-        #     return JsonResponse({'status': "Login to continue"})
-
     return redirect('/')
 
 
 def cart_list(request):
+
     guest_cart = Cart.objects.filter(session_id=guest(request))
     print("No of guest cart items are",guest_cart.count())
 
@@ -250,8 +256,8 @@ def cart_list(request):
                 print("The id of item in guest cart is", guest_product)
                 print("Ordered qty is", guest_qty)
 
-                product_in_cart = Cart.objects.filter(user = user_in) 
-                print("User Cart before adding guest cart is", product_in_cart)   
+                # product_in_cart = Cart.objects.filter(user = user_in) 
+                # print("User Cart before adding guest cart is", product_in_cart)   
 
             cart = Cart.objects.filter(user = user_in)
             #guest_cart.delete()
@@ -274,27 +280,22 @@ def cart_list(request):
 
 
 def cart_update(request):
-
-    if 'username' not in request.session:
-        user_in = guest(request)
-
-    elif 'username' in request.session:
-        user_in = request.session['username']
-    
     if request.method == 'POST':
         product_id = request.POST.get('cart_id')
-        cart = Cart.objects.filter(user=user_in,product=product_id).first()
         product_qty = request.POST['cart_qty']
-        
-        print("Product in cart is",cart.product.product_name)
-        print("Qty is",product_qty)
-        print("Qty of product in cart is",cart.product_qty)
-        
+          
+        if 'username' not in request.session:
+            user_in = guest(request)
+            cart = Cart.objects.filter(session_id=user_in,product=product_id).first() 
+
+        else:
+            user_in = request.session['username']
+            cart = Cart.objects.filter(user=user_in,product=product_id).first() 
+                
+            
         cart.product_qty = product_qty 
         cart.save()
-
-        print("After update qty is", cart.product_qty) 
-
+        
         return JsonResponse({'status':'Updated cart!'})
 
     return redirect('/')        
