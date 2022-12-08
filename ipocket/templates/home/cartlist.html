@@ -14,19 +14,17 @@
               {% csrf_token %}
               {% if no_of_cart_items == 0 %}
               <h5 class="mb-0">Cart is Empty!</h5>
-              {% elif no_of_cart_items == 1 %}
-              <h5 class="mb-0">Cart - 1 item</h5>
               {% else %}
-              <h5 class="mb-0">Cart - {{no_of_cart_items}} items</h5>
+              <h5 class="mb-0">Cart-<span id="cartCount"> {{no_of_cart_items}}</span> items</h5>
               {% endif %}
             </div>
-    
+            
             <div class="card-body">
               <!-- Single item -->
               {% for item in cart %}
               
               <div class="row" id="single-item{{item.product.product_id}}">
-                <input type="" value="{{item.product.product_id}}" id="cart-prod-id">
+                <input type="hidden" value="{{item.product.product_id}}" id="cart-prod-id">
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                   <!-- Image -->
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">

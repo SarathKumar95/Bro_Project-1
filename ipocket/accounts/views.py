@@ -11,6 +11,7 @@ from cart.models import *
 from category.forms import *
 import razorpay
 from ipocket.settings import RAZOR_KEY_ID, RAZOR_KEY_SECRET
+from django.views.decorators.cache import cache_control, never_cache
 # Create your views here.
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
@@ -258,10 +259,7 @@ def cart_list(request):
                     print("The item which is in the cart is", cart, "The qty is", cart.product_qty) 
 
                     #item.product.delete() # delete that product from guest cart  
-
-                    #print the guest cart to know if its deleted 
-
-                    print("Guest cart after deleting the product is", guest_cart)                
+              
 
                 else:
                     print("False")       #add the product
@@ -271,7 +269,11 @@ def cart_list(request):
 
             cart = Cart.objects.filter(user = user_in)
             
-            #guest_cart.delete()
+            guest_cart.delete()
+
+            #print the guest cart to know if its deleted 
+
+            print("Guest cart after deleting the product is", guest_cart)  
 
 
     sub_total = 0
@@ -316,13 +318,11 @@ def cart_delete(request):
         prod_id = int(request.POST['product_id'])
 
         if 'username' not in request.session:
-                cart_item = Cart.objects.filter(session_id = guest(request), product_id=prod_id)
+                cart_item = Cart.objects.filter(session_id = guest(request), product_id=prod_id) 
                 cart_item.delete()        
-                
-
         else:
             user_in = request.session['username']
-            cart_item = Cart.objects.filter(user = user_in, product_id=prod_id)
+            cart_item = Cart.objects.filter(user = user_in, product_id=prod_id) 
             cart_item.delete()
 
         return JsonResponse({"status": "Deleted Product Successfully!"})        
@@ -331,6 +331,8 @@ def cart_delete(request):
 
 # Checkout page view 
 
+
+@cache_control(max_age=4000,no_cache=True)
 def checkout(request):
     if 'username' not in request.session:
         messages.info(request,"Please Login")
@@ -444,6 +446,8 @@ def checkout(request):
 
 
 # Order page
+
+@never_cache 
 def OrderPage(request,tracking_no):
     order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username']).all()     
     
