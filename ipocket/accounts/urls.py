@@ -32,5 +32,6 @@ urlpatterns = [
     #path('guest',views.guest,name='guest')     
     path('ordereditem/<int:id>',views.ordered, name='ordered-items'),
     path('razorpay',views.razor_checkout, name='razorpay'),
+    path('search', views.search_product, name='search-product')
 
 ]

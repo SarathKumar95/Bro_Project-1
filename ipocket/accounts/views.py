@@ -486,7 +486,8 @@ def order_edit(request, id):
 
         if form.is_valid():
             print("The order status before is", order.status, "The order item status before is", orderitem.item_status)
-            orderitem.item_status = order.status
+            orderitem.item_status = order.status 
+
             print("The order status after is", order.status, "The order item status after is", orderitem.item_status)   
             form.save()
             messages.success(request,"Order Updated") 
@@ -614,3 +615,25 @@ def razor_checkout(request):
     }
 
     return render(request, 'home/rpay.html', context) 
+
+# Search view 
+
+def search_product(request):
+    if request.method == 'POST':
+        product_searched = request.POST['searchPro'] 
+
+        print(product_searched)
+
+        if product_searched == " ":
+            print("no pro")
+
+        else:
+            product = Products.objects.filter(slug__icontains = product_searched ).first()  
+
+            if product:
+                print("true")
+
+            else:
+                print("false")        
+
+    return redirect(request.path) 
