@@ -625,15 +625,16 @@ def search_product(request):
         print(product_searched)
 
         if product_searched == " ":
-            print("no pro")
+            messages.error(request, "Insert something to search!")
+            
 
         else:
-            product = Products.objects.filter(slug__icontains = product_searched ).first()  
-
+            product = Products.objects.filter(slug__icontains = product_searched ).first()
+            
             if product:
-                print("true")
+                return redirect('item/'+ str(product.product_id))
 
             else:
-                print("false")        
+                messages.error(request, "Sorry, Your search does not match any products!")       
 
-    return redirect(request.path) 
+    return redirect('productspage') 
