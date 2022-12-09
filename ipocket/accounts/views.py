@@ -482,22 +482,33 @@ def order_manager(request):
 
 def order_edit(request, id):
     order = Order.objects.filter(id=id).first()
-    orderitem = OrderItem.objects.filter(order_id=order.id).first()
+    orderitem = OrderItem.objects.filter(order_id=order.id).all()
 
-    print("Order is", order) 
+    countOrderItem = orderitem.count()
+
+    print("Order status is", order.status) 
     print("Order item is", orderitem)
+    print("No of Order item is", countOrderItem)
+
 
     form = OrderForm(instance=order)
 
+
+    
+
+
+    for item in orderitem:
+        print("The order status before is", order.status, "The order item is",item.product.slug,"and the order item status before is", item.item_status)
+
     if request.method == 'POST':
-        form = OrderForm(request.POST,instance=order) 
+        form = OrderForm(request.POST,instance=order)
+        print("Order status in form is ", request.POST['status'])        
+        for item in orderitem:
+              item.item_status = request.POST['status'] 
+              item.save()  
+              print("The orderitem is",item.product.slug ," Order status after is", order.status, "and the order item status after is", item.item_status)
 
         if form.is_valid():
-            print("The order status before is", order.status, "The order item status before is", orderitem.item_status)
-            
-            
-
-            print("The order status after is", order.status, "The order item status after is", orderitem.item_status)   
             form.save()
             messages.success(request,"Order Updated") 
             return redirect('order-list')
