@@ -250,6 +250,38 @@
     imageZoom('product-detail')
 
 
+    
+$('.addtoCartBtn').click(function (){
+    //console.log("Here in add!");
+    var product_id = document.getElementById('prod_id').value;
+    var product_qty = document.getElementById('var-value').innerHTML;
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+    console.log("Product id is ", product_id)
+    console.log("Product qty is ", product_qty)
+    
+    let navCount = Number($('#navcartCount').text()) 
+    
+    console.log("Cart in nav count is", navCount)
+
+    $.ajax({
+        method: "POST",
+        url: "cart/add",
+        data: {
+            'product_id' : product_id,
+            'product_qty' : product_qty,
+            csrfmiddlewaretoken: token     
+       },
+
+        success: function (response) {
+          console.log("its added!")  
+          alertify.success(response.status)
+          $('#navcartCount').text(navCount + 1)      
+        }
+    });
+
+});
+
+
         
         
     </script>

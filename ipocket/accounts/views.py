@@ -211,10 +211,12 @@ def cart_add(request):
 
             if (product_check):
                     if (Cart.objects.filter(user=email, product_id=product_id)):
+                        print("Product already in cart")
                         return JsonResponse({'status': "Product already in cart"})
 
                     else:
                          if product_check.quantity >= product_quantity:
+                            print("adding to cart")
                             Cart.objects.create(
                                 user=email, product_id=product_id, product_qty=product_quantity)
                             return JsonResponse({'status': 'Product added succesfully'})
@@ -370,6 +372,7 @@ def checkout(request):
     print("Tax amount is",grand_total_with_tax)
     print("Coupon is",coupon)
     print("Grand total is",grand_total) 
+    
     if request.method == 'POST':
         
         if cart.count() == 0:
@@ -407,9 +410,9 @@ def checkout(request):
 
             neworderItems = Cart.objects.filter(user=user_in)
 
-            print("Items in cart are",neworderItems)
+            print("ITEMS IN THE CART ARE",neworderItems)
 
-            print("No of Items in cart are",neworderItems.count())
+            print("NO OF ITEMS IN CART",neworderItems.count())
 
 
             for item in neworderItems:
@@ -422,24 +425,27 @@ def checkout(request):
                 )
 
                 
-                print("Item added is",item.product.product_name)
+                print("Item added is",item.product.slug)
                 print("Item price added is",item.product.price)
                 print("Item qty added is",item.product_qty)
 
 
                 orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
-                print("Ordered product quantity is", orderproduct.quantity) 
+                
+                print("Ordered product is",orderproduct.slug,"and quantity is", orderproduct.quantity) 
                 orderproduct.quantity -= item.product_qty 
                 orderproduct.save()
                 print("Ordered product quantity after ordering is", orderproduct.quantity) 
 
                 
                 cart = Cart.objects.filter(user=user_in) 
-                cart.delete()     
+                #cart.delete()     
                 
+            if request.POST['paymentMethod'] != "Cash On Delivery":
                 return JsonResponse({"track_no" : track_no })
-            
-            return redirect('order-page',tracking_no=neworder.tracking_no)     
+
+            else:
+                return redirect('order-page',tracking_no=neworder.tracking_no)     
             
     context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID,}    
     return render(request,'home/checkout.html',context) 
@@ -447,18 +453,20 @@ def checkout(request):
 
 # Order page
 
-@never_cache 
+
 def OrderPage(request,tracking_no):
+
+    print("here in orderpage!")
+
+
     order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username']).all()     
     
     print("Order is",order) 
 
     for item in order:
         orderid = item.id 
-
-    orderitem = OrderItem.objects.filter(order_id = orderid)
-
-    print("Order item is", orderitem)
+        orderitem = OrderItem.objects.filter(order_id = orderid)
+        print("Order item is", orderitem)
 
     context = {'order':order, 'orderitem':orderitem}
     return render(request,'home/orderplaced.html',context)
@@ -473,7 +481,7 @@ def order_manager(request):
 
 
 def order_edit(request, id):
-    order = Order.objects.filter(id=id).first() 
+    order = Order.objects.filter(id=id).first()
     orderitem = OrderItem.objects.filter(order_id=order.id).first()
 
     print("Order is", order) 
@@ -486,7 +494,8 @@ def order_edit(request, id):
 
         if form.is_valid():
             print("The order status before is", order.status, "The order item status before is", orderitem.item_status)
-            orderitem.item_status = order.status 
+            
+            
 
             print("The order status after is", order.status, "The order item status after is", orderitem.item_status)   
             form.save()

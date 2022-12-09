@@ -18,6 +18,25 @@
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+/* Boostrap Buttons Styling */
+
+.btn {
+  margin-left: 10px;
+  margin-right: 10px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  border-radius: 40px;
+  transition: all 0.3s ease 0s;
+  padding: 10px 25px;
+
+}
+
+#rzp-button1{
+  position: relative;
+  left: 10px;
+}
+
 </style>
 
 
@@ -201,7 +220,7 @@
       <div class="d-block my-3">
         <!-- Cod -->
         <div class="ms-4">
-          <button onclick="placeOrder()" type="submit" name="paymentMethod" value="Cash On Delivery" class="btn btn-dark btn-sm">Cash On Delivery</button>
+          <button onclick="placeOrder()" id="cod-btn" type="submit" name="paymentMethod" value="Cash On Delivery" class="btn btn-dark me-5">Cash On Delivery</button>
         </div>
         
         <!-- Paypal Button -->
@@ -209,7 +228,7 @@
         
         <!-- Razorpay button -->
         <div>
-          <button type="button" onclick="razorpay()" name="paymentMethod" value="Paid by RazorPay" class="btn btn-dark" id="rzp-button1">Pay</button>
+          <button type="button" onclick="razorpay()" name="paymentMethod" value="Paid by RazorPay" class="btn btn-dark ms-4" id="rzp-button1">Pay with RazorPay</button>
         </div>
         
         
