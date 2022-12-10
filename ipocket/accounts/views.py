@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 import json
 from django.shortcuts import render, redirect
@@ -12,6 +13,11 @@ from category.forms import *
 import razorpay
 from ipocket.settings import RAZOR_KEY_ID, RAZOR_KEY_SECRET
 from django.views.decorators.cache import cache_control, never_cache
+from django.template.loader import get_template
+from io import BytesIO
+from xhtml2pdf import pisa
+from django.views.generic import View 
+
 # Create your views here.
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
@@ -33,8 +39,9 @@ def guest(request):
 
 def home_page(request):
     category = Categories.objects.all()
+    subcat = ProductType.objects.all()
     product = Products.objects.all()
-    context = {'product': product, 'category': category}
+    context = {'product': product, 'category': category, 'subcat':subcat}
     return render(request, 'home/index.html', context)
 
 
@@ -439,7 +446,7 @@ def checkout(request):
 
                 
                 cart = Cart.objects.filter(user=user_in) 
-                #cart.delete()     
+                cart.delete()     
                 
             if request.POST['paymentMethod'] != "Cash On Delivery":
                 return JsonResponse({"track_no" : track_no })
@@ -493,8 +500,12 @@ def order_edit(request, id):
 
     form = OrderForm(instance=order)
 
+    print("Statuses in order is :" , order.orderstatus[1])  
+
 
     
+    print("Status of order is", form['status']) 
+
 
 
     for item in orderitem:
@@ -502,7 +513,7 @@ def order_edit(request, id):
 
     if request.method == 'POST':
         form = OrderForm(request.POST,instance=order)
-        print("Order status in form is ", request.POST['status'])        
+              
         for item in orderitem:
               item.item_status = request.POST['status'] 
               item.save()  
@@ -515,7 +526,7 @@ def order_edit(request, id):
         else:
             messages.error(request,form.errors) 
 
-    context = {'form':form, 'orderitem': orderitem} 
+    context = {'form':form, 'order':order, 'orderitem': orderitem} 
     return render(request,'owner/orderedit.html',context) 
 
 def order_info(request, id):
@@ -605,18 +616,6 @@ def ordered(request,id):
     return render(request,'user/myorderitems.html',context)
 
 
-# def payment_complete(request):
-#     print("Paypal view hit!")
-#     body = json.loads(request.body)
-#     print("body: ",body) 
-
-#     cart = body['cartIn']
-
-#     print("Cart is", cart)
-
-#     return JsonResponse('Payment Completed!', safe=False) 
-
-
 def razor_checkout(request):    
     DATA = {
         "amount": 10000,
@@ -658,3 +657,35 @@ def search_product(request):
                 messages.error(request, "Sorry, Your search does not match any products!")       
 
     return redirect('productspage') 
+
+# Download invoice function
+
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html =template.render(context_dict)
+    result = BytesIO()
+
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")),result) 
+
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+
+    return None    
+
+
+def viewInvoice(request,tracking_no):
+    user_in = request.session['username']
+    order = Order.objects.filter(user=user_in,tracking_no = tracking_no).first()
+    orderitem = OrderItem.objects.filter(order = order)
+    
+    print("Order is ", order)
+    print("Order item is ", orderitem)
+
+    data = { 
+            'order':order,
+            'orderitem':orderitem     
+        }
+
+    pdf = render_to_pdf('user/invoice.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')

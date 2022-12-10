@@ -21,37 +21,37 @@
 
         <table class="table">
             <tr>
-                <th>Product Name</th>
-                <th>Product Price</th> 
-                <th>Ordered Quantity</th>
-                <th>Item Status</th>
-                <th>Actions</th>
+                <th class="text-primary">Product Name</th>
+                <th class="text-primary">Product Price</th> 
+                <th class="text-primary">Ordered Quantity</th>
+                <th class="text-primary">Item Status</th>
+                <th class="text-primary">Actions</th>
             </tr>
 
             {% for item in orderitem %}
                {% csrf_token %}
             <tr>
                 {% if item.product.generation and item.product.series  %}
-                <td>
+                <td class="text-dark">
                     {{item.product.product_name}} {{item.product.generation}} {{item.product.series}}
-                </td>
+                </td class="text-dark">
                 {% elif item.product.generation == None %}
-                <td>
+                <td class="text-dark">
                     {{item.product.product_name}} {{item.product.series}}
                 </td>
                 {% elif item.product.series == None %}
-                <td>
+                <td class="text-dark">
                     {{item.product.product_name}} {{item.product.generation}}
                 </td>
                 {% else %}
-                <td>
+                <td class="text-dark">
                     {{item.product.product_name}}
                 </td>
                 {% endif %}
-                <td>{{item.product.price}}</td>
-                <td>{{item.quantity}}</td>
-                <td>{{item.item_status}}</td>
-                <td>
+                <td class="text-dark">{{item.product.price}}</td>
+                <td class="text-dark">{{item.quantity}}</td>
+                <td class="text-dark">{{item.item_status}}</td>
+                <td class="text-dark">
                     <div class="d-flex ">
                         <!---
                         <div class="mb-2">

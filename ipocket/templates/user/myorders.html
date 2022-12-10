@@ -34,8 +34,9 @@
     {% if order.count == 0 %} 
     <p>No Orders</p>  
     {% else %}
-    
-        <table class="table">
+        
+        
+        <table class="table me-5">
             <tr>
                 <th>Tracking Number</th>
                 <th>Ordered Items</th>
@@ -49,8 +50,13 @@
             </tr>
 
             {% for item in order %}
+            
             <tr>
-                <td>{{item.tracking_no}}</td>
+                <td>
+                    <div>{{item.tracking_no}}</div>
+                    <div><a href="{% url 'view-invoice' item.tracking_no %}">View Invoice</a></div>
+                </td>
+                
                 <td>
                     {% for item in orderitem %} 
                        

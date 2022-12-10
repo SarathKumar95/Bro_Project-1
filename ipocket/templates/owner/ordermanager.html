@@ -28,33 +28,33 @@
     <div>
         <table class="table">
             <tr>
-                <th>Tracking No</th>
-                <th>Order Date</th> 
-                <th>Ordered by</th>
-                <th>Order Status</th>
-                <th>Total</th>
-                <th>Tax</th>
-                <th>Shipping Charges</th>
-                <th>Grand Total</th>
-                <th>Payment Mode</th>
-                <th>Actions</th>
+                <th class="text-primary">Tracking No</th>
+                <th class="text-primary">Order Date</th> 
+                <th class="text-primary">Ordered by</th>
+                <th class="text-primary">Order Status</th>
+                <th class="text-primary">Total</th>
+                <th class="text-primary">Tax</th>
+                <th class="text-primary">Shipping Charges</th>
+                <th class="text-primary">Grand Total</th>
+                <th class="text-primary">Payment Mode</th>
+                <th class="text-primary">Actions</th>
             </tr>
 
             {% for item in orders %}
 
             <tr>
-                <td>
+                <td class="text-dark">
                     <strong>{{item.tracking_no}}</strong>
                 </td>
-                <td>{{item.created_at}}</td>
-                <td>{{item.email}}</td>
-                <td>{{item.status}}</td>
-                <td>{{item.price_before_tax}}</td>
-                <td>{{item.tax_amount}}</td>
-                <td>{{item.ship_amount}}</td>
-                <td>{{item.total_price}}</td>
-                <td>{{item.payment_mode}}</td>
-                <td>
+                <td class="text-dark">{{item.created_at}}</td>
+                <td class="text-dark">{{item.email}}</td>
+                <td class="text-dark">{{item.status}}</td>
+                <td class="text-dark">{{item.price_before_tax}}</td>
+                <td class="text-dark">{{item.tax_amount}}</td>
+                <td class="text-dark">{{item.ship_amount}}</td>
+                <td class="text-dark">{{item.total_price}}</td>
+                <td class="text-dark">{{item.payment_mode}}</td>
+                <td class="text-dark">
                     <div class="d-flex justify-content-between">
                         <div class="mb-2">
                             <a href="{% url 'order-edit' item.id %}">

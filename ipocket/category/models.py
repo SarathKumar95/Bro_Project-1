@@ -27,6 +27,7 @@ class Categories(models.Model):
     category_img = models.ImageField(upload_to='images/categories',null=True,blank=True)
     condition = models.CharField(max_length=25,null=True) 
     product_type = models.ForeignKey(ProductType,on_delete=models.CASCADE,null=True)
+    slug = models.CharField(max_length=100,null=True,blank=True)
 
     class Meta:
         verbose_name_plural = 'Categories' 
@@ -95,7 +96,6 @@ class Order(models.Model):
     status = models.CharField(max_length=150,choices=orderstatus,default='Order Confirmed')
     message = models.TextField(null=True,blank=True)
     tracking_no = models.CharField(max_length=150,null=True)
-    #tracking_no = models.CharField(max_length=150,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True) 
 
