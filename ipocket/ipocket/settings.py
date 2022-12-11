@@ -157,3 +157,11 @@ AUTH_USER_MODEL = 'accounts.MyUser'
 SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 RAZOR_KEY_ID = 'rzp_test_qmnG4KOy9Wvfyd'
 RAZOR_KEY_SECRET = 'AizRvsvRPuWJ2KkMvoAfj64A'
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.auth_backend.PasswordlessAuthBackend',
+)
+
+account_sid = env('TWILIO_ACCOUNT_SID') 
+auth_token = env('TWILIO_AUTH_TOKEN')
+    

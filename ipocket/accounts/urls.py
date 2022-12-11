@@ -33,6 +33,7 @@ urlpatterns = [
     path('ordereditem/<int:id>',views.ordered, name='ordered-items'),
     path('razorpay',views.razor_checkout, name='razorpay'),
     path('search', views.search_product, name='search-product'),
-    path('invoice/<str:tracking_no>', views.viewInvoice, name='view-invoice')
-
+    path('invoice/<str:tracking_no>', views.viewInvoice, name='view-invoice'),
+    path('signinOTP',views.signinOTP, name='signinOTP'),
+    path('VerifyOTP/+<int:phone>',views.verifyOTP, name='otp-verify'),
 ]

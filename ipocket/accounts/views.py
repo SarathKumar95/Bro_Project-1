@@ -1,10 +1,12 @@
-from datetime import datetime
+import os
 import random
 import json
 from django.shortcuts import render, redirect
+
+from ipocket import settings
 from .forms import *
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from category.models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -17,6 +19,9 @@ from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
 from django.views.generic import View 
+from twilio.rest import Client 
+from ipocket.settings import account_sid,auth_token 
+
 
 # Create your views here.
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
@@ -80,6 +85,83 @@ def signin(request):
             messages.error(request, 'Check credentials or contact admin.')
 
     return render(request, 'user/signin.html')
+
+
+def signinOTP(request):  
+    if request.method == "POST":
+        phone_number = request.POST.get('phone')
+        
+        if len(phone_number) < 12:             
+            messages.info(request,"Enter a phone number with country code")
+            return redirect(request.path)
+        else:
+            client = Client(account_sid,auth_token)
+
+            # service = client.verify.v2.services.create(
+            #                                 friendly_name='My First Verify Service'
+            #                             )
+
+            # print(service.sid)
+
+
+            verification = client.verify \
+                        .v2 \
+                        .services('VAb89bd4d0748fe2f04b91cdd353fb0429') \
+                        .verifications \
+                        .create(to=phone_number, channel='whatsapp')
+
+            print(verification.sid)
+
+            return redirect('VerifyOTP/'+phone_number)
+
+    return render(request, 'user/signinOTP.html')
+
+
+def verifyOTP(request,phone):
+
+    phone1 = "+"+str(phone)
+    print("Phone is ",phone1)
+    client = Client(account_sid,auth_token) 
+
+    user_in = MyUser.objects.filter(mobile_number=phone1)
+
+    print("user is", user_in)
+
+    # for item in user_in[0]:
+    #     print(item.email)   
+    
+    if request.method == 'POST':
+        otp = request.POST.get("otp")
+
+        print("Otp entered is", otp)
+
+        verification_check = client.verify \
+                           .v2 \
+                           .services('VAb89bd4d0748fe2f04b91cdd353fb0429') \
+                           .verification_checks \
+                           .create(to=phone1,code=otp)
+
+        print(verification_check.status)
+
+        if verification_check.status == 'approved':
+            mobile_number = phone1
+            user = authenticate(request,mobile_number=mobile_number) 
+            
+            print("Reaching here",user) 
+
+            if user is not None:
+                print("user not none")
+                
+                for item in user_in:
+                    email = item.email
+                    
+                request.session['username'] = email
+                return redirect('home')
+
+            else:
+                messages.error(request,"Check phone number!")    
+    
+    return render(request,'user/Otpverify.html')
 
 
 def signout(request):
@@ -169,9 +251,6 @@ def item(request, product_id):
     context = {'product': product, 'products': products}
     return render(request, 'home/shop-single.html', context)
 
-
-def signin_Otp(request):
-    pass
 
 
 # Cart functions here
