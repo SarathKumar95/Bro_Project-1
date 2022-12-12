@@ -46,7 +46,7 @@
                         <ul id="collapseThree" class="collapse list-unstyled pl-3">
                             {% for item in subCategory %} 
                             <li class="product-list">
-                                <a class="h3 text-secondary text-decoration-none mr-3" href="">{{item.product_type}}</a>
+                                <a class="h3 text-secondary text-decoration-none mr-3" href="{% url 'product-type-filter' item.sub_cat_id %}">{{item.product_type}}</a>
                             </li>
                             <hr>
                             {% endfor %}

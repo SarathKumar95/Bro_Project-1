@@ -253,11 +253,21 @@ def products(request):
 def product_filter(request,id):
     product = Products.objects.filter(condition=id)  
     category = Categories.objects.all()
-    subCategory = ProductType.objects.all()
+    subCategory = ProductType.objects.filter()
     context = {'product': product, 'category': category,
         'subCategory': subCategory}
     return render(request, 'home/shop.html', context)
 
+
+
+
+def product_type_filter(request,typeid):
+    product = Products.objects.filter(product_type=typeid)  
+    category = Categories.objects.all()
+    subCategory = ProductType.objects.all()
+    context = {'product': product, 'category': category,
+        'subCategory': subCategory}
+    return render(request, 'home/shop.html', context)
     
 
 
