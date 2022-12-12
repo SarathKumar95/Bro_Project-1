@@ -14,8 +14,10 @@ urlpatterns = [
     path('unblockuser/<int:id>', views.unblock_user, name='unblockuser'),
     path('products/',views.products,name="productspage"),
     path('products/filter/<int:id>',views.product_filter,name="productfilter"),
+    path('products/filter/type/<int:typeid>',views.product_type_filter,name="product-type-filter"),
     # url to select the condition followed by product_type 
     path('products/filter/1/<int:protype_id>',views.catpro_filter, name='filter-cat-pro'),
+
     path('products/sortbyprice/ascending',views.sortbyprice_ascending,name="product-sortybyprice-ascending"),
     path('products/sortbyprice/descending',views.sortbyprice_descending,name="product-sortybyprice-descending"),
     path('products/sortbynew',views.sortbynew,name="product-sortybynew"),

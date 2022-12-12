@@ -259,6 +259,15 @@ def product_filter(request,id):
     return render(request, 'home/shop.html', context)
 
 
+def product_type_filter(request,typeid):
+    product = Products.objects.filter(product_type=typeid)  
+    category = Categories.objects.all()
+    subCategory = ProductType.objects.all()
+    context = {'product': product, 'category': category,
+        'subCategory': subCategory}
+    return render(request, 'home/shop.html', context)
+
+
 #new condition, pass product type id
 def catpro_filter(request,protype_id):
     product = Products.objects.filter(condition=1,product_type=protype_id)  
