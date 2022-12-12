@@ -13,6 +13,7 @@ urlpatterns = [
     path('blockuser/<int:id>',views.block_user,name='blockuser'),
     path('unblockuser/<int:id>', views.unblock_user, name='unblockuser'),
     path('products/',views.products,name="productspage"),
+    path('products/filter/<int:id>',views.product_filter,name="productfilter"),
     path('item/<int:product_id>',views.item,name="itempage"),
     path('item/cart/add',views.cart_add,name="cart-add"),
     path('item/cart/list',views.cart_list,name="cart-list"),

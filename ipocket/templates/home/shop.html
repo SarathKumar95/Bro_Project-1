@@ -22,7 +22,7 @@
                         </a>
                         <ul class="collapse show list-unstyled pl-3">
                             {% for item in category %}
-                            <li><a class="text-decoration-none" href="#">{{item.condition}}</a></li>
+                            <li><a class="text-decoration-none" href="{% url 'productfilter' item.category_id %}">{{item.condition}}</a></li>
                             <hr>
                             {% endfor %}
                         </ul>
@@ -46,7 +46,7 @@
                         <ul id="collapseThree" class="collapse list-unstyled pl-3">
                             {% for item in subCategory %} 
                             <li class="product-list">
-                                <a class="h3 text-secondary text-decoration-none mr-3" href="#">{{item.product_type}}</a>
+                                <a class="h3 text-secondary text-decoration-none mr-3" href="">{{item.product_type}}</a>
                             </li>
                             <hr>
                             {% endfor %}

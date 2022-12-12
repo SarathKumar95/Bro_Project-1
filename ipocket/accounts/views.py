@@ -87,6 +87,8 @@ def signin(request):
     return render(request, 'user/signin.html')
 
 
+
+#OTP login
 def signinOTP(request):  
     if request.method == "POST":
         phone_number = request.POST.get('phone')
@@ -160,7 +162,10 @@ def verifyOTP(request,phone):
 
             else:
                 messages.error(request,"Check phone number!")    
-    
+
+        else:
+            messages.error(request, "Invalid OTP")    
+
     return render(request,'user/Otpverify.html')
 
 
@@ -237,12 +242,27 @@ def unblock_user(request, id):
 
 
 def products(request):
-    product = Products.objects.all()
+    product = Products.objects.all() 
     category = Categories.objects.all()
     subCategory = ProductType.objects.all()
     context = {'product': product, 'category': category,
         'subCategory': subCategory}
     return render(request, 'home/shop.html', context)
+
+
+def product_filter(request,id):
+    product = Products.objects.filter(condition=id)  
+    category = Categories.objects.all()
+    subCategory = ProductType.objects.all()
+    context = {'product': product, 'category': category,
+        'subCategory': subCategory}
+    return render(request, 'home/shop.html', context)
+
+    
+
+
+
+
 
 
 def item(request, product_id):

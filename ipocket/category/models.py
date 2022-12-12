@@ -10,7 +10,8 @@ class ProductType(models.Model):
     sub_cat_id = models.AutoField(primary_key=True) 
     product_type_image = models.ImageField(upload_to='images/producttype',null=True,blank=True)
     product_type = models.CharField(max_length=25,unique=True)
-
+    slug = models.CharField(max_length=100,unique=True,null=True,blank=True) 
+    
     class Meta:
         verbose_name_plural = 'SubCategories'
 
