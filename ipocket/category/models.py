@@ -62,6 +62,7 @@ class Products(models.Model):
     second_image = models.ImageField(upload_to='images/products',null=True,blank=True) 
     third_image = models.ImageField(upload_to='images/products',null=True,blank=True)  
     slug = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
 
     class Meta:
         verbose_name_plural = 'Products' 

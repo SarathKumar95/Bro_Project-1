@@ -22,6 +22,7 @@
                         </a>
                         <ul class="collapse show list-unstyled pl-3">
                             {% for item in category %}
+                            <input type="hidden" name="catID" value={{item.category_id}}>
                             <li><a class="text-decoration-none" href="{% url 'productfilter' item.category_id %}">{{item.condition}}</a></li>
                             <hr>
                             {% endfor %}
@@ -46,7 +47,7 @@
                         <ul id="collapseThree" class="collapse list-unstyled pl-3">
                             {% for item in subCategory %} 
                             <li class="product-list">
-                                <a class="h3 text-secondary text-decoration-none mr-3" href="{% url 'product-type-filter' item.sub_cat_id %}">{{item.product_type}}</a>
+                                <a class="h3 text-secondary text-decoration-none mr-3" href="{% url 'filter-cat-pro' item.sub_cat_id %}">{{item.product_type}}</a>
                             </li>
                             <hr>
                             {% endfor %}
@@ -60,7 +61,7 @@
                     <div class="col-md-6">
                         <ul class="list-inline shop-top-menu pb-3 pt-1">
                             <li class="list-inline-item">
-                                <a class="h3 text-dark text-decoration-none mr-3" href="#">All Products</a>
+                                <a class="h3 text-dark text-decoration-none mr-3" href="{% url 'productspage'%}">All Products</a>
                             </li>
                         </ul>
                     </div>
@@ -69,7 +70,7 @@
                             <select class="form-control">
                                 <option>Relevance</option>
                                 <option>Popularity</option>
-                                <option>Price : Low to High</option>
+                                <option><a href="{% url 'product-sortybyprice-ascending' %}">Price : Low to High</a></option>
                                 <option>Price : High to Low</option>
                                 <option>Newest First</option>
                             </select>
@@ -91,7 +92,7 @@
                 <div class="row">
                     {% for item in product %}
                     <div class="col-md-4">
-                        <input type="hidden" name="id" id="" value="{{item.product_id}}">
+                        <input type="hidden" name="id" value="{{item.product_id}}">
                         <div class="card mb-4 product-wap rounded-0" >
                             <div class="card rounded-0">
                                 {% if item.main_image %}
