@@ -245,18 +245,84 @@ def products(request):
     product = Products.objects.all() 
     category = Categories.objects.all()
     subCategory = ProductType.objects.all()
-    context = {'product': product, 'category': category,
-        'subCategory': subCategory}
-    return render(request, 'home/shop.html', context)
+    
+    if request.method == 'POST':
+        if 'condition' in request.POST and 'productType' not in request.POST:
+            condition_in = request.POST['condition']
+            print("Condition is", condition_in)
+
+            id_of_condition=Categories.objects.filter(condition=condition_in).first().category_id 
+
+            print("Cat id is", id_of_condition)
+
+            product = Products.objects.filter(condition=id_of_condition)
+            messages.success(request,"Listing "+condition_in+" products") 
+
+        elif 'productType' in request.POST and 'condition' not in request.POST:
+            protype = request.POST['productType']
+            
+            print("Product Type is",protype)
+
+            id_of_protype=ProductType.objects.filter(product_type=protype).first().sub_cat_id
+
+            print("Product Type id is", id_of_protype)
+
+            product = Products.objects.filter(product_type=id_of_protype)
+            
+            messages.success(request,"Listing "+protype) 
+
+
+        elif 'condition' and 'productType' not in request.POST:
+            messages.error(request,"Please select one condition and product type!") 
+
+        
+        else:
+            condition = request.POST['condition']
+            protype=request.POST['productType'] 
+
+            print("Condition is",condition,"Protype is", protype)
+
+            category_selected=Categories.objects.filter(condition=condition)
+            subcategory=ProductType.objects.filter(product_type=protype)
+
+            print("Category selected is",category_selected,"Product type is",subcategory)
+
+
+            no_of_category = Categories.objects.filter(condition=condition).count()   
+            no_of_subcategory=ProductType.objects.filter(product_type=protype).count()
+        
+            print("Count is ",no_of_category)
+            print("Count is ",no_of_subcategory)
+        
+            if no_of_subcategory == 0:
+                return redirect(request.path)
+
+            else:
+                for item in category_selected:
+                    Cat_id = item.category_id 
+                
+                print("Cat id is", Cat_id)    
+
+                for item in subcategory:
+                    SubCat_id = item.sub_cat_id
+
+                print("Sub Cat id is", SubCat_id)
+
+                product=Products.objects.filter(condition=Cat_id,product_type=SubCat_id)   
+
+                print("Products are",product)
+        
+    context = {'product': product, 'category': category,'subCategory': subCategory}
+    return render(request, 'home/shop.html', context) 
 
 #Filter Product 
-def product_filter(request,id):
-    product = Products.objects.filter(condition=id)  
+def product_filter(request,Cat_id,Subcat_id):
+    product = Products.objects.filter(condition=Cat_id,product_type=Subcat_id)  
     category = Categories.objects.all()
     subCategory = ProductType.objects.filter()
     context = {'product': product, 'category': category,
         'subCategory': subCategory}
-    return render(request, 'home/shop.html', context)
+    return render(request, 'home/shop.html')
 
 
 def product_type_filter(request,typeid):
@@ -270,13 +336,21 @@ def product_type_filter(request,typeid):
 
 #new condition, pass product type id
 def catpro_filter(request,protype_id):
-    product = Products.objects.filter(condition=1,product_type=protype_id)  
+    product = Products.objects.filter(condition=id)  
     category = Categories.objects.all()
     subCategory = ProductType.objects.all()
     context = {'product': product, 'category': category,
         'subCategory': subCategory}
     return render(request, 'home/shop.html', context)
 
+#product type, pass condition 
+def procat_filter(request,protype_id):
+    product = Products.objects.filter(product_type=protype_id)  
+    category = Categories.objects.all()
+    subCategory = ProductType.objects.all()
+    context = {'product': product, 'category': category,
+        'subCategory': subCategory}
+    return render(request, 'home/shop.html', context)
 
 
 #Sort Products 

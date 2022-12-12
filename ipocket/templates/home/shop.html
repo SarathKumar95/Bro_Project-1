@@ -1,163 +1,169 @@
-{% extends 'home/base.html' %}  
+{% extends 'home/base.html' %}
 
-{% block title %}Shop Products{% endblock%}  
+{% block title %}Shop Products{% endblock%}
 
 
-{% block content %} 
+{% block content %}
 {% load static %}
 
 
 
-    <!-- Start Content -->
-    <div class="container py-5">
-        <div class="row">
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row">
 
-            <div class="col-lg-3">
-                <h1 class="h2 pb-4">Categories</h1>
-                <ul class="list-unstyled templatemo-accordion">
-                    <li class="pb-3">
-                        <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
-                            Condition
-                            <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
-                        </a>
+        <div class="col-lg-3">
+            <h1 class="h2 pb-4">Categories</h1>
+            <ul class="list-unstyled templatemo-accordion">
+                <li class="pb-3">
+                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                        Condition
+                        <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                    </a>
+                    <form action="" method="POST">
+                        {% csrf_token %}
                         <ul class="collapse show list-unstyled pl-3">
                             {% for item in category %}
-                            <input type="hidden" name="catID" value={{item.category_id}}>
-                            <li><a class="text-decoration-none" href="{% url 'productfilter' item.category_id %}">{{item.condition}}</a></li>
+                            <input type="checkbox" name="condition" value="{{item.condition}}">
+                            <label for="condition">{{item.condition}}</label>
                             <hr>
                             {% endfor %}
                         </ul>
-                    </li>
-                    <!--<li class="pb-3">
-                        <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
-                            Sale
-                            <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
-                        </a>
-                        <ul id="collapseTwo" class="collapse list-unstyled pl-3">
-                            <li><a class="text-decoration-none" href="#">Sport</a></li>
-                            <li><a class="text-decoration-none" href="#">Luxury</a></li>
-                        </ul>
-                    </li>
-                    --->
-                    <li class="pb-3">
-                        <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
-                            Product
-                            <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
-                        </a>
-                        <ul id="collapseThree" class="collapse list-unstyled pl-3">
-                            {% for item in subCategory %} 
-                            <li class="product-list">
-                                <a class="h3 text-secondary text-decoration-none mr-3" href="{% url 'filter-cat-pro' item.sub_cat_id %}">{{item.product_type}}</a>
-                            </li>
-                            <hr>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                </ul>
+                </li>
+                <li class="pb-3">
+                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
+                        Product
+                        <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
+                    </a>
+                    <ul id="collapseThree" class="collapse list-unstyled pl-3">
+                        {% for item in subCategory %}
+                        <input type="checkbox" name="productType" value="{{item.product_type}}">
+                        <label for="productType">{{item.product_type}}</label>
+                        <hr>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+            <input type="submit" class="btn btn-sm btn-primary" value="Apply">
+        </div>
+
+        
+
+        </form>
+
+        <div class="col-lg-9">            
+            <div class="messages">
+                {% for message in messages %} 
+                <div class="alert alert-warning" role="alert">
+                    {{message}}
+                  </div>
+                {% endfor %}
+             </div>   
+
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-inline shop-top-menu pb-3 pt-1">
+                        <li class="list-inline-item">
+                            <a class="h3 text-dark text-decoration-none mr-3" href="{% url 'productspage'%}">All
+                                Products</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6 pb-4">
+                    <div class="d-flex">
+                        <select class="form-control">
+                            <option>Relevance</option>
+                            <option>Popularity</option>
+                            <option><a href="{% url 'product-sortybyprice-ascending' %}">Price : Low to High</a>
+                            </option>
+                            <option>Price : High to Low</option>
+                            <option>Newest First</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-
-            <div class="col-lg-9">
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-inline shop-top-menu pb-3 pt-1">
-                            <li class="list-inline-item">
-                                <a class="h3 text-dark text-decoration-none mr-3" href="{% url 'productspage'%}">All Products</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6 pb-4">
-                        <div class="d-flex">
-                            <select class="form-control">
-                                <option>Relevance</option>
-                                <option>Popularity</option>
-                                <option><a href="{% url 'product-sortybyprice-ascending' %}">Price : Low to High</a></option>
-                                <option>Price : High to Low</option>
-                                <option>Newest First</option>
-                            </select>
+            
+            <div class="row">
+                {% for item in product %}
+                <div class="col-md-4">
+                    <input type="hidden" name="id" value="{{item.product_id}}">
+                    <div class="card mb-4 product-wap rounded-0">
+                        <div class="card rounded-0">
+                            {% if item.main_image %}
+                            <img class="card-img rounded-0 img-fluid" src="{{item.main_image.url}}"
+                                style="width:260px;">
+                            {% else %}
+                            {{'NO IMAGE'}}
+                            {% endif %}
+                            <div
+                                class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                <ul class="list-unstyled">
+                                    <li><a class="btn btn-success text-white" href="shop-single.html"><i
+                                                class="far fa-heart"></i></a></li>
+                                    <li><a class="btn btn-success text-white mt-2"
+                                            href="{% url 'itempage' item.product_id %}"><i class="far fa-eye"></i></a>
+                                    </li>
+                                    <li><button class="btn btn-success text-white mt-2 btn-lg"><i
+                                                class="fas fa-cart-plus"></i></button></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="messages">
-                    {% for message in messages %}
-
-                    <div class="alert alert-danger" role="alert">
-                        {{message}}
-                      </div>
-                    
-                    {% endfor %}
-                </div>
-
-
-                <div class="row">
-                    {% for item in product %}
-                    <div class="col-md-4">
-                        <input type="hidden" name="id" value="{{item.product_id}}">
-                        <div class="card mb-4 product-wap rounded-0" >
-                            <div class="card rounded-0">
-                                {% if item.main_image %}
-                                <img class="card-img rounded-0 img-fluid" src="{{item.main_image.url}}" style="width:260px;">
+                        <div class="card-body">
+                            {% if item.generation == None %}
+                            <a href="shop-single.html" class="h3 text-decoration-none">
+                                {{item.product_name}} {{item.series}}
+                            </a>
+                            {% elif item.series == None %}
+                            <a href="shop-single.html" class="h3 text-decoration-none">
+                                {{item.product_name}} {{item.generation}}
+                            </a>
+                            {% else %}
+                            <a href="shop-single.html" class="h3 text-decoration-none">
+                                {{item.product_name}} {{item.generation}} {{item.series}}
+                            </a>
+                            {% endif %}
+                            <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
+                                {% if item.internal_storage == None %}
+                                <li>{{item.color}}</li>
                                 {% else %}
-                                {{'NO IMAGE'}}
+                                <li>{{item.color}} {{item.internal_storage}}</li>
                                 {% endif %}
-                                <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
-                                    <ul class="list-unstyled">
-                                        <li><a class="btn btn-success text-white" href="shop-single.html"><i class="far fa-heart"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'itempage' item.product_id %}"><i class="far fa-eye"></i></a></li>
-                                        <li><button class="btn btn-success text-white mt-2 btn-lg"><i class="fas fa-cart-plus"></i></button></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                {% if item.generation == None %}
-                                <a href="shop-single.html" class="h3 text-decoration-none">
-                                    {{item.product_name}} {{item.series}}
-                                </a>
-                               {% elif item.series == None %}
-                                <a href="shop-single.html" class="h3 text-decoration-none">
-                                    {{item.product_name}} {{item.generation}}
-                                </a>
-                                {% else %}
-                                <a href="shop-single.html" class="h3 text-decoration-none">
-                                    {{item.product_name}} {{item.generation}} {{item.series}}
-                                </a>
-                               {% endif %}
-                                <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
-                                    {% if item.internal_storage == None %}
-                                    <li>{{item.color}}</li>
-                                    {% else %}
-                                    <li>{{item.color}} {{item.internal_storage}}</li>
-                                    {% endif %}
-                                    <li class="pt-2">
-                                        <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
-                                        <span class="product-color-dot color-dot-blue float-left rounded-circle ml-1"></span>
-                                        <span class="product-color-dot color-dot-black float-left rounded-circle ml-1"></span>
-                                        <span class="product-color-dot color-dot-light float-left rounded-circle ml-1"></span>
-                                        <span class="product-color-dot color-dot-green float-left rounded-circle ml-1"></span>
-                                    </li>
-                                </ul>
-                                <ul class="list-unstyled d-flex justify-content-center mb-1">
-                                    <li>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-muted fa fa-star"></i>
-                                        <i class="text-muted fa fa-star"></i>
-                                    </li>
-                                </ul>
-                                <p class="text-center mb-0">₹{{item.price}}.00/-</p>
-                            </div>
+                                <li class="pt-2">
+                                    <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
+                                    <span
+                                        class="product-color-dot color-dot-blue float-left rounded-circle ml-1"></span>
+                                    <span
+                                        class="product-color-dot color-dot-black float-left rounded-circle ml-1"></span>
+                                    <span
+                                        class="product-color-dot color-dot-light float-left rounded-circle ml-1"></span>
+                                    <span
+                                        class="product-color-dot color-dot-green float-left rounded-circle ml-1"></span>
+                                </li>
+                            </ul>
+                            <ul class="list-unstyled d-flex justify-content-center mb-1">
+                                <li>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-warning fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                    <i class="text-muted fa fa-star"></i>
+                                </li>
+                            </ul>
+                            <p class="text-center mb-0">₹{{item.price}}.00/-</p>
                         </div>
                     </div>
-                    {% endfor %}
-                    
+                </div>
+                {% endfor %}
+
                 <div class="row">
                     <ul class="pagination pagination-lg justify-content-end">
                         <li class="page-item disabled">
-                            <a class="page-link active rounded-0 mr-3 shadow-sm border-top-0 border-left-0" href="#" tabindex="-1">1</a>
+                            <a class="page-link active rounded-0 mr-3 shadow-sm border-top-0 border-left-0" href="#"
+                                tabindex="-1">1</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link rounded-0 mr-3 shadow-sm border-top-0 border-left-0 text-dark" href="#">2</a>
+                            <a class="page-link rounded-0 mr-3 shadow-sm border-top-0 border-left-0 text-dark"
+                                href="#">2</a>
                         </li>
                         <li class="page-item">
                             <a class="page-link rounded-0 shadow-sm border-top-0 border-left-0 text-dark" href="#">3</a>
@@ -177,20 +183,47 @@
                 <div class="col-lg-6 m-auto">
                     <h1 class="h1">Our Brands</h1>
                     <p>
-                        We are certified sellers of Apple Products and would love to serve our customers at a price that won't break their pockets.
+                        We are certified sellers of Apple Products and would love to serve our customers at a price that
+                        won't break their pockets.
                     </p>
                 </div>
                 <div class="col-lg-6 m-auto tempaltemo-carousel">
-                            <a href="#"><img class="img-fluid brand-img" src="{% static 'images/home/apple.png' %}" alt="Brand Logo"></a>
+                    <a href="#"><img class="img-fluid brand-img" src="{% static 'images/home/apple.png' %}"
+                            alt="Brand Logo"></a>
                 </div>
-                </div>
-                                
             </div>
-            </div>
-            </div>
-            </div>
+
         </div>
-    </section>
-    <!--End Brands-->
-    <script src="{% static 'js/home/custom.js' %}"></script>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!--End Brands-->
+
+{% block scripts %}
+<script src="{% static 'js/home/custom.js' %}"></script>
+
+<script>
+    // the selector will match all input controls of type :checkbox
+// and attach a click event handler 
+$("input:checkbox").on('click', function() {
+  // in the handler, 'this' refers to the box clicked on
+  var $box = $(this);
+  if ($box.is(":checked")) {
+    // the name of the box is retrieved using the .attr() method
+    // as it is assumed and expected to be immutable
+    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+    // the checked state of the group/box on the other hand will change
+    // and the current value is retrieved using .prop() method
+    $(group).prop("checked", false);
+    $box.prop("checked", true);
+  } else {
+    $box.prop("checked", false);
+  }
+});
+</script>
+
+{% endblock %}
+
 {% endblock %}
