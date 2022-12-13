@@ -247,6 +247,15 @@ def products(request):
     subCategory = ProductType.objects.all()
     
     if request.method == 'POST':
+
+        #range = 
+        
+        if 'rangeprice' in request.POST:
+            print("Range is",request.POST['rangeprice'])
+
+        else:
+            pass    
+
         if 'condition' in request.POST and 'productType' not in request.POST:
             condition_in = request.POST['condition']
             print("Condition is", condition_in)
@@ -332,26 +341,6 @@ def product_type_filter(request,typeid):
     context = {'product': product, 'category': category,
         'subCategory': subCategory}
     return render(request, 'home/shop.html', context)
-
-
-#new condition, pass product type id
-def catpro_filter(request,protype_id):
-    product = Products.objects.filter(condition=id)  
-    category = Categories.objects.all()
-    subCategory = ProductType.objects.all()
-    context = {'product': product, 'category': category,
-        'subCategory': subCategory}
-    return render(request, 'home/shop.html', context)
-
-#product type, pass condition 
-def procat_filter(request,protype_id):
-    product = Products.objects.filter(product_type=protype_id)  
-    category = Categories.objects.all()
-    subCategory = ProductType.objects.all()
-    context = {'product': product, 'category': category,
-        'subCategory': subCategory}
-    return render(request, 'home/shop.html', context)
-
 
 #Sort Products 
 #price 
@@ -910,3 +899,4 @@ def viewInvoice(request,tracking_no):
 
     pdf = render_to_pdf('user/invoice.html', data)
     return HttpResponse(pdf, content_type='application/pdf')
+

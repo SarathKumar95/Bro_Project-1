@@ -7,48 +7,44 @@
 {% load static %}
 
 
-
 <!-- Start Content -->
 <div class="container py-5">
     <div class="row">
 
         <div class="col-lg-3">
-            <h1 class="h2 pb-4">Categories</h1>
+            <h4 class="h4 pb-4">Filter By:</h4>
             <ul class="list-unstyled templatemo-accordion">
-                <li class="pb-3">
-                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
-                        Condition
-                        <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
-                    </a>
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        <ul class="collapse show list-unstyled pl-3">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                <li>
+                    <h5 class="p-1 border-bottom">Condition</h5>
+                    <div class="pb-4">
+                        <ul>
                             {% for item in category %}
-                            <input type="checkbox" name="condition" value="{{item.condition}}">
-                            <label for="condition">{{item.condition}}</label>
-                            <hr>
+                            <li style="list-style:none;">
+                                <input type="checkbox" name="condition" value="{{item.condition}}">
+                                <label for="condition"><h6>{{item.condition}}</h6></label>
+                            </li>
                             {% endfor %}
                         </ul>
+                    </div>
                 </li>
-                <li class="pb-3">
-                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
-                        Product
-                        <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
-                    </a>
-                    <ul id="collapseThree" class="collapse list-unstyled pl-3">
-                        {% for item in subCategory %}
-                        <input type="checkbox" name="productType" value="{{item.product_type}}">
-                        <label for="productType">{{item.product_type}}</label>
-                        <hr>
-                        {% endfor %}
-                    </ul>
+                <li>
+                    <h5 class="p-1 border-bottom">Product Type</h5>
+                    <div>
+                        <ul>
+                            {% for item in subCategory %}
+                            <li style="list-style:none;">
+                                <input type="checkbox" name="productType" value="{{item.product_type}}">
+                                <label for="productType">{{item.product_type}}</label>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </li>
             </ul>
-            <input type="submit" class="btn btn-sm btn-primary" value="Apply">
+            <input type="submit" class="btn btn-sm btn-dark" value="Apply Filters">
         </div>
-
-        
-
         </form>
 
         <div class="col-lg-9">            
@@ -82,7 +78,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="row">
                 {% for item in product %}
                 <div class="col-md-4">
@@ -175,35 +171,12 @@
         </div>
     </div>
     <!-- End Content -->
-
-    <!-- Start Brands -->
-    <section class="bg-light py-5">
-        <div class="container my-4">
-            <div class="row d-flex py-3">
-                <div class="col-lg-6 m-auto">
-                    <h1 class="h1">Our Brands</h1>
-                    <p>
-                        We are certified sellers of Apple Products and would love to serve our customers at a price that
-                        won't break their pockets.
-                    </p>
-                </div>
-                <div class="col-lg-6 m-auto tempaltemo-carousel">
-                    <a href="#"><img class="img-fluid brand-img" src="{% static 'images/home/apple.png' %}"
-                            alt="Brand Logo"></a>
-                </div>
-            </div>
-
-        </div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!--End Brands-->
+    </div>
 
 {% block scripts %}
 <script src="{% static 'js/home/custom.js' %}"></script>
-
+<script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
 <script>
     // the selector will match all input controls of type :checkbox
 // and attach a click event handler 
@@ -222,6 +195,7 @@ $("input:checkbox").on('click', function() {
     $box.prop("checked", false);
   }
 });
+
 </script>
 
 {% endblock %}
