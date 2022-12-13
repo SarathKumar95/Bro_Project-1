@@ -18,71 +18,81 @@
     </div>
 
     <div>
-
-        <table class="table">
-            <tr>
-                <th class="text-primary">Product Name</th>
-                <th class="text-primary">Product Price</th> 
-                <th class="text-primary">Ordered Quantity</th>
-                <th class="text-primary">Item Status</th>
-                <th class="text-primary">Actions</th>
-            </tr>
-
+        <div class="bg-light text-center rounded p-4">
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col">Order Item ID</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
             {% for item in orderitem %}
-               {% csrf_token %}
-            <tr>
-                {% if item.product.generation and item.product.series  %}
-                <td class="text-dark">
-                    {{item.product.product_name}} {{item.product.generation}} {{item.product.series}}
-                </td class="text-dark">
-                {% elif item.product.generation == None %}
-                <td class="text-dark">
-                    {{item.product.product_name}} {{item.product.series}}
-                </td>
-                {% elif item.product.series == None %}
-                <td class="text-dark">
-                    {{item.product.product_name}} {{item.product.generation}}
-                </td>
-                {% else %}
-                <td class="text-dark">
-                    {{item.product.product_name}}
-                </td>
-                {% endif %}
-                <td class="text-dark">{{item.product.price}}</td>
-                <td class="text-dark">{{item.quantity}}</td>
-                <td class="text-dark">{{item.item_status}}</td>
-                <td class="text-dark">
-                    <div class="d-flex ">
-                        <!---
-                        <div class="mb-2">
-                            <input type="image" src="{% static 'images/cancel.png' %}" title="Cancel Order Item" onclick="cancelOrderItem()" id="cancelOrderItem-btn"
-                            data-url="{% url 'orderitem-cancel' item.id %}" value="{{item.id}}" style="height:25px;">   
-                        </div>                        
+            {% csrf_token %}
+         
+         <tr>
+            <td>{{item.id}}</td>   
+    
+             {% if item.product.generation and item.product.series  %}
+             <td class="text-dark">
+                 {{item.product.product_name}} {{item.product.generation}} {{item.product.series}}
+             </td class="text-dark">
+             {% elif item.product.generation == None %}
+             <td class="text-dark">
+                 {{item.product.product_name}} {{item.product.series}}
+             </td>
+             {% elif item.product.series == None %}
+             <td class="text-dark">
+                 {{item.product.product_name}} {{item.product.generation}}
+             </td>
+             {% else %}
+             <td class="text-dark">
+                 {{item.product.product_name}}
+             </td>
+             {% endif %}
+             <td class="text-dark">{{item.product.price}}</td>
+             <td class="text-dark">{{item.quantity}}</td>
+             <td class="text-dark">{{item.item_status}}</td>
+             <td class="text-dark">
+                 <div class="d-flex ">
+                     <!---
+                     <div class="mb-2">
+                         <input type="image" src="{% static 'images/cancel.png' %}" title="Cancel Order Item" onclick="cancelOrderItem()" id="cancelOrderItem-btn"
+                         data-url="{% url 'orderitem-cancel' item.id %}" value="{{item.id}}" style="height:25px;">   
+                     </div>                        
 
-                        -->
-                                                
-                        <div class="mb-2">
-                            <a href="{% url 'orderitem-edit' item.id %}">
-                                <img src="{% static 'images/edit.png' %}" alt="editbutton" title="Edit Order Item" style="height:25px;">
-                              </a>    
-                        </div>
-                        
-                        <div class="mb-2">
-                            <input type="image" src="{% static 'images/delete.png' %}" title="Delete Order Item" onclick="deleteOrderItem()" id="deleteOrderItem-btn"
-                            data-url="{% url 'orderitem-delete' item.id %}" value="{{item.id}}" style="height:25px;">
-                        </div>
+                     -->
+                                             
+                     <div class="mb-2">
+                         <a href="{% url 'orderitem-edit' item.id %}">
+                             <img src="{% static 'images/edit.png' %}" alt="editbutton" title="Edit Order Item" style="height:25px;">
+                           </a>    
+                     </div>
+                     
+                     <div class="mb-2">
+                         <input type="image" src="{% static 'images/delete.png' %}" title="Delete Order Item" onclick="deleteOrderItem()" id="deleteOrderItem-btn"
+                         data-url="{% url 'orderitem-delete' item.id %}" value="{{item.id}}" style="height:25px;">
+                     </div>
 
-                    </div>
-                    
-                </td>  
-                
-            </tr>    
+                 </div>
+                 
+             </td>  
+             
+         </tr>    
 
-            {% endfor %}
-        </table>
+         {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
-
 
 
 

@@ -12,7 +12,6 @@ from category.models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from cart.models import *
 from category.forms import *
-import razorpay
 from ipocket.settings import RAZOR_KEY_ID, RAZOR_KEY_SECRET
 from django.views.decorators.cache import cache_control, never_cache
 from django.template.loader import get_template
@@ -22,6 +21,7 @@ from django.views.generic import View
 from twilio.rest import Client 
 from ipocket.settings import account_sid,auth_token 
 
+import razorpay
 
 # Create your views here.
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
@@ -692,7 +692,7 @@ def OrderPage(request,tracking_no):
 
 
 def order_manager(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('created_at')
     context = {'orders':orders}
     return render(request,'owner/ordermanager.html',context)    
 

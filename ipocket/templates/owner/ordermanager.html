@@ -21,70 +21,72 @@
 
     <div class="message-wrapper text-center mb-2">
         {% for message in messages %}  
-            <p>{{message}}</p>
+        <div class="alert alert-warning" role="alert">
+            {{message}}
+          </div>
         {% endfor %}
     </div>
 
-    <div>
-        <table class="table">
-            <tr>
-                <th class="text-primary">Tracking No</th>
-                <th class="text-primary">Order Date</th> 
-                <th class="text-primary">Ordered by</th>
-                <th class="text-primary">Order Status</th>
-                <th class="text-primary">Total</th>
-                <th class="text-primary">Tax</th>
-                <th class="text-primary">Shipping Charges</th>
-                <th class="text-primary">Grand Total</th>
-                <th class="text-primary">Payment Mode</th>
-                <th class="text-primary">Actions</th>
-            </tr>
-
-            {% for item in orders %}
-
-            <tr>
-                <td class="text-dark">
-                    <strong>{{item.tracking_no}}</strong>
-                </td>
-                <td class="text-dark">{{item.created_at}}</td>
-                <td class="text-dark">{{item.email}}</td>
-                <td class="text-dark">{{item.status}}</td>
-                <td class="text-dark">{{item.price_before_tax}}</td>
-                <td class="text-dark">{{item.tax_amount}}</td>
-                <td class="text-dark">{{item.ship_amount}}</td>
-                <td class="text-dark">{{item.total_price}}</td>
-                <td class="text-dark">{{item.payment_mode}}</td>
-                <td class="text-dark">
-                    <div class="d-flex justify-content-between">
-                        <div class="mb-2">
-                            <a href="{% url 'order-edit' item.id %}">
-                                <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
-                              </a>    
-                        </div>
-
-                        <div class="mb-2">
-                            
-                        <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrder()" id="deleteOrder-btn"
-                            data-url="{% url 'order-delete' item.id %}" style="height:25px;">
-                        </div>
-
-                        <div class="mb-2">
-                            <a href="{% url 'order-info' item.id %}">
-                                <img src="{% static 'images/info.png' %}" alt="infobutton" style="height:25px;">
-                              </a>    
-                        </div>
-
-                    </div>
-                    
-                </td>  
-                
-            </tr>    
-
-            {% endfor %}
-        </table>
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-light text-center rounded p-4">
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col">Tracking No</th>
+                            <th scope="col">Order Date</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Tax</th>
+                            <th scope="col">Shipping Charges</th>
+                            <th scope="col">Grand Total</th>
+                            <th scope="col">Payment Mode</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in orders %}
+                        <tr>
+                            <td>{{item.tracking_no}}</td>
+                            <td >{{item.created_at.date}}</td>
+                            <td>{{item.email}}</td>
+                            <td>₹{{item.price_before_tax}}</td>
+                            <td>₹{{item.tax_amount}}</td>
+                            <td>₹{{item.ship_amount}}</td>
+                            <td>₹{{item.total_price}}</td>
+                            <td>{{item.payment_mode}}</td>
+                            <td>{{item.status}}</td>
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                    <div class="mb-2">
+                                        <a href="{% url 'order-edit' item.id %}" title="Edit Order">
+                                            <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                                          </a>    
+                                    </div>
+            
+                                    <div class="mb-2">
+                                        
+                                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrder()" id="deleteOrder-btn"
+                                        data-url="{% url 'order-delete' item.id %}" style="height:25px;" title="Delete Order">
+                                    </div>
+            
+                                    <div class="mb-2">
+                                        <a href="{% url 'order-info' item.id %}" title="Order Items">
+                                            <img src="{% static 'images/info.png' %}" alt="infobutton" style="height:25px;">
+                                          </a>     
+                                    </div>
+            
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-
-</div>
-
+    
 {% endblock %}
