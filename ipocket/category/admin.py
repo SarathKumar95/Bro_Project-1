@@ -7,4 +7,5 @@ admin.site.register(Categories)
 admin.site.register(ProductType)
 admin.site.register(Order)
 admin.site.register(OrderItem)
+admin.site.register(Coupon)
 

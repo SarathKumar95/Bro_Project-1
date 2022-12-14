@@ -12,10 +12,11 @@
     <div class="page-title text-center mt-3 mb-5">
         <h5>Edit Product</h5>
     </div>
-    
     <div class="message-wrapper text-center mb-2">
         {% for message in messages %}  
+        <div class="alert alert-warning" role="alert">
             {{message}}
+          </div>
         {% endfor %}
     </div>
 

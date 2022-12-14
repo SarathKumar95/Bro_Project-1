@@ -20,12 +20,14 @@
     <div class="page-title text-center mb-3">
         <h5>Edit Order</h5>
     </div>
-    
     <div class="message-wrapper text-center mb-2">
         {% for message in messages %}  
+        <div class="alert alert-warning" role="alert">
             {{message}}
+          </div>
         {% endfor %}
     </div>
+  
         <div class="form-wrapper ms-3 me-3">
             <form enctype="multipart/form-data" action="" method="POST">
                 {% csrf_token %}

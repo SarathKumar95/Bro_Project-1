@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from cart.models import *
 from category.forms import *
 from ipocket.settings import RAZOR_KEY_ID, RAZOR_KEY_SECRET
-from django.views.decorators.cache import cache_control, never_cache
+from django.views.decorators.cache import cache_control
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
@@ -29,8 +29,10 @@ client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
 # global vars here
 
-orderid = 0;
-
+orderid = 0
+grandTotal_after_discount = 0
+coupon_check = 0
+coupon_discount = 0
 
 def guest(request):
     guest_user = request.session.session_key
@@ -548,129 +550,7 @@ def cart_delete(request):
     return redirect('cart-list')        
 
 
-# Checkout page view 
-
-
-@cache_control(max_age=4000,no_cache=True)
-def checkout(request):
-    if 'username' not in request.session:
-        messages.info(request,"Please Login")
-        return redirect('signin')
-        
-    user_in = request.session['username']
-    cart = Cart.objects.filter(user = user_in)
-    user_filt = MyUser.objects.filter(email=user_in) 
-
-
-    print("Cart in checkout is ", cart) 
-
-    
-    sub_total = 0
-    tax = 0
-    coupon = 0
-    for item in cart:
-        Item_total = item.product.price * item.product_qty
-        sub_total+=Item_total
-    
-    if sub_total <= 100000:
-        shipping = 150
-        
-    else:
-        shipping = 0       
-        tax = 5
-    
-
-    grand_total_with_tax = sub_total * tax/100
-    grand_total = sub_total + shipping + grand_total_with_tax
-
-    print("Sub total is",sub_total)
-    print("Shipping is",shipping)
-    print("Tax is",tax) 
-    print("Tax amount is",grand_total_with_tax)
-    print("Coupon is",coupon)
-    print("Grand total is",grand_total) 
-    
-    if request.method == 'POST':
-        
-        if cart.count() == 0:
-            messages.info( request, "Cannot create an order as the cart is empty!")
-             
-        else:
-        
-            neworder = Order()
-            neworder.user = request.session['username']
-            neworder.first_name = request.POST['fname']
-            neworder.last_name = request.POST['lname']
-            neworder.email = request.POST['email']
-            neworder.phone = request.POST['phno'] 
-            neworder.address = request.POST['add'] 
-            neworder.city = request.POST['city']
-            neworder.state = request.POST['state'] 
-            neworder.pincode = request.POST['zip']
-            neworder.total_price = grand_total
-            neworder.price_before_tax = sub_total 
-            neworder.tax_amount = grand_total_with_tax
-            neworder.ship_amount = shipping
-            neworder.coupon_amount = coupon
-            neworder.payment_mode = request.POST['paymentMethod']
-
-
-            print("The payment mode used is ", request.POST['paymentMethod'])
-
-
-            track_no = 'IPOrder' + str(random.randint(111111,999999)) 
-            while Order.objects.filter(tracking_no=track_no) is None:
-                track_no = 'IPOrder' + str(random.randint(111111,999999))
-
-            neworder.tracking_no = track_no
-            neworder.save() 
-
-            neworderItems = Cart.objects.filter(user=user_in)
-
-            print("ITEMS IN THE CART ARE",neworderItems)
-
-            print("NO OF ITEMS IN CART",neworderItems.count())
-
-
-            for item in neworderItems:
-                OrderItem.objects.create(
-                    order = neworder,
-                    product=item.product,
-                    price=item.product.price,
-                    quantity=item.product_qty
-
-                )
-
-                
-                print("Item added is",item.product.slug)
-                print("Item price added is",item.product.price)
-                print("Item qty added is",item.product_qty)
-
-
-                orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
-                
-                print("Ordered product is",orderproduct.slug,"and quantity is", orderproduct.quantity) 
-                orderproduct.quantity -= item.product_qty 
-                orderproduct.save()
-                print("Ordered product quantity after ordering is", orderproduct.quantity) 
-
-                
-                cart = Cart.objects.filter(user=user_in) 
-                cart.delete()     
-                
-            if request.POST['paymentMethod'] != "Cash On Delivery":
-                return JsonResponse({"track_no" : track_no })
-
-            else:
-                return redirect('order-page',tracking_no=neworder.tracking_no)     
-            
-    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID,}    
-    return render(request,'home/checkout.html',context) 
-
-
 # Order page
-
-
 def OrderPage(request,tracking_no):
 
     print("here in orderpage!")
@@ -900,3 +780,190 @@ def viewInvoice(request,tracking_no):
     pdf = render_to_pdf('user/invoice.html', data)
     return HttpResponse(pdf, content_type='application/pdf')
 
+
+
+
+def coupon_post(request):
+    
+    if request.method == 'POST':
+        grandTotal=request.POST['grandTotal']
+        coupon=request.POST['coupon'] 
+        print("Coupon is ", coupon)
+        print("Total is", grandTotal)
+        
+        global coupon_check
+        coupon_check=Coupon.objects.filter(coupon_code=coupon).first()
+        
+        if coupon_check:
+            print("STATUS IS", coupon_check.is_expired)
+            
+            if coupon_check.is_expired == False:
+                print("Inside false")
+
+                coupon_perc=coupon_check.discount_percentage/100
+                global coupon_discount
+                coupon_discount= float(grandTotal) * coupon_perc 
+                
+                global grandTotal_after_discount               
+                grandTotal_after_discount=float(grandTotal)-coupon_discount
+
+                print("Coup perc is",coupon_perc)
+
+                print("Price to be discounted is",coupon_discount)
+
+                print("Grand Total is",grandTotal_after_discount)
+                
+
+                cart = Cart.objects.filter(user=request.session['username'])
+
+                print("Cart is ", cart)
+
+                #json_data = 
+                return JsonResponse({'status':"Coupon Applied", 'grandTotal': grandTotal_after_discount})
+    
+            elif coupon_check.is_expired == True:
+                return JsonResponse({'status':"Sorry,this coupon seems to be expired!"}) 
+
+        else:
+            return JsonResponse({'status':"Invalid Coupon"})
+    
+
+        return redirect('checkout')        
+
+
+
+
+@cache_control(no_cache=True)
+def checkout(request):
+    if 'username' not in request.session:
+        messages.info(request,"Please Login")
+        return redirect('signin')
+        
+    user_in = request.session['username']
+    cart = Cart.objects.filter(user = user_in)
+    user_filt = MyUser.objects.filter(email=user_in) 
+
+
+    print("Cart in checkout is ", cart) 
+
+    sub_total = 0
+    tax = 0
+
+    if coupon_check:
+        coupon = coupon_check
+    
+    else:    
+        coupon = 0
+    
+    
+    for item in cart:
+        Item_total = item.product.price * item.product_qty
+        sub_total+=Item_total
+    
+    if sub_total <= 100000:
+        shipping = 150
+        
+    else:
+        shipping = 0       
+        tax = 5
+
+    
+    grand_total_with_tax = sub_total * tax/100
+    
+    
+    if grandTotal_after_discount:
+        print("Grand total", grandTotal_after_discount)
+        grand_total = grandTotal_after_discount
+    else:
+        print("No amount")
+        grand_total = sub_total + shipping + grand_total_with_tax
+
+
+    print("Sub total is",sub_total)
+    print("Shipping is",shipping)
+    print("Tax is",tax) 
+    print("Tax amount is",grand_total_with_tax)
+    print("Coupon is",coupon)
+    print("Grand total is",grand_total) 
+    
+    if request.method == 'POST':
+        
+        if cart.count() == 0:
+            messages.info( request, "Cannot create an order as the cart is empty!")
+             
+        else:
+        
+            neworder = Order()
+            neworder.user = request.session['username']
+            neworder.first_name = request.POST['fname']
+            neworder.last_name = request.POST['lname']
+            neworder.email = request.POST['email']
+            neworder.phone = request.POST['phno'] 
+            neworder.address = request.POST['add'] 
+            neworder.city = request.POST['city']
+            neworder.state = request.POST['state'] 
+            neworder.pincode = request.POST['zip']
+            neworder.total_price = grand_total
+            neworder.price_before_tax = sub_total 
+            neworder.tax_amount = grand_total_with_tax
+            neworder.ship_amount = shipping
+            
+            if coupon_discount:
+                neworder.coupon_amount = coupon_discount
+            else:
+                neworder.coupon_amount = 0    
+            
+            neworder.payment_mode = request.POST['paymentMethod']
+
+
+            print("The payment mode used is ", request.POST['paymentMethod'])
+
+
+            track_no = 'IPOrder' + str(random.randint(111111,999999)) 
+            while Order.objects.filter(tracking_no=track_no) is None:
+                track_no = 'IPOrder' + str(random.randint(111111,999999))
+
+            neworder.tracking_no = track_no
+            neworder.save() 
+
+            neworderItems = Cart.objects.filter(user=user_in)
+
+            print("ITEMS IN THE CART ARE",neworderItems)
+
+            print("NO OF ITEMS IN CART",neworderItems.count())
+
+
+            for item in neworderItems:
+                OrderItem.objects.create(
+                    order = neworder,
+                    product=item.product,
+                    price=item.product.price,
+                    quantity=item.product_qty
+
+                )
+
+                
+                print("Item added is",item.product.slug)
+                print("Item price added is",item.product.price)
+                print("Item qty added is",item.product_qty)
+
+
+                orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
+                
+                print("Ordered product is",orderproduct.slug,"and quantity is", orderproduct.quantity) 
+                orderproduct.quantity -= item.product_qty 
+                orderproduct.save()
+                print("Ordered product quantity after ordering is", orderproduct.quantity) 
+
+                
+                cart = Cart.objects.filter(user=user_in) 
+                cart.delete()     
+                
+            if request.POST['paymentMethod'] != "Cash On Delivery":
+                return JsonResponse({"track_no" : track_no })
+
+            else:
+                return redirect('order-page',tracking_no=neworder.tracking_no)     
+            
+    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID, 'coupon':coupon, 'coupon_discount':coupon_discount}    
+    return render(request,'home/checkout.html',context) 

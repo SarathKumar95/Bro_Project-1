@@ -1,5 +1,5 @@
-from django.urls import path,include
-from . import views
+from django.urls import path
+from accounts import views
 
 urlpatterns = [
     path('',views.home_page, name='home'),
@@ -41,4 +41,5 @@ urlpatterns = [
     path('invoice/<str:tracking_no>', views.viewInvoice, name='view-invoice'),
     path('signinOTP',views.signinOTP, name='signinOTP'),
     path('VerifyOTP/+<int:phone>',views.verifyOTP, name='otp-verify'),
+    path('coupon_post',views.coupon_post, name='coupon-post'),
 ]

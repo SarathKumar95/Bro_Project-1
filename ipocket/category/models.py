@@ -1,6 +1,7 @@
 from django.db import models
 
 from accounts.models import MyUser
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -71,6 +72,20 @@ class Products(models.Model):
         return '{} - {} - {}'.format(self.product_name, self.generation, self.series) 
 
 
+
+
+class Coupon(models.Model):
+    coupon_id=models.AutoField(primary_key=True)
+    coupon_code=models.CharField(max_length=100)
+    valid_till=models.DateField(default=now) 
+    is_expired=models.BooleanField(default=False)
+    discount_percentage = models.IntegerField()
+    minimum_amount=models.IntegerField()         
+
+    def __str__(self):
+        return '{}'.format(self.coupon_code)
+
+
 class Order(models.Model):
     user = models.CharField(max_length=150,null=True)
     first_name = models.CharField(max_length=150,null=False) 
@@ -100,7 +115,7 @@ class Order(models.Model):
     tracking_no = models.CharField(max_length=150,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True) 
-
+    coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.user,str(self.tracking_no) )
@@ -122,3 +137,4 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.order.user,self.order.tracking_no)
+
