@@ -838,9 +838,10 @@ def coupon_post(request):
                     print("Grand Total is",grandTotal_after_discount)
 
                     cart.coupon_applied=coupon
+                    cart.coupon_discount=coupon_discount
                     cart.save()
 
-                    print("Coupon is passed to cart", cart.coupon_applied)
+                    print("Coupon is passed to cart", cart.coupon_applied, "Coupon discount passed to cart", cart.coupon_discount )
                 
                     return JsonResponse({'status':"Coupon Applied", 'grandTotal': grandTotal_after_discount})
     
@@ -875,11 +876,16 @@ def checkout(request):
 
     
     coupon = '' 
-    
+
+
+    cart_to_html=Cart.objects.filter(user=user_in).first()
+
+    print("Cart coupon status is",cart_to_html.coupon_applied)    
+
     
     for item in cart:
         Item_total = item.product.price * item.product_qty
-        sub_total+=Item_total
+        sub_total+=Item_total 
     
     if sub_total <= 100000:
         shipping = 150
@@ -986,5 +992,5 @@ def checkout(request):
             else:
                 return redirect('order-page',tracking_no=neworder.tracking_no)     
             
-    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID, 'coupon':coupon, 'coupon_discount':coupon_discount}    
+    context = {'user_filt':user_filt,'cart':cart,'cart_to_html':cart_to_html,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID}    
     return render(request,'home/checkout.html',context) 

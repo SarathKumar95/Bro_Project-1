@@ -11,7 +11,7 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     session_id = models.CharField(max_length=255,null=True,blank=True)
     coupon_applied=models.CharField(max_length=100,null=True,blank=True)
-
+    coupon_discount=models.FloatField(null=True,blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.user, self.id)
