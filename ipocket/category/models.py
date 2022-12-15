@@ -82,7 +82,7 @@ class Coupon(models.Model):
     discount_percentage = models.IntegerField()
     minimum_amount=models.IntegerField()         
     maximum_amount=models.IntegerField(default=90000) 
-
+    
 
     def __str__(self):
         return '{}'.format(self.coupon_code)

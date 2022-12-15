@@ -787,34 +787,41 @@ def viewInvoice(request,tracking_no):
 
 
 def coupon_post(request):
-
     if request.method == 'POST':
         grandTotal= request.POST['grandTotal']
         coupon=request.POST['coupon'] 
 
         print("Type grand", type(grandTotal))
         
+        cart=Cart.objects.filter(user=request.session['username']).first()
+
+        print("Cart coupon is", cart.coupon_applied)
+
         global coupon_check
         coupon_check=Coupon.objects.filter(coupon_code=coupon).first()
         
+        print("Coupon applied is", coupon_check)
         
 
-        int_grand = int(grandTotal) 
+        point_grand = float(grandTotal) 
 
 
-        print("Type x is", type(int_grand))
+        print("Type x is", type(point_grand))
 
         if coupon_check:
             print("STATUS IS", coupon_check.is_expired)
             
-            if coupon_check.is_expired == False:
+            if cart.coupon_applied == coupon:
+                return JsonResponse({'status':"Coupon Already Applied!"})
 
-                if int_grand < coupon_check.minimum_amount:
-                    return JsonResponse({'status':"Grand Total less than the required amount!"})
+            elif coupon_check.is_expired == False:
+
+                if point_grand < coupon_check.minimum_amount:
+                    return JsonResponse({'status':"Add items worth "+str(coupon_check.minimum_amount - point_grand)+" to avail this coupon"})
             
 
-                elif int_grand > coupon_check.maximum_amount:
-                         return JsonResponse({'status':"Grand Total greater than the maximum amount!"})
+                elif point_grand > coupon_check.maximum_amount:
+                         return JsonResponse({'status':"Coupon only applicable to orders below "+str(coupon_check.maximum_amount)})
                 else:
 
                     coupon_perc=coupon_check.discount_percentage/100
@@ -829,13 +836,12 @@ def coupon_post(request):
                     print("Price to be discounted is",coupon_discount)
 
                     print("Grand Total is",grandTotal_after_discount)
+
+                    cart.coupon_applied=coupon
+                    cart.save()
+
+                    print("Coupon is passed to cart", cart.coupon_applied)
                 
-
-                    cart = Cart.objects.filter(user=request.session['username'])
-
-                    print("Cart is ", cart)
-
-             
                     return JsonResponse({'status':"Coupon Applied", 'grandTotal': grandTotal_after_discount})
     
             elif coupon_check.is_expired == True:
@@ -867,11 +873,8 @@ def checkout(request):
     sub_total = 0
     tax = 0
 
-    if coupon_check:
-        coupon = coupon_check
     
-    else:    
-        coupon = ''
+    coupon = '' 
     
     
     for item in cart:
