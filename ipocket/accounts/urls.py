@@ -42,4 +42,5 @@ urlpatterns = [
     path('signinOTP',views.signinOTP, name='signinOTP'),
     path('VerifyOTP/+<int:phone>',views.verifyOTP, name='otp-verify'),
     path('coupon_post',views.coupon_post, name='coupon-post'),
+    path('coupon_delete',views.coupon_delete, name='coupon-delete'),
 ]

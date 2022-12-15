@@ -555,20 +555,21 @@ def cart_delete(request):
 
 # Order page
 def OrderPage(request,tracking_no):
-
-    print("here in orderpage!")
-
-
     order = Order.objects.filter(tracking_no=tracking_no).filter(user=request.session['username']).all()     
-    
-    print("Order is",order) 
-
     for item in order:
         orderid = item.id 
-        orderitem = OrderItem.objects.filter(order_id = orderid)
+        orderitem = OrderItem.objects.filter(order_id = orderid).all()
         print("Order item is", orderitem)
 
-    context = {'order':order, 'orderitem':orderitem}
+    orderTotal=0
+
+    for item in orderitem:
+        # print("Item name is", item.product.price)
+        orderTotal= orderTotal + item.product.price * item.quantity
+
+    print("Order item total is",orderTotal)        
+
+    context = {'order':order, 'orderitem':orderitem, 'orderTotal':orderTotal}
     return render(request,'home/orderplaced.html',context)
 
 
@@ -785,7 +786,7 @@ def viewInvoice(request,tracking_no):
 
 
 
-
+#Coupon management
 def coupon_post(request):
     if request.method == 'POST':
         grandTotal= request.POST['grandTotal']
@@ -839,11 +840,12 @@ def coupon_post(request):
 
                     cart.coupon_applied=coupon
                     cart.coupon_discount=coupon_discount
+                    cart.grand_total=grandTotal_after_discount
                     cart.save()
 
                     print("Coupon is passed to cart", cart.coupon_applied, "Coupon discount passed to cart", cart.coupon_discount )
                 
-                    return JsonResponse({'status':"Coupon Applied", 'grandTotal': grandTotal_after_discount})
+                    return JsonResponse({'status':"Coupon Applied"})
     
             elif coupon_check.is_expired == True:
                 return JsonResponse({'status':"Sorry,this coupon seems to be expired!"}) 
@@ -856,8 +858,12 @@ def coupon_post(request):
         return redirect('checkout')        
 
 
+def coupon_delete(request):
+    return HttpResponse("Hit")
 
 
+
+#Checkout
 @cache_control(no_cache=True)
 def checkout(request):
     if 'username' not in request.session:
@@ -873,10 +879,6 @@ def checkout(request):
 
     sub_total = 0
     tax = 0
-
-    
-    coupon = '' 
-
 
     cart_to_html=Cart.objects.filter(user=user_in).first()
 
@@ -898,19 +900,14 @@ def checkout(request):
     grand_total_with_tax = sub_total * tax/100
     
     
-    if grandTotal_after_discount:
-        print("Grand total", grandTotal_after_discount)
-        grand_total = grandTotal_after_discount
-    else:
-        print("No amount")
-        grand_total = sub_total + shipping + grand_total_with_tax
+    
+    grand_total = sub_total + shipping + grand_total_with_tax
 
 
     print("Sub total is",sub_total)
     print("Shipping is",shipping)
     print("Tax is",tax) 
     print("Tax amount is",grand_total_with_tax)
-    print("Coupon is",coupon)
     print("Grand total is",grand_total) 
     
     if request.method == 'POST':
@@ -930,17 +927,25 @@ def checkout(request):
             neworder.city = request.POST['city']
             neworder.state = request.POST['state'] 
             neworder.pincode = request.POST['zip']
-            neworder.total_price = grand_total
+            
+            if coupon_discount:
+                neworder.total_price = grand_total - coupon_discount
+                neworder.coupon_amount = coupon_discount
+            else:
+                neworder.total_price = grand_total
+                neworder.coupon_amount = 0    
+            
+
+            
             neworder.price_before_tax = sub_total 
             neworder.tax_amount = grand_total_with_tax
             neworder.ship_amount = shipping
-            
-            if coupon_discount:
-                neworder.coupon_amount = coupon_discount
-            else:
-                neworder.coupon_amount = 0    
-            
-            neworder.payment_mode = request.POST['paymentMethod']
+            neworder.payment_mode = request.POST['paymentMethod'] 
+
+
+            print("New order sub total is", neworder.price_before_tax) 
+
+
 
 
             print("The payment mode used is ", request.POST['paymentMethod'])
@@ -951,7 +956,10 @@ def checkout(request):
                 track_no = 'IPOrder' + str(random.randint(111111,999999))
 
             neworder.tracking_no = track_no
+            neworder.coupon=cart_to_html.coupon_applied
+            
             neworder.save() 
+
 
             neworderItems = Cart.objects.filter(user=user_in)
 
@@ -994,3 +1002,7 @@ def checkout(request):
             
     context = {'user_filt':user_filt,'cart':cart,'cart_to_html':cart_to_html,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID}    
     return render(request,'home/checkout.html',context) 
+
+
+
+

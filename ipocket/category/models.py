@@ -117,7 +117,7 @@ class Order(models.Model):
     tracking_no = models.CharField(max_length=150,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True) 
-    coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE,null=True,blank=True)
+    coupon=models.CharField(max_length=100, null=True,blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.user,str(self.tracking_no) )

@@ -98,11 +98,12 @@
 
           {% if cart_to_html.coupon_applied != None %}
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-            <strong> Coupon : </strong><span>{{cart_to_html.coupon_applied}}</span>
+            <strong> Coupon : </strong><span><button class="btn btn-sm btn-danger" style="position:relative; left:20px;">{{cart_to_html.coupon_applied}}<i class="fa-solid fa-x ms-3"></i>
+            </button></span>
           </li>
           {% else %}
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-            <strong> Coupon : </strong><span>{{"NO COUPON"}}</span>
+            <strong> Coupon : </strong><span>{{"NO COUPON APPLIED"}}</span>
           </li>
           {% endif %}
 
@@ -122,7 +123,11 @@
                 <p class="mb-0">(including VAT)</p>
               </strong>
             </div>
+            {% if cart_to_html.grand_total %}
+            <span> ₹<strong><span id="grandTotal">{{cart_to_html.grand_total}}</span></strong></span>
+            {% else %}
             <span> ₹<strong><span id="grandTotal">{{grand_total}}</span></strong></span>
+            {% endif %}
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
             <div class="input-group">
@@ -318,11 +323,15 @@
     var city = document.querySelector("[name = 'city' ]").value;
     var zip = document.querySelector("[name = 'zip' ]").value;
     var payment_mode = 'Paid by Paypal';
+    let coupon = document.getElementById('coupon').value
+    
+    
+    console.log("Coupon is", coupon)
 
     console.log("Zip is", zip)
 
     var url = "{% url 'checkout' %}"
-    var cartIn = document.getElementById('cart').value;
+    var cartIn = document.getElementById('cart').value;    
 
 
     console.log("Cart id is", cartIn)
@@ -510,7 +519,7 @@ $('#couponBtn').click(function (e) {
   let grandTotal = Number(document.getElementById('grandTotal').innerHTML)
   console.log("Grand total is", grandTotal)
   
-  var coupon = document.getElementById('coupon').value
+  let coupon = document.getElementById('coupon').value
   console.log("Coupon is", coupon)
 
   var token = $('input[name=csrfmiddlewaretoken]').val();

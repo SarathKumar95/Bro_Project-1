@@ -120,12 +120,12 @@
               <div class="d-flex justify-content-between pt-2">
                 <p class="fw-bold mb-0">Order Details</p>
                 {% for item in order %}
-                <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span><span>₹</span>{{item.price_before_tax}}</p>
+                <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span><span>₹</span>{{orderTotal}}</p>
               </div>
   
               <div class="d-flex justify-content-between pt-2">
                 <p class="text-muted mb-0">Tracking Number : {{item.tracking_no}}</p>
-                <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> ₹ {{item.coupon_amount}}</p>
+                <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span>-(₹{{item.coupon_amount}})</p>
               </div>
   
               <div class="d-flex justify-content-between">
