@@ -23,7 +23,6 @@ from ipocket.settings import account_sid,auth_token
 
 import razorpay
 
-# Create your views here.
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
 
@@ -33,7 +32,11 @@ orderid = 0
 grandTotal_after_discount = 0
 coupon_check = 0
 coupon_discount = 0
+already_applied_coupon = "None"
 
+
+
+# Create your views here.
 def guest(request):
     guest_user = request.session.session_key
 
@@ -784,45 +787,60 @@ def viewInvoice(request,tracking_no):
 
 
 def coupon_post(request):
-    
+
     if request.method == 'POST':
-        grandTotal=request.POST['grandTotal']
+        grandTotal= request.POST['grandTotal']
         coupon=request.POST['coupon'] 
-        print("Coupon is ", coupon)
-        print("Total is", grandTotal)
+
+        print("Type grand", type(grandTotal))
         
         global coupon_check
         coupon_check=Coupon.objects.filter(coupon_code=coupon).first()
         
+        
+
+        int_grand = int(grandTotal) 
+
+
+        print("Type x is", type(int_grand))
+
         if coupon_check:
             print("STATUS IS", coupon_check.is_expired)
             
             if coupon_check.is_expired == False:
-                print("Inside false")
 
-                coupon_perc=coupon_check.discount_percentage/100
-                global coupon_discount
-                coupon_discount= float(grandTotal) * coupon_perc 
+                if int_grand < coupon_check.minimum_amount:
+                    return JsonResponse({'status':"Grand Total less than the required amount!"})
+            
+
+                elif int_grand > coupon_check.maximum_amount:
+                         return JsonResponse({'status':"Grand Total greater than the maximum amount!"})
+                else:
+
+                    coupon_perc=coupon_check.discount_percentage/100
+                    global coupon_discount
+                    coupon_discount= float(grandTotal) * coupon_perc 
                 
-                global grandTotal_after_discount               
-                grandTotal_after_discount=float(grandTotal)-coupon_discount
+                    global grandTotal_after_discount               
+                    grandTotal_after_discount=float(grandTotal)-coupon_discount
 
-                print("Coup perc is",coupon_perc)
+                    print("Coup perc is",coupon_perc)
 
-                print("Price to be discounted is",coupon_discount)
+                    print("Price to be discounted is",coupon_discount)
 
-                print("Grand Total is",grandTotal_after_discount)
+                    print("Grand Total is",grandTotal_after_discount)
                 
 
-                cart = Cart.objects.filter(user=request.session['username'])
+                    cart = Cart.objects.filter(user=request.session['username'])
 
-                print("Cart is ", cart)
+                    print("Cart is ", cart)
 
-                #json_data = 
-                return JsonResponse({'status':"Coupon Applied", 'grandTotal': grandTotal_after_discount})
+             
+                    return JsonResponse({'status':"Coupon Applied", 'grandTotal': grandTotal_after_discount})
     
             elif coupon_check.is_expired == True:
                 return JsonResponse({'status':"Sorry,this coupon seems to be expired!"}) 
+
 
         else:
             return JsonResponse({'status':"Invalid Coupon"})
@@ -853,7 +871,7 @@ def checkout(request):
         coupon = coupon_check
     
     else:    
-        coupon = 0
+        coupon = ''
     
     
     for item in cart:
