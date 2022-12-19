@@ -1,4 +1,4 @@
-from django.forms import ModelForm,TextInput,NumberInput,Select,Textarea,FileInput
+from django.forms import CheckboxInput, DateInput, ModelForm,TextInput,NumberInput,Select,Textarea,FileInput
 from django import forms
 from category.models import *
 
@@ -156,3 +156,46 @@ class OrderItemForm(ModelForm):
                 'style' : "max-width: 300px",
             }),
         }
+
+
+class CouponForm(ModelForm):
+    
+    class Meta:
+        model = Coupon
+        fields = '__all__'
+
+        widgets= {
+            'coupon_code': TextInput(attrs={
+                'class': "form-control  text-dark",
+                'style' : "max-width: 300px",
+            }),            
+            'valid_till': DateInput(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 300px",
+            }),            
+            'is_expired': CheckboxInput(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 300px",
+            }),            
+            'discount_percentage': NumberInput(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 300px",
+            }),            
+            
+             'minimum_amount': NumberInput(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 300px",
+            }),
+
+            'maximum_amount': NumberInput(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 300px",
+            }),
+
+            'description': Textarea(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 600px",
+            }),
+
+        }
+

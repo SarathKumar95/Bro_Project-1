@@ -4,10 +4,14 @@ function changeQty(){
     var cart_id = document.getElementById('cart-prod-id').value;
     var cart_qty = document.getElementById('cart-prod-qty').value;
     // console.log("Product id", cart_id)
-    // console.log("cart qty is",cart_qty)
+    console.log("cart qty is",cart_qty)
   
+    var Total=document.getElementById('proqty-price').innerText;
+
+    console.log("Qty is",Total)
+
     var token = $('input[name=csrfmiddlewaretoken]').val();
-    console.log("Token: ",token)
+    //console.log("Token: ",token)
 
     $.ajax({
         method:'POST',
@@ -18,7 +22,9 @@ function changeQty(){
     
         },
         success: function (response) {
-            alertify.success(response.status)            
+            document.getElementById('sub-total').innerText=Total*cart_qty
+            alertify.success(response.status)
+
         }
     });
   }

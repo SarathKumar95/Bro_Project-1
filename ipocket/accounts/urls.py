@@ -41,6 +41,11 @@ urlpatterns = [
     path('invoice/<str:tracking_no>', views.viewInvoice, name='view-invoice'),
     path('signinOTP',views.signinOTP, name='signinOTP'),
     path('VerifyOTP/+<int:phone>',views.verifyOTP, name='otp-verify'),
-    path('coupon_post',views.coupon_post, name='coupon-post'),
-    path('coupon_delete',views.coupon_delete, name='coupon-delete'),
+    path('coupon/all',views.coupon_all, name='coupon-all'),
+    path('coupon/post',views.coupon_post, name='coupon-post'),
+    path('coupon/delete',views.coupon_delete, name='coupon-delete'),
+    path('manager/coupon',views.coupon_manager, name='coupon-manager'),
+    path('manager/coupon/add',views.coupon_add, name='coupon-add'),
+    path('manager/coupon/edit/<int:coupon_id>',views.coupon_editor, name='coupon-editor'),
+    path('manager/coupon/delete/<int:coupon_id>',views.coupon_delete_admin, name='coupon-deleteAdmin'),
 ]

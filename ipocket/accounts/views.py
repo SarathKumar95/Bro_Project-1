@@ -786,7 +786,72 @@ def viewInvoice(request,tracking_no):
 
 
 
-#Coupon management
+#Coupon views
+
+def coupon_manager(request):
+    coupons=Coupon.objects.all()
+    form=CouponForm()
+    context = {'coupons':coupons, 'form':form}
+    return render(request,'owner/couponmanager.html',context)   
+
+
+
+def coupon_add(request):
+    form=CouponForm()
+    context={'form':form} 
+
+    if request.method == 'POST':
+        form=CouponForm(request.POST)
+        if form.is_valid():
+            messages.success(request,"New Coupon Added!")
+            form.save()
+            return redirect('coupon-manager')
+        else:
+            print("Hit here!!")
+            messages.error(request,form.errors)    
+    return render(request,'owner/couponadd.html',context)
+
+
+
+def coupon_editor(request,coupon_id):
+    coupon=Coupon.objects.filter(coupon_id=coupon_id).first() 
+    form=CouponForm(instance=coupon)
+    context={'form':form} 
+
+    if request.method=='POST':
+        form=CouponForm(request.POST, instance=coupon) 
+
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Coupon Updated") 
+            return redirect('coupon-manager')
+        else:
+            messages.error(request,form.errors) 
+
+    return render(request,'owner/couponedit.html',context)   
+
+
+
+
+def coupon_delete_admin(request,coupon_id):
+    coupon=Coupon.objects.filter(coupon_id=coupon_id).first() 
+    coupon.delete()
+    messages.error(request, "Removed Coupon")
+    return redirect('coupon-manager')
+
+
+
+
+def coupon_all(request):
+    coupons=Coupon.objects.all()
+    data = list()
+    for item in coupons:
+        data.append(item.coupon_code)
+
+    return JsonResponse(data, safe=False)    
+
+
 def coupon_post(request):
     if request.method == 'POST':
         grandTotal= request.POST['grandTotal']
@@ -859,7 +924,15 @@ def coupon_post(request):
 
 
 def coupon_delete(request):
-    return HttpResponse("Hit")
+    if request.method == 'POST':
+        cart=Cart.objects.filter(user=request.session['username']).first()
+        print("Cart is ", cart.coupon_applied) 
+
+        cart.grand_total+=cart.coupon_discount
+        cart.coupon_applied = None
+        cart.coupon_discount = 0 
+        cart.save()
+        return redirect('checkout')
 
 
 
@@ -877,6 +950,7 @@ def checkout(request):
 
     print("Cart in checkout is ", cart) 
 
+
     sub_total = 0
     tax = 0
 
@@ -884,7 +958,6 @@ def checkout(request):
 
     print("Cart coupon status is",cart_to_html.coupon_applied)    
 
-    
     for item in cart:
         Item_total = item.product.price * item.product_qty
         sub_total+=Item_total 
@@ -898,10 +971,17 @@ def checkout(request):
 
     
     grand_total_with_tax = sub_total * tax/100
+
+    
+    if cart_to_html.grand_total:
+        grand_total = cart_to_html.grand_total
+        print("Grand total from cart is", cart_to_html.grand_total)
+
+    else:
+         grand_total = sub_total + shipping + grand_total_with_tax     
     
     
-    
-    grand_total = sub_total + shipping + grand_total_with_tax
+   
 
 
     print("Sub total is",sub_total)

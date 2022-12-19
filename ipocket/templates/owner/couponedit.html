@@ -1,0 +1,51 @@
+{% extends 'owner/base.html' %}
+
+{% block title %} Edit Coupon {% endblock %} 
+
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+<style>
+    .asteriskField {
+    display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+</style>
+
+<div class="main">
+    <div class="page-title text-center mt-5 mb-3">
+        <h5>Edit Coupon</h5>
+    </div>
+
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+        <div class="alert alert-warning" role="alert">
+            {{message}}
+          </div>
+        {% endfor %}
+    </div>
+  
+        <div class="form-wrapper ms-3 me-3">
+            <form enctype="multipart/form-data" action="" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <input type="submit" class="btn btn-primary" value="Update">
+            </form>   
+        </div>
+        
+    </div>
+
+{% endblock %}

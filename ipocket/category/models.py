@@ -3,6 +3,8 @@ from django.db import models
 from accounts.models import MyUser
 from django.utils.timezone import now
 
+import datetime
+
 # Create your models here.
 
 #sub category on phones/watches/airpods 
@@ -76,17 +78,33 @@ class Products(models.Model):
 
 class Coupon(models.Model):
     coupon_id=models.AutoField(primary_key=True)
-    coupon_code=models.CharField(max_length=100)
-    valid_till=models.DateField(default=now) 
-    is_expired=models.BooleanField(default=False)
+    coupon_code=models.CharField(max_length=100,unique=True)
+    valid_till=models.DateField(default=now)
+    is_expired=models.BooleanField(default=False)    
     discount_percentage = models.IntegerField()
     minimum_amount=models.IntegerField()         
     maximum_amount=models.IntegerField(default=90000) 
-    
+    description=models.TextField(max_length=500,null=True,blank=True) 
 
     def __str__(self):
         return '{}'.format(self.coupon_code)
 
+
+    def save(self,*args,**kwargs):
+        today=datetime.date.today()
+        
+        print("Valid till is", self.valid_till)
+        print("Todays date is", today)
+
+        if self.valid_till < today:
+            print("Date has passed", self.is_expired)
+
+            self.is_expired=True
+
+        else:
+            print("Date is coming..", self.is_expired)    
+            self.is_expired=False
+        super(Coupon, self).save(*args, **kwargs)
 
 class Order(models.Model):
     user = models.CharField(max_length=150,null=True)
