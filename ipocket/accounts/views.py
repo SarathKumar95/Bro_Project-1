@@ -20,6 +20,8 @@ from xhtml2pdf import pisa
 from django.views.generic import View 
 from twilio.rest import Client 
 from ipocket.settings import account_sid,auth_token 
+from indian_cities.dj_city import cities 
+
 
 import razorpay
 
@@ -183,9 +185,27 @@ def signout(request):
 def myaccount(request):
     if 'username' in request.session:
         user_in = request.session['username']
-        context = {'user_in': user_in}
+        user_name=MyUser.objects.filter(email=user_in).first() 
+        fname = user_name.first_name
+        lname = user_name.last_name
+        context = {'user_in': user_in, 'fname' : fname, 'lname': lname}
         return render(request, 'user/userhome.html', context)
     return redirect('signin')
+
+
+def personal(request):
+    if 'username' in request.session:
+        user_in = request.session['username']
+        user_name=MyUser.objects.filter(email=user_in).first() 
+        fname = user_name.first_name
+        lname = user_name.last_name 
+        form=CustomUserCreationForm(instance=user_name)
+        context = {'user_in': user_in, 'fname' : fname, 'lname': lname, 'form':form}
+    return render(request,'user/personal.html',context)
+
+
+
+
 
 
 def myorder(request):
@@ -947,8 +967,12 @@ def checkout(request):
     cart = Cart.objects.filter(user = user_in)
     user_filt = MyUser.objects.filter(email=user_in) 
 
-
     print("Cart in checkout is ", cart) 
+
+    kerala=["Thiruvananthapuram","Kochi","Calicut","Kollam","Thrissur","Kannur","Kasaragod","Alappuzha","Palakkad","Kottayam","Kothamangalam","Malappuram","Manjeri","Thalassery", "Ponnani",]
+
+    for item in kerala:
+        print("item is", item)
 
 
     sub_total = 0
