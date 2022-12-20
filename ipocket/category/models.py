@@ -240,3 +240,18 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.order.user, self.order.tracking_no)
+
+
+class Wishlist(models.Model):
+    user_id=models.ForeignKey(MyUser,on_delete=models.CASCADE) 
+    product=models.ForeignKey(Products,on_delete=models.CASCADE)
+    wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
+
+    def __str__(self):
+
+        if self.wishlist_name != None:
+
+            return '{}' - '{}'.format(self.user_id.email, self.wishlist_name) 
+
+        else:
+            return self.user_id.email    

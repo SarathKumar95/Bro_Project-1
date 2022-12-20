@@ -8,4 +8,5 @@ admin.site.register(ProductType)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(Coupon)
+admin.site.register(Wishlist) 
 
