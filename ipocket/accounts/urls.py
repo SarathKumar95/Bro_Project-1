@@ -48,5 +48,8 @@ urlpatterns = [
     path('manager/coupon/add',views.coupon_add, name='coupon-add'),
     path('manager/coupon/edit/<int:coupon_id>',views.coupon_editor, name='coupon-editor'),
     path('manager/coupon/delete/<int:coupon_id>',views.coupon_delete_admin, name='coupon-deleteAdmin'),
-    path('personal',views.personal,name='personal')
+    path('personal',views.personal,name='personal'),
+    path('manageaddresses',views.manage_address,name='manage-address'),
+
+
 ]

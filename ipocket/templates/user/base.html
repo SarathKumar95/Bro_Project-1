@@ -17,9 +17,10 @@
   z-index: 1; /* Stay on top */
   top: 85px; /* Stay at the top */
   left: 0;
-  background-color: #111; /* Black */
+  background-color:#ffffff; /* White */
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 20px;
+  border: 1px solid black;
 }
 
 /* The navigation menu links */
@@ -27,13 +28,13 @@
   padding: 2px 10px 5px 25px;
   text-decoration: none;
   font-size: 15px;
-  color: white;
+  color: black;
   display: block;
 }
 
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
-  color:grey;
+  color:rgb(154, 154, 175);
 }
 
 /* Style page content */
@@ -78,11 +79,11 @@ padding: 0px 10px;
   <div class="sidenav">
     <img class="ms-4" src="{% static 'images/head.png' %}" alt="head" style="height:40px;">
     <a href="#"><strong>Hello,</strong><br><span style="text-transform:uppercase"><strong>{{fname}} {{lname}}</strong></span></a>
-    <hr style="color:white">
+    <hr style="color:black">
     <a href="#"><strong>Account Settings</strong></a>
     <ul>
       <li style="list-style: none;"><a href="{% url 'personal' %}">Profile Information</a></li>
-      <li style="list-style: none;"><a href="">Manage Addresses</a></li>
+      <li style="list-style: none;"><a href="{% url 'manage-address' %}">Manage Addresses</a></li>
     </ul>
 
     <a href="#"><strong>Payments</strong></a>

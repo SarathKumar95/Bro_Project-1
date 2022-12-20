@@ -75,7 +75,11 @@
               <h6 class="my-0">{{item.product.product_name}} {{item.product.series}}</h6>
               {% endif %}
             </div>
+            {% if item.product.price_after_offer %}
+            <span class="text-dark">{{item.product_qty}} x ₹{{item.product.price_after_offer}}</span>
+            {% else %}
             <span class="text-dark">{{item.product_qty}} x ₹{{item.product.price}}.00</span>
+            {% endif %}
           </li>
 
           {% endfor %}

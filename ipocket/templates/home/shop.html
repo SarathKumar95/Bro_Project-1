@@ -89,6 +89,9 @@
                             {% if item.main_image %}
                             <img class="card-img rounded-0 img-fluid" src="{{item.main_image.url}}"
                                 style="width:260px;">
+                            {% if item.price_after_offer > 0 or item.product_type.offer_percentage > 0 %}    
+                            <img src="{% static 'images/special-tag.png' %}" alt="special-tag" style="height:50px;width:50px; position:absolute; top:0px;right: 0px;">
+                            {% endif %}    
                             {% else %}
                             {{'NO IMAGE'}}
                             {% endif %}
@@ -146,7 +149,12 @@
                                     <i class="text-muted fa fa-star"></i>
                                 </li>
                             </ul>
+                            {% if item.price_after_offer > 0 or item.product_type.offer_percentage > 0 %}
+                            <strike><p class="text-center mb-0">₹{{item.price}}.00/-</p></strike>
+                            <p class="text-center text-success mb-0">₹{{item.price_after_offer}}/-</p>
+                            {% else %}
                             <p class="text-center mb-0">₹{{item.price}}.00/-</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

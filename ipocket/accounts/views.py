@@ -199,11 +199,52 @@ def personal(request):
         user_name=MyUser.objects.filter(email=user_in).first() 
         fname = user_name.first_name
         lname = user_name.last_name 
-        form=CustomUserCreationForm(instance=user_name)
+
+        billAddress=BillingAddress.objects.filter(user_id=user_name.id).first() 
+
+        print("Bill address is ", billAddress)        
+
+
+        form=CustomUserChangeForm(instance=user_name)
+
+        if request.method == 'POST':
+            form=CustomUserChangeForm(request.POST, instance=user_name)
+
+            if form.is_valid():
+                messages.info(request,"Updated Successfully!")
+                form.save()    
+            else:
+                for error in form.errors:
+                    messages.error(request,error)     
+
+
         context = {'user_in': user_in, 'fname' : fname, 'lname': lname, 'form':form}
     return render(request,'user/personal.html',context)
 
 
+
+def manage_address(request):
+    if 'username' in request.session:
+        user_in = request.session['username']
+        user_name=MyUser.objects.filter(email=user_in).first() 
+        fname = user_name.first_name
+        lname = user_name.last_name 
+
+        billAddress=BillingAddress.objects.filter(user_id=user_name.id).first()
+
+
+        Billform=BillingAddressForm(instance=billAddress) 
+
+        if request.method=='POST':
+            Billform=BillingAddressForm(request.POST,instance=billAddress) 
+            if Billform.is_valid():
+                Billform.save()
+                messages.success(request, "Update Successful")  
+            else:
+                messages.success(request, Billform.errors)
+
+    context = {'user_in': user_in, 'fname' : fname, 'lname': lname, 'Billform':Billform}
+    return render(request,'user/manageaddress.html',context)
 
 
 
@@ -520,12 +561,16 @@ def cart_list(request):
             print("Guest cart after deleting the product is", guest_cart)  
 
 
+
     sub_total = 0
     tax = 0
     for item in cart:
-        Item_total = item.product.price * item.product_qty
-        sub_total+=Item_total
+        if item.product.price_after_offer > 0:
+            Item_total = item.product.price_after_offer * item.product_qty
+        else:
+            Item_total = item.product.price * item.product_qty
         
+        sub_total+=Item_total
 
     no_of_cart_items = cart.count()
     context = {'cart': cart,'no_of_cart_items':no_of_cart_items,'sub_total':sub_total}
@@ -983,8 +1028,13 @@ def checkout(request):
     print("Cart coupon status is",cart_to_html.coupon_applied)    
 
     for item in cart:
-        Item_total = item.product.price * item.product_qty
-        sub_total+=Item_total 
+        if item.product.price_after_offer > 0:
+            Item_total = item.product.price_after_offer * item.product_qty
+        else:    
+            Item_total = item.product.price * item.product_qty
+        
+        
+    sub_total+=Item_total 
     
     if sub_total <= 100000:
         shipping = 150
