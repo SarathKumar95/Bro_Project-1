@@ -40,12 +40,16 @@ class ProductType(models.Model):
                 print("Price before category offer is", price) 
                 print("Price after category offer is", item.price_after_offer) 
 
+                
+
             else:
                 item.price_after_offer = None   
 
                 
                 print("Price before category offer is", price)
                 print("Price after category offer is", item.price_after_offer)
+            
+            item.save()
 
         super(ProductType, self).save(*args, **kwargs)
 
@@ -146,8 +150,8 @@ class Products(models.Model):
             elif price_after_categoryoffer < price_after_productoffer:     
                 self.price_after_offer=price_after_categoryoffer
 
-            else:
-                self.price_after_offer=self.price
+            elif price_after_categoryoffer == price_after_productoffer:
+                self.price_after_offer=price_after_categoryoffer
 
 
         super(Products, self).save(*args, **kwargs)
