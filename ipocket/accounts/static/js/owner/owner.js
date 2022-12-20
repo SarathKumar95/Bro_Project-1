@@ -29,17 +29,46 @@ function unblockUser(){
 
 }
 
-function deleteProduct(){
+function deleteProduct(passID){
 
-    let confirmAction = confirm("Are you sure you want to delete this product? ");
+    console.log("Product ID", passID) 
+    let confirmAction = confirm("Are you sure you want to delete this product ? ");
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+
     if(confirmAction){
-        console.log("Inside confirm");
-        let url = $("#deleteproduct-btn").attr("data-url");
-        window.location = url;
+        $.ajax({
+            method: "POST",
+            url: "product/delete",
+            data:{
+                'passID': passID,
+                csrfmiddlewaretoken:getCookie('csrftoken')
+            },
+            
+            success: function (response) {
+                console.log(passID)
+            }
+        });
     }
     else{
         console.log("Do nothing!");
     }
+
 
 }
 

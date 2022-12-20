@@ -84,9 +84,8 @@
                             <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                         </a>    
                     </div>
-                                    
-                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteProduct()" id="deleteproduct-btn"
-                    data-url="{% url 'productdelete' item.product_id %}" style="height:25px;">
+                    {% csrf_token %}                
+                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteProduct(passID='{{item.product_id}}')" id="deleteproduct-btn" style="height:25px;">
                 </td>
                 
             </tr>
