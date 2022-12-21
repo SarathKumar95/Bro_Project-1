@@ -73,17 +73,17 @@
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
                     <button class="btn btn-primary px-3 me-2"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty('{{item.product_id}}')">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty(productID='{{item.product_id}}')">
                       <i class="fas fa-minus"></i>
                     </button>
   
                     <div class="form-outline">
-                      <input id="cart-prod-qty" min="0" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
+                      <input id="cart-prod-qty{{item.id}}" min="0" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
   
                     <button class="btn btn-primary px-3 ms-2"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQty()">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQty(productID='{{item.product_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
@@ -94,9 +94,9 @@
                   
                   <p class="text-start text-md-center">
                     {% if item.product.price_after_offer %}
-                    <strong>₹ <span id="proqty-price">{{item.product.price_after_offer}}</span></strong>
+                    <strong>₹ <span>{{item.product.price_after_offer}}</span></strong>
                     {% else %}
-                    <strong>₹ <span id="proqty-price">{{item.product.price}}</span></strong>
+                    <strong>₹ <span>{{item.product.price}}</span></strong>
                     {% endif %}
                   </p>
                   
@@ -161,7 +161,75 @@
   </section>
 
   <script src="https://code.jquery.com/jquery-3.6.1.min.js"integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="crossorigin="anonymous"></script>
-  <script>  
-  </script>
+
+
+<script>
+  
+function changeQty(productID,cartqty,cartID){
+  
+    console.log("cart qty is",cartqty)
+    console.log("Product id is", productID)
+    console.log("cart id is", cartID)
+
+    let meme=document.getElementById('cart-prod-qty'+cartID).value;
+
+    console.log(meme)
+
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+    //console.log("Token: ",token)
+
+    $.ajax({
+        method:'POST',
+        url: "list/update/add",
+        data: {'cart_id':productID,
+        'cart_qty':meme,
+        csrfmiddlewaretoken: token
+    
+        },
+        success: function (response) {
+            alertify.success(response.status)
+        }
+    });
+  }
+  
+
+function deleteCartItem(proId) {   
+    
+    let subTotal = $('#sub-total').text() 
+    const qty = $('#cartprod-qty'+proId).val()
+    const price = $('#cartprod-price'+proId).val()  
+    let cartCount = $('#cartCount').text()
+          
+    console.log("Cart count is", cartCount);
+
+    var token = $('input[name=csrfmiddlewaretoken]').val(); 
+    
+    $.ajax({
+        method: "POST",
+        url: "list/delete",
+        data: {
+            'product_id':proId,
+            csrfmiddlewaretoken: token
+        },
+        success: function (response) {
+            alertify.success(response.status)
+            $('#single-item'+proId).remove()
+            $('#sub-total').text((subTotal) - (price * qty))  
+            // $('#cartCount').val()    
+            // $('#sub-total').text()
+            // location.reload()        
+            $('#cartCount').text(cartCount - 1) 
+            
+            console.log("Cart count is", cartCount);
+            
+        }
+    });
+}
+
+  
+</script>
+
+
+
 
 {% endblock %}

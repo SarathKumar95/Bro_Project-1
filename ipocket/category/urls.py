@@ -14,5 +14,7 @@ urlpatterns = [
     path('category/add', views.list_categories,name='category-add'),
     path('category/edit/<int:category_id>', views.edit_categories,name='category-edit'),
     path('category/delete/<int:category_id>', views.delete_categories,name='category-delete'),
+    path('wishlist/add',views.wishlist_add,name='wish-add'),
+    
 ]
     

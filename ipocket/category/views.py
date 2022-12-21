@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from category.models import *
 from category.forms import *
 from django.contrib import messages
-
+from accounts.views import guest
 
 # Create your views here.
 
@@ -148,3 +148,32 @@ def delete_categories(request, category_id):
     messages.success(request, "Deleted Category")
 
     return redirect('category-list')
+
+
+
+def wishlist_add(request):
+    
+    if request.method=="POST":
+            product_id=request.POST['product_id'] 
+
+            product=Products.objects.filter(product_id=product_id).first() 
+
+            print("Product id is", product_id) 
+
+
+            if 'username' in request.session:
+
+                user_in=request.session['username'] 
+
+                print(user_in)    
+
+                userID=MyUser.objects.filter(email=user_in).first().id 
+
+                print(userID)
+
+                wishlist=Wishlist.objects.create(user_id=request.session['username'],product=product_id)
+
+            else:
+                return JsonResponse({'status':"Please login to add to wishlist"})    
+
+

@@ -505,7 +505,7 @@ def cart_add(request):
                             return JsonResponse({'status': 'Product added succesfully'})
 
                          else:
-                            return JsonResponse({'status': 'Only' + str(product_check.quantity) + 'quantity is available.'})
+                            return JsonResponse({'status': 'Only ' + str(product_check.quantity) + ' quantity is available.'})
             else:
                 return JsonResponse({'status': "No such product found"})
 
@@ -565,12 +565,16 @@ def cart_list(request):
     sub_total = 0
     tax = 0
     for item in cart:
+        product_qtyCheck=item.product.quantity
+        
         if item.product.price_after_offer > 0:
             Item_total = item.product.price_after_offer * item.product_qty
         else:
             Item_total = item.product.price * item.product_qty
-        
         sub_total+=Item_total
+
+        print("Quantity is",product_qtyCheck)
+        
 
     no_of_cart_items = cart.count()
     context = {'cart': cart,'no_of_cart_items':no_of_cart_items,'sub_total':sub_total}
@@ -581,10 +585,15 @@ def cart_list(request):
 
 
 
-def cart_update(request):
+def cart_updateAdd(request):
     if request.method == 'POST':
-        product_id = request.POST.get('cart_id')
+        product_id = request.POST['cart_id']
         product_qty = request.POST['cart_qty']
+
+        
+        product=Products.objects.filter(product_id=product_id)
+
+        print("Product is",product)   
           
         if 'username' not in request.session:
             user_in = guest(request)
@@ -593,7 +602,7 @@ def cart_update(request):
         else:
             user_in = request.session['username']
             cart = Cart.objects.filter(user=user_in,product=product_id).first() 
-                
+    
             
         cart.product_qty = product_qty 
         cart.save()
