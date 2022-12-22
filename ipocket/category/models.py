@@ -115,28 +115,43 @@ class Products(models.Model):
         return '{} - {} - {}'.format(self.product_name, self.generation, self.series)
 
     def save(self, *args, **kwargs):
-        print("Product offer is ", self.product_offer)
-
-        print("ProductType offer is", self.product_type.offer_percentage)
 
         if self.product_type.offer_percentage == None and self.product_offer != None:
             
+            print("1st condition hit, Product offer is",self.product_offer)
+
+            print("Category offer is",self.product_type.offer_percentage) 
+
             Price_on_Offer = (self.price * self.product_offer)/100     
             price_after_productoffer = self.price - Price_on_Offer
             self.price_after_offer=price_after_productoffer 
 
             print("Price after product offer is", price_after_productoffer)
 
+        
+        elif self.product_type.offer_percentage != None and self.product_offer == None:
+            
+            print("1st condition hit, Product offer is",self.product_offer)
+
+            print("Category offer is",self.product_type.offer_percentage) 
+
+            Price_on_Offer = (self.price * self.product_type.offer_percentage)/100     
+            price_after_categoryoffer = self.price - Price_on_Offer
+            self.price_after_offer=price_after_categoryoffer 
+
+            print("Price after product offer is", price_after_categoryoffer) 
+
         elif self.product_type.offer_percentage != None and self.product_offer != None:
 
+            
+            print("2nd condition hit, Product offer is",self.product_offer)
+
+            print("Category offer is",self.product_type.offer_percentage)
+            
+    
             Price_on_Offer = (self.price * self.product_offer)/100
 
             Price_on_categoryOffer=(self.price * self.product_type.offer_percentage)/100 
-
-
-            print("Price on product offer is", Price_on_Offer)
-
-            print("Price on category offer is", Price_on_categoryOffer) 
 
             price_after_productoffer = self.price - Price_on_Offer
             price_after_categoryoffer = self.price - Price_on_categoryOffer

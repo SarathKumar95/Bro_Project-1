@@ -73,7 +73,7 @@
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
                     <button class="btn btn-primary px-3 me-2"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty(productID='{{item.product_id}}')">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty(productID='{{item.product_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
                       <i class="fas fa-minus"></i>
                     </button>
   
@@ -165,6 +165,7 @@
 
 <script>
   
+  
 function changeQty(productID,cartqty,cartID){
   
     console.log("cart qty is",cartqty)
@@ -172,17 +173,20 @@ function changeQty(productID,cartqty,cartID){
     console.log("cart id is", cartID)
 
     let meme=document.getElementById('cart-prod-qty'+cartID).value;
-
+    let Total=document.getElementById('sub-total').innerText 
+    
     console.log(meme)
+    console.log("Total is",Total)
 
     var token = $('input[name=csrfmiddlewaretoken]').val();
     //console.log("Token: ",token)
 
     $.ajax({
         method:'POST',
-        url: "list/update/add",
-        data: {'cart_id':productID,
+        url: "list/update",
+        data: {'product_id':productID,
         'cart_qty':meme,
+        'cart_id':cartID,
         csrfmiddlewaretoken: token
     
         },

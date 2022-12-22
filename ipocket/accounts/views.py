@@ -36,8 +36,6 @@ coupon_check = 0
 coupon_discount = 0
 already_applied_coupon = "None"
 
-
-
 # Create your views here.
 def guest(request):
     guest_user = request.session.session_key
@@ -544,7 +542,7 @@ def cart_list(request):
                     print("The item which is in the cart is", cart, "The qty is", cart.product_qty) 
 
                     #item.product.delete() # delete that product from guest cart  
-              
+               
 
                 else:
                     print("False")       #add the product
@@ -562,7 +560,8 @@ def cart_list(request):
 
 
 
-    sub_total = 0
+    sub_total=0
+    
     tax = 0
     for item in cart:
         product_qtyCheck=item.product.quantity
@@ -571,10 +570,13 @@ def cart_list(request):
             Item_total = item.product.price_after_offer * item.product_qty
         else:
             Item_total = item.product.price * item.product_qty
+        
         sub_total+=Item_total
 
         print("Quantity is",product_qtyCheck)
         
+        print("Sub total is",sub_total)    
+
 
     no_of_cart_items = cart.count()
     context = {'cart': cart,'no_of_cart_items':no_of_cart_items,'sub_total':sub_total}
@@ -585,16 +587,20 @@ def cart_list(request):
 
 
 
-def cart_updateAdd(request):
+def cart_update(request):
     if request.method == 'POST':
-        product_id = request.POST['cart_id']
+        product_id = request.POST['product_id']
         product_qty = request.POST['cart_qty']
-
+        cart_id=request.POST['cart_id']
         
         product=Products.objects.filter(product_id=product_id)
+        cart_to_Remove=Cart.objects.filter(id=cart_id).first()
 
-        print("Product is",product)   
-          
+        print("Product Qty is",product_qty)   
+        print("Cart Id is",cart_id)        
+        print("Cart is",cart_to_Remove)
+            
+
         if 'username' not in request.session:
             user_in = guest(request)
             cart = Cart.objects.filter(session_id=user_in,product=product_id).first() 
@@ -602,9 +608,20 @@ def cart_updateAdd(request):
         else:
             user_in = request.session['username']
             cart = Cart.objects.filter(user=user_in,product=product_id).first() 
-    
-            
-        cart.product_qty = product_qty 
+        
+        CartTotal= Cart.objects.filter(user=user_in)
+        
+        print("Cart total is ",CartTotal)
+
+        for item in CartTotal:
+            if item.product.price_after_offer > 0:
+                itemPrice=item.product.price_after_offer
+            else:
+                itemPrice=item.product.price    
+        
+        print("Item price is ", itemPrice)
+        
+        cart.product_qty = product_qty  
         cart.save()
         
         return JsonResponse({'status':'Updated cart!'})
