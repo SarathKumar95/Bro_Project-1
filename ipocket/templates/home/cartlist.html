@@ -22,7 +22,7 @@
             <div class="card-body">
               <!-- Single item -->
               {% for item in cart %}
-              
+              <input type="hidden" value="{{item.product.quantity}}" id="productStock{{item.id}}">
               <div class="row" id="single-item{{item.product.product_id}}">
                 <input type="hidden" value="{{item.product.product_id}}" id="cart-prod-id">
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
@@ -82,7 +82,7 @@
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
   
-                    <button class="btn btn-primary px-3 ms-2"
+                    <button class="btn btn-primary px-3 ms-2" id="plusBtn{{item.id}}"
                       onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQty(productID='{{item.product_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
                       <i class="fas fa-plus"></i>
                     </button>
@@ -174,10 +174,16 @@ function changeQty(productID,cartqty,cartID){
     console.log("cart id is", cartID)
 
     let meme=document.getElementById('cart-prod-qty'+cartID).value;
-    let Total=document.getElementById('sub-total').innerText 
-    
-    console.log(meme)
-    console.log("Total is",Total)
+    let stock=document.getElementById('productStock'+cartID).value; 
+
+    if (Number(meme) == Number(stock)){
+      document.getElementById('plusBtn'+cartID).disabled=true;
+    } 
+
+    else{
+      document.getElementById('plusBtn'+cartID).disabled=false;
+    }
+
 
     var token = $('input[name=csrfmiddlewaretoken]').val();
     //console.log("Token: ",token)
