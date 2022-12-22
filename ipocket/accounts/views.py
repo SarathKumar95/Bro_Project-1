@@ -1060,29 +1060,21 @@ def checkout(request):
     cart = Cart.objects.filter(user = user_in)
     user_filt = MyUser.objects.filter(email=user_in) 
 
-    print("Cart in checkout is ", cart) 
-
-    kerala=["Thiruvananthapuram","Kochi","Calicut","Kollam","Thrissur","Kannur","Kasaragod","Alappuzha","Palakkad","Kottayam","Kothamangalam","Malappuram","Manjeri","Thalassery", "Ponnani",]
-
-    for item in kerala:
-        print("item is", item)
-
-
+    print("Cart in checkout is ", cart)
+    
+    
     sub_total = 0
     tax = 0
-
-    cart_to_html=Cart.objects.filter(user=user_in).first()
-
-    print("Cart coupon status is",cart_to_html.coupon_applied)    
-
+    
     for item in cart:
         if item.product.price_after_offer > 0:
             Item_total = item.product.price_after_offer * item.product_qty
         else:    
             Item_total = item.product.price * item.product_qty
+        print("Item price is ", Item_total)
+        sub_total+=Item_total 
         
-        
-    sub_total+=Item_total 
+    print("Sub total is", sub_total)     
     
     if sub_total <= 100000:
         shipping = 150
@@ -1094,7 +1086,11 @@ def checkout(request):
     
     grand_total_with_tax = sub_total * tax/100
 
-    
+     
+    cart_to_html=Cart.objects.filter(user=user_in).first()
+
+    print("Cart coupon status is",cart_to_html.coupon_applied)    
+
     if cart_to_html.grand_total:
         grand_total = cart_to_html.grand_total
         print("Grand total from cart is", cart_to_html.grand_total)
@@ -1103,10 +1099,8 @@ def checkout(request):
          grand_total = sub_total + shipping + grand_total_with_tax     
     
     
-   
 
-
-    print("Sub total is",sub_total)
+    print("Sub total to send is",sub_total)
     print("Shipping is",shipping)
     print("Tax is",tax) 
     print("Tax amount is",grand_total_with_tax)
