@@ -192,7 +192,8 @@ function changeQty(productID,cartqty,cartID){
     
         },
         success: function (response) {
-            alertify.success(response.status)
+            alertify.success(response.status) 
+            document.getElementById('sub-total').innerText=response.update_price  
         }
     });
   }

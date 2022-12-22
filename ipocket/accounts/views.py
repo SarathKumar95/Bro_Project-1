@@ -646,7 +646,7 @@ def cart_update(request):
         cart.product_qty = product_qty  
         cart.save()
         
-        return JsonResponse({'status':'Updated cart!'})
+        return JsonResponse({'status':'Updated cart!', 'update_price':update_price})
 
     return redirect('/')        
 
