@@ -455,10 +455,10 @@ def cart_add(request):
     if request.method == 'POST':
         if 'username' not in request.session:
             prod_id = request.POST['product_id']
-            prod_qty = request.POST['product_qty']
+            prod_qty = 1
             product = Products.objects.filter(product_id=prod_id).first()
             print("Prod id is", prod_id)
-            print("Prod qty is", prod_qty)
+            
             
 
             cart = Cart.objects.filter(session_id=guest(request))
@@ -482,7 +482,7 @@ def cart_add(request):
         elif 'username' in request.session:
             email = request.session['username']
             product_id = request.POST['product_id']
-            product_quantity = int(request.POST['product_qty'])
+            product_quantity = 1
             product_check = Products.objects.get(product_id=product_id)
             print("Product name is ", product_check)
             print("Stock is", product_check.quantity)
@@ -920,7 +920,6 @@ def coupon_add(request):
             form.save()
             return redirect('coupon-manager')
         else:
-            print("Hit here!!")
             messages.error(request,form.errors)    
     return render(request,'owner/couponadd.html',context)
 
@@ -969,32 +968,27 @@ def coupon_post(request):
     if request.method == 'POST':
         grandTotal= request.POST['grandTotal']
         coupon=request.POST['coupon'] 
-
-        print("Type grand", type(grandTotal))
         
         cart=Cart.objects.filter(user=request.session['username']).first()
 
-        print("Cart coupon is", cart.coupon_applied)
-
+        print("Coupon to be applied is ", coupon)    
+        
+        
+        print("Coupon in is",cart.coupon_applied) 
+                
+        
         global coupon_check
-        coupon_check=Coupon.objects.filter(coupon_code=coupon).first()
-        
-        print("Coupon applied is", coupon_check)
-        
+        coupon_check=Coupon.objects.filter(coupon_code=coupon).first()        
 
         point_grand = float(grandTotal) 
 
-
-        print("Type x is", type(point_grand))
-
         if coupon_check:
-            print("STATUS IS", coupon_check.is_expired)
             
             if cart.coupon_applied == coupon:
                 return JsonResponse({'status':"Coupon Already Applied!"})
-
+            
             elif coupon_check.is_expired == False:
-
+                
                 if point_grand < coupon_check.minimum_amount:
                     return JsonResponse({'status':"Add items worth "+str(coupon_check.minimum_amount - point_grand)+" to avail this coupon"})
             
@@ -1010,24 +1004,23 @@ def coupon_post(request):
                     global grandTotal_after_discount               
                     grandTotal_after_discount=float(grandTotal)-coupon_discount
 
-                    print("Coup perc is",coupon_perc)
-
-                    print("Price to be discounted is",coupon_discount)
-
-                    print("Grand Total is",grandTotal_after_discount)
-
-                    cart.coupon_applied=coupon
-                    cart.coupon_discount=coupon_discount
-                    cart.grand_total=grandTotal_after_discount
-                    cart.save()
-
-                    print("Coupon is passed to cart", cart.coupon_applied, "Coupon discount passed to cart", cart.coupon_discount )
-                
-                    return JsonResponse({'status':"Coupon Applied"})
+                    if cart.coupon_applied == None:
+                        cart.coupon_applied=coupon
+                        cart.coupon_discount=coupon_discount
+                        cart.grand_total=grandTotal_after_discount
+                        cart.save() 
+                        return JsonResponse({'status':"Coupon Applied"})
+                    
+                    elif cart.coupon_applied != None:
+                        return JsonResponse({'status':"Only one coupon can be availed"})
     
             elif coupon_check.is_expired == True:
                 return JsonResponse({'status':"Sorry,this coupon seems to be expired!"}) 
 
+        
+        
+        
+        
 
         else:
             return JsonResponse({'status':"Invalid Coupon"})

@@ -72,13 +72,13 @@
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
-                    <button class="btn btn-primary px-3 me-2"
+                    <button class="btn btn-primary px-3 me-2" id="minusBtn{{item.id}}"
                       onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty(productID='{{item.product_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
                       <i class="fas fa-minus"></i>
                     </button>
   
                     <div class="form-outline">
-                      <input id="cart-prod-qty{{item.id}}" min="0" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
+                      <input id="cart-prod-qty{{item.id}}" min="1" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
   
@@ -165,10 +165,9 @@
 
 
 <script>
-  
-  
+
 function changeQty(productID,cartqty,cartID){
-  
+    
     console.log("cart qty is",cartqty)
     console.log("Product id is", productID)
     console.log("cart id is", cartID)
@@ -182,7 +181,7 @@ function changeQty(productID,cartqty,cartID){
 
     else{
       document.getElementById('plusBtn'+cartID).disabled=false;
-    }
+    } 
 
 
     var token = $('input[name=csrfmiddlewaretoken]').val();
