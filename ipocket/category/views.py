@@ -59,8 +59,7 @@ def delete_product(request):
         product = Products.objects.filter(product_id=productID).first()
 
         product.delete()
-
-        messages.info(request, "Product Deleted")
+        messages.error(request, "Product Deleted")
     return redirect('productmanager')
 
 

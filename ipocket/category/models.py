@@ -165,7 +165,12 @@ class Products(models.Model):
                 self.applied_offer="Category Offer"
             elif price_after_categoryoffer == price_after_productoffer:
                 self.price_after_offer=price_after_categoryoffer
-                self.applied_offer="Both Offer are Same"
+                self.applied_offer="Both Offer are Same" 
+            
+        else:
+            self.price_after_offer=0
+            self.applied_offer=''       
+            
 
         super(Products, self).save(*args, **kwargs)
 

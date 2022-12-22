@@ -74,7 +74,7 @@
                                 {% else %}
                                 <h1 class="h2">{{item.product_name}}</h1>
                                 {% endif %}
-                            {% if item.price_after_offer > 0 %}    
+                            {% if item.product_offer > 0 or item.product_type.offer_percentage %}    
                             <strike><p class="h3 py-2">₹{{item.price}}.00/-</p></strike>
                             <p class="h3 text-success py-2">₹{{item.price_after_offer}}/-</p>
                             {% else %}
