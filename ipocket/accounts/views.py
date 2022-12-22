@@ -594,12 +594,10 @@ def cart_update(request):
         cart_id=request.POST['cart_id']
         
         product=Products.objects.filter(product_id=product_id)
-        cart_to_Remove=Cart.objects.filter(id=cart_id).first()
-
+        
         print("Product Qty is",product_qty)   
         print("Cart Id is",cart_id)        
-        print("Cart is",cart_to_Remove)
-            
+        
 
         if 'username' not in request.session:
             user_in = guest(request)
@@ -609,17 +607,41 @@ def cart_update(request):
             user_in = request.session['username']
             cart = Cart.objects.filter(user=user_in,product=product_id).first() 
         
+        
+        
+        
         CartTotal= Cart.objects.filter(user=user_in)
         
         print("Cart total is ",CartTotal)
-
+        
+        total=0
+            
         for item in CartTotal:
             if item.product.price_after_offer > 0:
                 itemPrice=item.product.price_after_offer
             else:
-                itemPrice=item.product.price    
+                itemPrice=item.product.price  
+            
+            print("Item price is", itemPrice)
+            
+            total= total + itemPrice 
+            
+            print("Total is",total)      
         
-        print("Item price is ", itemPrice)
+        if cart.product.price_after_offer > 0:
+            cartPrice=cart.product.price_after_offer 
+        else:
+            cartPrice=cart.product.price    
+        
+        print("Cart product price is", cartPrice) 
+        
+        on_change_price = total - cartPrice  #minus the existing cart price from total
+        
+        update_price=on_change_price + (cartPrice * float(product_qty))
+        
+        print("Total to cart is",on_change_price) 
+        
+        print("Updated price is ", update_price)
         
         cart.product_qty = product_qty  
         cart.save()
