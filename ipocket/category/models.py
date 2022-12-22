@@ -104,7 +104,8 @@ class Products(models.Model):
         upload_to='images/products', null=True, blank=True)
     slug = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    product_offer = models.IntegerField(null=True, blank=True)
+    product_offer = models.IntegerField(null=True, blank=True) 
+    applied_offer = models.CharField(max_length=100, null=True,blank=True)
     price_after_offer = models.FloatField(null=True,blank=True)
     
     
@@ -125,7 +126,8 @@ class Products(models.Model):
             Price_on_Offer = (self.price * self.product_offer)/100     
             price_after_productoffer = self.price - Price_on_Offer
             self.price_after_offer=price_after_productoffer 
-
+            self.applied_offer="Product Offer"
+            
             print("Price after product offer is", price_after_productoffer)
 
         
@@ -138,16 +140,11 @@ class Products(models.Model):
             Price_on_Offer = (self.price * self.product_type.offer_percentage)/100     
             price_after_categoryoffer = self.price - Price_on_Offer
             self.price_after_offer=price_after_categoryoffer 
-
+            self.applied_offer="Category Offer"
             print("Price after product offer is", price_after_categoryoffer) 
 
         elif self.product_type.offer_percentage != None and self.product_offer != None:
 
-            
-            print("2nd condition hit, Product offer is",self.product_offer)
-
-            print("Category offer is",self.product_type.offer_percentage)
-            
     
             Price_on_Offer = (self.price * self.product_offer)/100
 
@@ -161,13 +158,14 @@ class Products(models.Model):
 
             if price_after_productoffer < price_after_categoryoffer:
                 self.price_after_offer=price_after_productoffer 
+                self.applied_offer="Product Offer"
 
             elif price_after_categoryoffer < price_after_productoffer:     
                 self.price_after_offer=price_after_categoryoffer
-
+                self.applied_offer="Category Offer"
             elif price_after_categoryoffer == price_after_productoffer:
                 self.price_after_offer=price_after_categoryoffer
-
+                self.applied_offer="Both Offer are Same"
 
         super(Products, self).save(*args, **kwargs)
 

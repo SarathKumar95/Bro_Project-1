@@ -1,5 +1,3 @@
-console.log("In owner.js");
-
 
 function blockUser(){
     let confirmAction = confirm("Are you sure you want to block this user? ");
@@ -31,6 +29,10 @@ function unblockUser(){
 
 function deleteProduct(passID){
 
+    let row=document.getElementById('productrow'+passID)
+
+    console.log("Row is", row) 
+
     console.log("Product ID", passID) 
     let confirmAction = confirm("Are you sure you want to delete this product ? ");
     
@@ -61,7 +63,8 @@ function deleteProduct(passID){
             },
             
             success: function (response) {
-                console.log(passID)
+                alert("Product Deleted!")
+                row.remove()                 
             }
         });
     }

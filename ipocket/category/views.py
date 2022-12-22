@@ -61,7 +61,6 @@ def delete_product(request):
         product.delete()
 
         messages.info(request, "Product Deleted")
-
     return redirect('productmanager')
 
 

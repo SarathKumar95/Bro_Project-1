@@ -43,7 +43,7 @@
                     </thead>
                     <tbody>
                         {% for item in products %}
-                        <tr>
+                        <tr id="productrow{{item.product_id}}">
                             <td>                
                                 {% if item.series %} 
                                 <strong><p>{{item.product_name}} {{item.generation}} {{item.series}}</p></strong>
@@ -66,10 +66,14 @@
                             <td>{{item.condition}}</td>
                             <td>{{item.price}}</td>
                             
-                            {% if item.product_offer > 0 %}
-                            <td>Product Offer Applied {{item.product_offer}}%</td>
-                            {% elif item.product_type.offer_percentage > 0 %}    
-                            <td>Category Offer Applied {{item.product_type.offer_percentage}}%</td>
+                            {% if item.applied_offer %}
+                                {% if item.applied_offer == 'Category Offer' %}
+                                    <td>{{item.applied_offer}} {{item.product_type.offer_percentage}}%</td>
+                                {% elif item.applied_offer == 'Product Offer' %}
+                                    <td>{{item.applied_offer}} {{item.product_offer}}%</td>
+                                {% else %}
+                                    <td>{{item.applied_offer}} {{item.product_offer}}%</td>    
+                                {% endif %}
                             {% else %}
                             <td>No Offers</td>
                             {% endif %}
@@ -87,11 +91,18 @@
             </div>
         </div>
     </div>
-
-
-
 </div>
 </div>
+
+{% block script %}
+<script>
+
+
+
+
+</script>
+
+{% endblock %}
 
 
 {% endblock %}
