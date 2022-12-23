@@ -162,16 +162,35 @@ def wishlist_add(request):
             if 'username' in request.session:
 
                 user_in=request.session['username'] 
+                
+                user=MyUser.objects.filter(email=user_in).first().id 
+                
+                print("User is", user)
 
-                print(user_in)    
+                wishlist=Wishlist.objects.create(user_id=user,product_id=product_id)
 
-                userID=MyUser.objects.filter(email=user_in).first().id 
-
-                print(userID)
-
-                wishlist=Wishlist.objects.create(user_id=request.session['username'],product=product_id)
-
+                return JsonResponse({'status':"Product added to Wishlist"})
             else:
                 return JsonResponse({'status':"Please login to add to wishlist"})    
 
 
+
+
+
+def wishlist_list(request):
+    user=request.session['username'] 
+    
+    userID=MyUser.objects.filter(email=user).first().id
+    
+    print("User ID is",userID)
+    
+    wishlist=Wishlist.objects.filter(user_id=userID) 
+    
+    print("Wishlist is",wishlist) 
+    
+    
+    for item in wishlist:
+        print(item.product.product_name) 
+        print(item.product.price_after_offer)
+        
+    return render(request,'user/wishlist.html')     

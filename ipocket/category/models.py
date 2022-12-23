@@ -216,7 +216,6 @@ class Order(models.Model):
     city = models.CharField(max_length=100, null=True)
     pincode = models.IntegerField(null=True)
     total_price = models.FloatField(null=True)
-    tax_amount = models.FloatField(null=True)
     ship_amount = models.FloatField(null=True)
     coupon_amount = models.FloatField(null=True)
     payment_mode = models.CharField(max_length=150, null=True)
@@ -251,7 +250,8 @@ class OrderItem(models.Model):
         ('Shipped', 'Shipped'),
         ('In Transit', 'In Transit'),
         ('Out for Delivery', 'Out for Delivery'),
-        ('Cancelled', 'Cancelled'),
+        ('Delivered', 'Delivered'),
+        
     ]
     item_status = models.CharField(
         max_length=50, choices=order_itemstatus, default="Order Confirmed", null=True)
@@ -261,15 +261,15 @@ class OrderItem(models.Model):
 
 
 class Wishlist(models.Model):
-    user_id=models.ForeignKey(MyUser,on_delete=models.CASCADE) 
+    user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
-
+      
     def __str__(self):
 
         if self.wishlist_name != None:
 
-            return '{}' - '{}'.format(self.user_id.email, self.wishlist_name) 
+            return '{}' - '{}'.format(self.user.email, self.wishlist_name) 
 
         else:
-            return self.user_id.email    
+            return self.user.email    

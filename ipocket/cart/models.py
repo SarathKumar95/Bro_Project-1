@@ -11,7 +11,8 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     session_id = models.CharField(max_length=255,null=True,blank=True)
     coupon_applied=models.CharField(max_length=100,null=True,blank=True)
-    coupon_discount=models.FloatField(null=True,blank=True)
+    discount_percentage=models.FloatField(null=True,blank=True)
+    amount_discounted=models.FloatField(null=True,blank=True)
     grand_total=models.FloatField(null=True,blank=True)
 
     def __str__(self):

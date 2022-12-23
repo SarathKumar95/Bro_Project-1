@@ -33,7 +33,6 @@ client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 orderid = 0
 grandTotal_after_discount = 0
 coupon_check = 0
-coupon_discount = 0
 already_applied_coupon = "None"
 
 # Create your views here.
@@ -690,7 +689,27 @@ def OrderPage(request,tracking_no):
 
 def order_manager(request):
     orders = Order.objects.all().order_by('created_at')
-    context = {'orders':orders}
+    form=OrderForm()
+    context = {'orders':orders,'form':form} 
+
+    if request.method=='POST':
+        status=request.POST['status'] 
+        itemID=request.POST['itemID']        
+        print("Status is ",status)
+        print("item id is",itemID) 
+        
+        order=Order.objects.filter(id=itemID).first()
+    
+        print("Order status is",order.status) 
+        
+        
+        order.status=status
+        
+        order.save()
+        
+        print("Order status now is",order.status) 
+        
+        
     return render(request,'owner/ordermanager.html',context)    
 
 
@@ -969,59 +988,84 @@ def coupon_post(request):
         grandTotal= request.POST['grandTotal']
         coupon=request.POST['coupon'] 
         
-        cart=Cart.objects.filter(user=request.session['username']).first()
+        cart=Cart.objects.filter(user=request.session['username'])
+    
 
-        print("Coupon to be applied is ", coupon)    
-        
-        
-        print("Coupon in is",cart.coupon_applied) 
+        itemcount=0
+        total=0
+        total_after_coupon = 0 
+        for item in cart:
+            itemcount+=1
+            itemCoupon=item.coupon_applied
+            if item.product.price_after_offer:
+                price=item.product.price_after_offer
+            else:
+                price=item.product.price 
+            itemTotal=item.grand_total    
+            total+=price
                 
         
-        global coupon_check
-        coupon_check=Coupon.objects.filter(coupon_code=coupon).first()        
-
-        point_grand = float(grandTotal) 
-
+        coupon_check=Coupon.objects.filter(coupon_code=coupon).first() 
+        
+        print("disc percentage is", coupon_check.discount_percentage) 
+         
+         
         if coupon_check:
             
-            if cart.coupon_applied == coupon:
+            print("Item coupon is", itemCoupon)
+            
+            if itemCoupon == coupon:
                 return JsonResponse({'status':"Coupon Already Applied!"})
             
             elif coupon_check.is_expired == False:
                 
-                if point_grand < coupon_check.minimum_amount:
-                    return JsonResponse({'status':"Add items worth "+str(coupon_check.minimum_amount - point_grand)+" to avail this coupon"})
+                if total < coupon_check.minimum_amount:
+                    return JsonResponse({'status':"Add items worth "+str(coupon_check.minimum_amount - total)+" to avail this coupon"})
             
 
-                elif point_grand > coupon_check.maximum_amount:
+                elif total > coupon_check.maximum_amount:
                          return JsonResponse({'status':"Coupon only applicable to orders below "+str(coupon_check.maximum_amount)})
                 else:
-
-                    coupon_perc=coupon_check.discount_percentage/100
-                    global coupon_discount
-                    coupon_discount= float(grandTotal) * coupon_perc 
-                
-                    global grandTotal_after_discount               
-                    grandTotal_after_discount=float(grandTotal)-coupon_discount
-
-                    if cart.coupon_applied == None:
-                        cart.coupon_applied=coupon
-                        cart.coupon_discount=coupon_discount
-                        cart.grand_total=grandTotal_after_discount
-                        cart.save() 
-                        return JsonResponse({'status':"Coupon Applied"})
                     
-                    elif cart.coupon_applied != None:
-                        return JsonResponse({'status':"Only one coupon can be availed"})
+                    for item in cart:
+                        
+                        item_Discount_to_apply = coupon_check.discount_percentage / itemcount
+                            
+                        print("Coupon check discount is",item_Discount_to_apply)
+                        print(item.product.product_name)
+                        
+                        if item.product.price_after_offer:
+                            price=item.product.price_after_offer 
+                        else:
+                            price=item.product.price 
+                        
+                        amount_to_be_discounted = (price * item_Discount_to_apply/100)
+                        price_after_discount= price - (price * item_Discount_to_apply/100)    
+                        print("Price is", price)
+                        print("Price after discount is",price_after_discount)
+                        print("Amount to discount",amount_to_be_discounted)       
+                        
+                        total_after_coupon= total_after_coupon + price_after_discount 
+                        
+                        print("Total after discount is",total_after_coupon)           
+                        
+                        if item.coupon_applied == None:
+                            item.coupon_applied=coupon
+                            item.discount_percentage=item_Discount_to_apply
+                            item.amount_discounted=amount_to_be_discounted
+                            item.grand_total=price_after_discount
+                            item.save() 
+                            print("saved")
+                    
+                        elif item.coupon_applied != None:
+                            return JsonResponse({'status':"Only one coupon can be availed"})
     
-            elif coupon_check.is_expired == True:
-                return JsonResponse({'status':"Sorry,this coupon seems to be expired!"}) 
-
+                        elif coupon_check.is_expired == True:
+                            return JsonResponse({'status':"Sorry,this coupon seems to be expired!"}) 
+                    
+                    
+                    return JsonResponse({'status':"Coupon Applied",'total':total_after_coupon})
         
-        
-        
-        
-
         else:
             return JsonResponse({'status':"Invalid Coupon"})
     
@@ -1031,13 +1075,15 @@ def coupon_post(request):
 
 def coupon_delete(request):
     if request.method == 'POST':
-        cart=Cart.objects.filter(user=request.session['username']).first()
-        print("Cart is ", cart.coupon_applied) 
-
-        cart.grand_total+=cart.coupon_discount
-        cart.coupon_applied = None
-        cart.coupon_discount = 0 
-        cart.save()
+        cart=Cart.objects.filter(user=request.session['username'])
+        
+        for item in cart:
+            item.grand_total=item.grand_total+item.amount_discounted
+            item.coupon_applied = None
+            item.amount_discounted = 0
+            item.discount_percentage = 0    
+            item.save()  
+                  
         return redirect('checkout')
 
 
@@ -1053,52 +1099,40 @@ def checkout(request):
     cart = Cart.objects.filter(user = user_in)
     user_filt = MyUser.objects.filter(email=user_in) 
 
-    print("Cart in checkout is ", cart)
-    
-    
     sub_total = 0
-    tax = 0
-    
+    coupon_name = None
+    total_discount = 0
+         
     for item in cart:
         if item.product.price_after_offer > 0:
             Item_total = item.product.price_after_offer * item.product_qty
         else:    
             Item_total = item.product.price * item.product_qty
-        print("Item price is ", Item_total)
-        sub_total+=Item_total 
+        sub_total+=Item_total
         
-    print("Sub total is", sub_total)     
+        if item.amount_discounted != None:
+            total_discount+=item.amount_discounted
+        else:
+            pass    
+         
+
+    coupon_name=item.coupon_applied 
+    
+    print("Coupon applied is",coupon_name)   
     
     if sub_total <= 100000:
         shipping = 150
         
     else:
         shipping = 0       
-        tax = 5
+        
 
-    
-    grand_total_with_tax = sub_total * tax/100
-
-     
-    cart_to_html=Cart.objects.filter(user=user_in).first()
-
-    print("Cart coupon status is",cart_to_html.coupon_applied)    
-
-    if cart_to_html.grand_total:
-        grand_total = cart_to_html.grand_total
-        print("Grand total from cart is", cart_to_html.grand_total)
-
+    if total_discount != 0:
+        grandTotal_with_shipping=sub_total+shipping - total_discount
     else:
-         grand_total = sub_total + shipping + grand_total_with_tax     
-    
-    
-
-    print("Sub total to send is",sub_total)
-    print("Shipping is",shipping)
-    print("Tax is",tax) 
-    print("Tax amount is",grand_total_with_tax)
-    print("Grand total is",grand_total) 
-    
+        grandTotal_with_shipping= sub_total + shipping
+        
+        
     if request.method == 'POST':
         
         if cart.count() == 0:
@@ -1117,27 +1151,18 @@ def checkout(request):
             neworder.state = request.POST['state'] 
             neworder.pincode = request.POST['zip']
             
-            if coupon_discount:
-                neworder.total_price = grand_total - coupon_discount
-                neworder.coupon_amount = coupon_discount
+            if total_discount:
+                neworder.total_price = grandTotal_with_shipping - total_discount
+                neworder.coupon_amount = total_discount
             else:
-                neworder.total_price = grand_total
+                neworder.total_price = grandTotal_with_shipping
                 neworder.coupon_amount = 0    
             
 
-            
-            neworder.price_before_tax = sub_total 
-            neworder.tax_amount = grand_total_with_tax
-            neworder.ship_amount = shipping
-            neworder.payment_mode = request.POST['paymentMethod'] 
+                neworder.ship_amount = shipping
+                neworder.payment_mode = request.POST['paymentMethod'] 
 
-
-            print("New order sub total is", neworder.price_before_tax) 
-
-
-
-
-            print("The payment mode used is ", request.POST['paymentMethod'])
+                print("The payment mode used is ", request.POST['paymentMethod'])
 
 
             track_no = 'IPOrder' + str(random.randint(111111,999999)) 
@@ -1145,7 +1170,7 @@ def checkout(request):
                 track_no = 'IPOrder' + str(random.randint(111111,999999))
 
             neworder.tracking_no = track_no
-            neworder.coupon=cart_to_html.coupon_applied
+            neworder.coupon=coupon_name
             
             neworder.save() 
 
@@ -1174,10 +1199,10 @@ def checkout(request):
 
                 orderproduct = Products.objects.filter(product_id=item.product.product_id).first()
                 
-                print("Ordered product is",orderproduct.slug,"and quantity is", orderproduct.quantity) 
+
                 orderproduct.quantity -= item.product_qty 
                 orderproduct.save()
-                print("Ordered product quantity after ordering is", orderproduct.quantity) 
+
 
                 
                 cart = Cart.objects.filter(user=user_in) 
@@ -1189,7 +1214,7 @@ def checkout(request):
             else:
                 return redirect('order-page',tracking_no=neworder.tracking_no)     
             
-    context = {'user_filt':user_filt,'cart':cart,'cart_to_html':cart_to_html,'sub_total':sub_total,'shipping':shipping, 'tax':tax, 'grand_total_with_tax':grand_total_with_tax, 'grand_total':grand_total, 'api_key' : RAZOR_KEY_ID}    
+    context = {'user_filt':user_filt,'cart':cart,'sub_total':sub_total,'shipping':shipping,'coupon_name': coupon_name,'total_discount':total_discount, 'total':grandTotal_with_shipping ,'api_key':RAZOR_KEY_ID}    
     return render(request,'home/checkout.html',context) 
 
 

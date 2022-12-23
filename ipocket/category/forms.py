@@ -118,7 +118,13 @@ class OrderForm(ModelForm):
             'status' : Select(attrs={
                 'class': "form-control text-dark",
                 'style' : "max-width: 300px",
-            })
+            }),
+            
+            
+            'coupon': TextInput(attrs={
+                'class': "form-control text-dark",
+                'style' : "max-width: 300px",
+            }),
 
             
             

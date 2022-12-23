@@ -12,6 +12,11 @@
     .d-flex{
         gap:10px;
     }
+
+    table tbody tr .status{
+        width: 600px;
+    }
+
 </style>
 
 <div class="main ms-4 me-4">
@@ -27,36 +32,49 @@
         {% endfor %}
     </div>
 
-    <div class="container-fluid pt-4 px-4">
+    <div class="container-fluid">
         <div class="bg-light text-center rounded p-4">
             <div class="table-responsive">
                 <table class="table text-start align-middle table-bordered table-hover mb-0">
                     <thead>
                         <tr class="text-dark">
-                            <th scope="col">Tracking No</th>
-                            <th scope="col">Order Date</th>
-                            <th scope="col">Customer</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Tax</th>
-                            <th scope="col">Shipping Charges</th>
-                            <th scope="col">Grand Total</th>
-                            <th scope="col">Payment Mode</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Action</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Order Details</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Order Date</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Customer</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Status</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in orders %}
-                        <tr>
-                            <td>{{item.tracking_no}}</td>
-                            <td >{{item.created_at.date}}</td>
+                        <tr id="row{{item.id}}">
+                            <td>
+                                <div>
+                                   <p><span style="font-weight:bold;">Tracking No : </span>{{item.tracking_no}}</p> 
+                                   <p><span style="font-weight:bold;">Sub Total : </span>{{item.price_before_tax}}</p>
+                                   <p><span style="font-weight:bold;">Tax : </span>₹{{item.tax_amount}}</p> 
+                                   <p><span style="font-weight:bold;">Shipping Amount : </span>{{item.ship_amount}}</p>
+                                   <p><span style="font-weight:bold;">Grand Total : </span>₹{{item.total_price}}</p>
+                                   <p><span style="font-weight:bold;">Payment Mode : </span>{{item.payment_mode}}</p>
+                                    
+                                        
+                                </div>
+                            
+                            </td>
+                            <td style="min-width: 200px;">{{item.created_at.date}}</td>
                             <td>{{item.email}}</td>
-                            <td>₹{{item.price_before_tax}}</td>
-                            <td>₹{{item.tax_amount}}</td>
-                            <td>₹{{item.ship_amount}}</td>
-                            <td>₹{{item.total_price}}</td>
-                            <td>{{item.payment_mode}}</td>
-                            <td>{{item.status}}</td>
+                            <td>
+                                <span id="status{{item.id}}">Current Status :{{item.status}} <button class="btn btn-sm btn-secondary"  onclick="changeStatus(itemID='{{item.id}}')"  >Change</button></span>
+                                    
+
+                                <form action="" method="POST" hidden="true" id="form{{item.id}}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="itemID" value="{{item.id}}">
+                                    <span name="status" onchange="saveOrder(itemID='{{item.id}}')" id="status{{item.id}}">{{form.status}}</span>  
+                                    <button class="mt-2" onclick="postOrder(itemID='{{item.id}}')" >Save</button>    
+                                </form>
+                              
+                            </td>
                             <td>
                                 <div class="d-flex justify-content-between">
                                     <div class="mb-2">
@@ -88,5 +106,44 @@
         </div>
     </div>
 
+{% block script %}
+<script>
+function saveOrder(itemID){
+    let save=document.getElementById('saveBtn'+itemID).hidden=false; 
+}
+
+
+function postOrder(itemID){
+    
+    let status=document.getElementById('id_status').value
+    let token = $('input[name=csrfmiddlewaretoken]').val();
+    
+    console.log("Status is",status)
+    console.log("token is",token)
+    $.ajax({
+        method:"POST",
+        url: "{% url 'order-list'  %}",
+        data: {
+            'itemID':itemID,
+            'status':status,
+            csrfmiddlewaretoken:token,
+        },
+
+        success: function (response) {
+           alert('Updated Order') 
+        }
+    });
+} 
+
+function changeStatus(itemID){
+    let save=document.getElementById('form'+itemID).hidden=false;
+    let button = document.getElementById('status'+itemID).hidden=true;
+}
+
+</script>
+
+
+
+{% endblock %}
     
 {% endblock %}

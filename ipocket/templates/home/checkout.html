@@ -96,13 +96,10 @@
             <span>₹{{shipping}}.00</span>
             {% endif %}
           </li>
+            
+          {% if coupon_name != None  %}
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-            <strong> Tax : </strong><span>{{grand_total_with_tax}}</span>
-          </li>
-
-          {% if cart_to_html.coupon_applied != None %}
-          <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-            <strong> Coupon : </strong><span><button class="btn btn-sm btn-danger" id="removeCoupon" style="position:relative; left:20px;"><span name>{{cart_to_html.coupon_applied}}</span><i class="fa-solid fa-x ms-3"></i>
+            <strong> Coupon : </strong><span><button class="btn btn-sm btn-danger" id="removeCoupon" style="position:relative; left:20px;"><span name>{{coupon_name}}</span><i class="fa-solid fa-x ms-3"></i>
             </button></span>
           </li>
           {% else %}
@@ -110,10 +107,10 @@
             <strong> Coupon : </strong><span>{{"NO COUPON APPLIED"}}</span>
           </li>
           {% endif %}
-
-          {% if cart_to_html.coupon_discount != None %}
+            
+          {% if total_discount != 0 %}
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-            <strong> Discount : </strong><span>{{cart_to_html.coupon_discount}}</span>
+            <strong> Discount : </strong><span>{{total_discount}}</span>
           </li>
           {% else %}
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
@@ -127,11 +124,7 @@
                 <p class="mb-0">(including VAT)</p>
               </strong>
             </div>
-            {% if cart_to_html.grand_total %}
-            <span> ₹<strong><span id="grandTotal">{{cart_to_html.grand_total}}</span></strong></span>
-            {% else %}
-            <span> ₹<strong><span id="grandTotal">{{grand_total}}</span></strong></span>
-            {% endif %}
+            <span> ₹<strong><span id="grandTotal">{{total}}</span></strong></span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
             <div class="input-group">
@@ -538,6 +531,7 @@ $('#couponBtn').click(function (e) {
       alertify.success(response.status)
       if (response.status == "Coupon Applied"){
         window.location.href="checkout"
+        document.getElementById('grandTotal').innerHTML = response.total
       } 
     },
 
@@ -552,9 +546,7 @@ $('#couponBtn').click(function (e) {
 $('#removeCoupon').click(function (e) { 
   e.preventDefault();
 
-  // var cart = document.getElementById('yourCart')
-
-  // console.log("Cart div is", cart)
+  console.log("Done");
 
   var token = $('input[name=csrfmiddlewaretoken]').val();
   $.ajax({
