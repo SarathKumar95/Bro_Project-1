@@ -33,7 +33,8 @@ client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 orderid = 0
 grandTotal_after_discount = 0
 coupon_check = 0
-already_applied_coupon = "None"
+item_count_on_couponAdd = 0
+
 
 # Create your views here.
 def guest(request):
@@ -1008,7 +1009,11 @@ def coupon_post(request):
         coupon_check=Coupon.objects.filter(coupon_code=coupon).first() 
         
         print("disc percentage is", coupon_check.discount_percentage) 
-         
+        
+        print("Item count when adding coupon is",itemcount) 
+        
+        global item_count_on_couponAdd
+        item_count_on_couponAdd=itemcount
          
         if coupon_check:
             
@@ -1074,17 +1079,20 @@ def coupon_post(request):
 
 
 def coupon_delete(request):
-    if request.method == 'POST':
-        cart=Cart.objects.filter(user=request.session['username'])
+    print("Hit post coupon delete")
+    cart=Cart.objects.filter(user=request.session['username'])
         
-        for item in cart:
-            item.grand_total=item.grand_total+item.amount_discounted
+    for item in cart:
+        if item.amount_discounted == None:
+            item.grand_total=item.grand_total
+        else:
+            item.grand_total=item.grand_total+item.amount_discounted    
             item.coupon_applied = None
             item.amount_discounted = 0
             item.discount_percentage = 0    
             item.save()  
-                  
-        return redirect('checkout')
+                 
+    return JsonResponse({'status':'Removed Coupon'})
 
 
 
@@ -1102,8 +1110,11 @@ def checkout(request):
     sub_total = 0
     coupon_name = None
     total_discount = 0
+    
          
     for item in cart:
+        coupon_name = item.coupon_applied        
+        print("Coupon name is",coupon_name)
         if item.product.price_after_offer > 0:
             Item_total = item.product.price_after_offer * item.product_qty
         else:    
@@ -1113,13 +1124,21 @@ def checkout(request):
         if item.amount_discounted != None:
             total_discount+=item.amount_discounted
         else:
-            pass    
-         
-
-    coupon_name=item.coupon_applied 
+            pass   
     
-    print("Coupon applied is",coupon_name)   
     
+    cartAll = Cart.objects.filter(user=user_in)
+    
+    itemCount=len(cartAll)
+     
+    if cartAll[0].coupon_applied != cartAll[(itemCount-1)].coupon_applied:
+        print("there is a diff") 
+        coupon_delete(request)        
+        total_discount = 0
+    else:
+        print("No worries")    
+            
+        
     if sub_total <= 100000:
         shipping = 150
         
@@ -1131,15 +1150,15 @@ def checkout(request):
         grandTotal_with_shipping=sub_total+shipping - total_discount
     else:
         grandTotal_with_shipping= sub_total + shipping
-        
-        
+     
+       
     if request.method == 'POST':
-        
+
         if cart.count() == 0:
             messages.info( request, "Cannot create an order as the cart is empty!")
              
         else:
-        
+            
             neworder = Order()
             neworder.user = request.session['username']
             neworder.first_name = request.POST['fname']
@@ -1177,16 +1196,19 @@ def checkout(request):
 
             neworderItems = Cart.objects.filter(user=user_in)
 
-            print("ITEMS IN THE CART ARE",neworderItems)
-
-            print("NO OF ITEMS IN CART",neworderItems.count())
 
 
             for item in neworderItems:
+                if item.product.price_after_offer:
+                    price=item.product.price_after_offer
+
+                else:
+                    price=item.product.price 
+                       
                 OrderItem.objects.create(
                     order = neworder,
                     product=item.product,
-                    price=item.product.price,
+                    price=price,
                     quantity=item.product_qty
 
                 )

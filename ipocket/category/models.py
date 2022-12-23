@@ -219,7 +219,7 @@ class Order(models.Model):
     ship_amount = models.FloatField(null=True)
     coupon_amount = models.FloatField(null=True)
     payment_mode = models.CharField(max_length=150, null=True)
-    price_before_tax = models.FloatField(null=True)
+    #price_before_tax = models.FloatField(null=True)
     payment_id = models.CharField(max_length=255, null=True, blank=True)
     orderstatus = [
         ('Order Confirmed', 'Order Confirmed'),
