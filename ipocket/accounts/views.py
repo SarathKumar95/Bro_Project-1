@@ -677,8 +677,10 @@ def OrderPage(request,tracking_no):
     orderTotal=0
 
     for item in orderitem:
-        # print("Item name is", item.product.price)
-        orderTotal= orderTotal + item.product.price * item.quantity
+        if item.product.price_after_offer:
+            orderTotal= orderTotal + item.product.price_after_offer * item.quantity
+        else:
+            orderTotal= orderTotal + item.product.price * item.quantity
 
     print("Order item total is",orderTotal)        
 
@@ -1151,7 +1153,7 @@ def checkout(request):
     else:
         grandTotal_with_shipping= sub_total + shipping
      
-       
+    print("Grand Total with shipping",grandTotal_with_shipping)   
     if request.method == 'POST':
 
         if cart.count() == 0:
@@ -1169,19 +1171,18 @@ def checkout(request):
             neworder.city = request.POST['city']
             neworder.state = request.POST['state'] 
             neworder.pincode = request.POST['zip']
+            neworder.total_price = grandTotal_with_shipping
             
-            if total_discount:
-                neworder.total_price = grandTotal_with_shipping - total_discount
+            if total_discount:    
                 neworder.coupon_amount = total_discount
             else:
-                neworder.total_price = grandTotal_with_shipping
                 neworder.coupon_amount = 0    
             
 
-                neworder.ship_amount = shipping
-                neworder.payment_mode = request.POST['paymentMethod'] 
+            neworder.ship_amount = shipping
+            neworder.payment_mode = request.POST['paymentMethod'] 
 
-                print("The payment mode used is ", request.POST['paymentMethod'])
+            print("The payment mode used is ", request.POST['paymentMethod'])
 
 
             track_no = 'IPOrder' + str(random.randint(111111,999999)) 
@@ -1242,3 +1243,4 @@ def checkout(request):
 
 
 
+ 
