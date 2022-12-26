@@ -64,8 +64,12 @@
                             <td style="min-width: 200px;">{{item.created_at.date}}</td>
                             <td>{{item.email}}</td>
                             <td>
-                                <span id="status{{item.id}}">Current Status :{{item.status}} <button class="btn btn-sm btn-secondary"  onclick="changeStatus(itemID='{{item.id}}')"  >Change</button></span>
-                                    
+                                <span id="status{{item.id}}">Current Status :{{item.status}} 
+                                {% if item.status == 'Delivered' or item.status == 'Cancelled'  %}    
+                                <button class="btn btn-sm btn-secondary" hidden onclick="changeStatus(itemID='{{item.id}}')" id="changeBtn{{item.id}}"  >Change</button></span>
+                                {% else %}
+                                <button class="btn btn-sm btn-secondary"  onclick="changeStatus(itemID='{{item.id}}')" id="changeBtn{{item.id}}"  >Change</button></span>
+                                {% endif %}   
 
                                 <form action="" method="POST" hidden="true" id="form{{item.id}}">
                                     {% csrf_token %}
@@ -108,6 +112,8 @@
 
 {% block script %}
 <script>
+
+
 function saveOrder(itemID){
     let save=document.getElementById('saveBtn'+itemID).hidden=false; 
 }
@@ -137,7 +143,7 @@ function postOrder(itemID){
 
 function changeStatus(itemID){
     let save=document.getElementById('form'+itemID).hidden=false;
-    let button = document.getElementById('status'+itemID).hidden=true;
+    let button = document.getElementById('status'+itemID).hidden=true; 
 }
 
 </script>

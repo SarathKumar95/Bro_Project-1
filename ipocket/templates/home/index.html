@@ -95,8 +95,10 @@
         <div class="row">
             {% for item in subcat %}
             <div class="col-12 col-md-4 p-5 mt-3">
-                {% if item.product_type_img|default_if_none:" " %}
+                {% if item.product_type_img %}
                 <a href="#"><img src="{{item.product_type_image.url}}" class="rounded-circle img-fluid border" style="height:115px; width: 110px; position:relative; left:85px; " alt="category-image"></a>
+                {% else %}
+                <a href="#">None</a>
                 <h5 class="text-center mt-3 mb-3">{{item.product_type}}</h5>
                 <p class="text-center"><a class="btn btn-dark" href="{% url 'product-type-filter' item.sub_cat_id %}">Go Shop</a></p>
                 {% endif %}

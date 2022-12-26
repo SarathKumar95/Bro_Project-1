@@ -125,11 +125,13 @@ class OrderForm(ModelForm):
                 'class': "form-control text-dark",
                 'style' : "max-width: 300px",
             }),
-
-            
-            
-            
         }
+
+
+        def clean(self):
+            instance = getattr(self,'instance')
+
+            print('Instance status is', instance.status)
 
 
 

@@ -698,14 +698,18 @@ def order_manager(request):
     if request.method=='POST':
         status=request.POST['status'] 
         itemID=request.POST['itemID']        
-        print("Status is ",status)
-        print("item id is",itemID) 
         
-        order=Order.objects.filter(id=itemID).first()
+        order=Order.objects.filter(id=itemID).first() 
+
     
-        print("Order status is",order.status) 
+
+        orderItem = OrderItem.objects.filter(order_id=itemID).all()
         
-        
+        for item in orderItem:
+            item.item_status = status
+            item.save()
+
+
         order.status=status
         
         order.save()
@@ -722,23 +726,7 @@ def order_edit(request, id):
 
     countOrderItem = orderitem.count()
 
-    print("Order status is", order.status) 
-    print("Order item is", orderitem)
-    print("No of Order item is", countOrderItem)
-
-
     form = OrderForm(instance=order)
-
-    print("Statuses in order is :" , order.orderstatus[1])  
-
-
-    
-    print("Status of order is", form['status']) 
-
-
-
-    for item in orderitem:
-        print("The order status before is", order.status, "The order item is",item.product.slug,"and the order item status before is", item.item_status)
 
     if request.method == 'POST':
         form = OrderForm(request.POST,instance=order)
@@ -746,7 +734,7 @@ def order_edit(request, id):
         for item in orderitem:
               item.item_status = request.POST['status'] 
               item.save()  
-              print("The orderitem is",item.product.slug ," Order status after is", order.status, "and the order item status after is", item.item_status)
+
 
         if form.is_valid():
             form.save()

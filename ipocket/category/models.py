@@ -180,6 +180,7 @@ class Coupon(models.Model):
     coupon_code = models.CharField(max_length=100, unique=True)
     valid_till = models.DateField(default=now)
     is_expired = models.BooleanField(default=False)
+    one_time_use = models.BooleanField(default=False)
     discount_percentage = models.IntegerField()
     minimum_amount = models.IntegerField()
     maximum_amount = models.IntegerField(default=90000)
@@ -226,7 +227,9 @@ class Order(models.Model):
         ('Shipped', 'Shipped'),
         ('In Transit', 'In Transit'),
         ('Out for Delivery', 'Out for Delivery'),
+        ('Delivered','Delivered'),
         ('Cancelled', 'Cancelled'),
+        
     ]
     status = models.CharField(
         max_length=150, choices=orderstatus, default='Order Confirmed')
