@@ -1,19 +1,17 @@
-{% extends 'user/base.html' %}  
+{% extends 'user/base.html' %}
 
 
-{% block title %}My Orders{% endblock %} 
+{% block title %}My Orders{% endblock %}
 
 {% block content %}
 {% load static %}
-
-
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 <style>
-
-    .popup{
+    .popup {
         visibility: hidden;
     }
-
-    
 </style>
 
 <div class="main text-center">
@@ -27,58 +25,63 @@
 
     <div class="popup">
         <span class="popuptext" id="myPopup">Popup text...</span>
-      </div> 
-      
+    </div>
+
     <div>
-        
-    {% if order.count == 0 %} 
-    <p>No Orders</p>  
-    {% else %}
-        
-        
+
+        {% if order.count == 0 %}
+        <p>No Orders</p>
+        {% else %}
+
+
         <table class="table me-5">
             <tr>
                 <th>Tracking Number</th>
                 <th>Ordered Items</th>
                 <th>Ordered Date</th>
-                <th>Tax Charged</th>
                 <th>Shipping Charges</th>
                 <th>Coupon Applied</th>
                 <th>Total</th>
                 <th>Status</th>
-                
+
             </tr>
 
             {% for item in order %}
-            
+
             <tr>
                 <td>
                     <div>{{item.tracking_no}}</div>
                     <div><a href="{% url 'view-invoice' item.tracking_no %}">View Invoice</a></div>
                 </td>
-                
+
                 <td>
-                    {% for item in orderitem %} 
-                       
+                    {% for item in orderitem %}
+
                     <div>
                         {% if item.product.generation %}
-                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}} {{item.product.generation}}</a>
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}}
+                            {{item.product.generation}}</a>
                         {% elif item.product.series %}
-                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}} {{item.product.series}}</a>
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}}
+                            {{item.product.series}}</a>
                         {% elif item.product.series and item.product.generation %}
-                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}} {{item.product.generation}} {{item.product.series}}</a>
+                        <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}}
+                            {{item.product.generation}} {{item.product.series}}</a>
                         {% else %}
                         <a href="{% url 'ordered-items' item.id %}">{{item.product.product_name}}</a>
                         {% endif %}
                     </div>
-                {% endfor %}
+                    {% endfor %}
                 </td>
                 <td>{{item.created_at}}</td>
-                <td><span>₹</span>{{item.tax_amount}}</td>
                 <td><span>₹</span>{{item.ship_amount}}</td>
                 <td><span>₹</span>{{item.coupon_amount}}</td>
                 <td><span>₹</span>{{item.total_price}}</td>
+                {% if item.status == "Delivered" %}
+                <td><a href="{% url 'return-order' item.id %}" class="btn btn-sm btn-danger" >Return</button></td>
+                {% else %}
                 <td>{{item.status}}</td>
+                {% endif %}
             </tr>
             {% endfor %}
 
@@ -90,13 +93,32 @@
 
 
 </div>
+{% block script %}
 
 <script>
-    function popup(){
-        var popdiv = document.getElementsByClassName('popup');
-        console.log("Pop div is", popdiv)
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
+    const csrftoken = getCookie('csrftoken');
+
+
+
+    
 </script>
 
+{% endblock %}
 
 {% endblock %}

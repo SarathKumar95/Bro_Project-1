@@ -50,6 +50,7 @@ urlpatterns = [
     path('manager/coupon/delete/<int:coupon_id>',views.coupon_delete_admin, name='coupon-deleteAdmin'),
     path('personal',views.personal,name='personal'),
     path('manageaddresses',views.manage_address,name='manage-address'),
-
+    path('myorders/return/<int:itemID>',views.returnOrder,name='return-order'),
+    path('myorders/return/confirm',views.confirm_Return,name='confirm=return'),
 
 ]

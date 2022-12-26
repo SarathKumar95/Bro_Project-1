@@ -1,0 +1,79 @@
+{% extends 'user/base.html' %}
+
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+<div class="main mt-5">
+    <h2 class="mb-3">Return Order</h2>
+    
+    <hr class="mb-3">
+
+    <div class="message-wrapper">
+        {% for message in messages %}
+        <div class="alert alert-primary" role="alert">
+            {{message}}
+          </div>
+        {% endfor %}  
+    </div>
+
+    {% if order.status == "Returned" %}
+    <p>This Order is already Returned and is in processing.</p>
+    {% endif %}
+    
+    <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+          <tr>
+            <th>Select</th>
+            <th>Order Item</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in orderItem %}
+          
+         <input type="hidden" name="order" value="{{item.order_id}}" >  
+          <tr>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <td>
+                    {% if item.item_status == 'Returned' %}
+                    <input type="checkbox" checked value="{{item.id}}" name="item">
+                    {% else %}
+                    <input type="checkbox" value="{{item.id}}" name="item">
+                    {% endif %}
+                  </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img
+                        src="{{item.product.main_image.url}}"
+                        alt=""
+                        style="width: 45px; height: 45px"
+                        class="rounded-circle"
+                        />
+                    <div class="ms-3">
+                      <p class="fw-bold mb-1">{{item.product.slug}}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                    {{item.item_status}}
+                </td>
+            
+        </tr>
+        {% endfor %}    
+        </tbody>
+        
+      </table>
+      {% if order.status != 'Returned' %}
+        <button class="ms-2 mt-2 mb-2 btn btn-sm btn-danger">Confirm Return</button>
+      {% else %}  
+      <button class="ms-2 mt-2 mb-2 btn btn-sm btn-danger" disabled>Confirm Return</button>
+      {% endif %}
+    </form> 
+</div>   
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+{% endblock %}
