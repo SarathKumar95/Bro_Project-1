@@ -21,9 +21,13 @@ from django.views.generic import View
 from twilio.rest import Client
 from ipocket.settings import account_sid, auth_token
 from indian_cities.dj_city import cities
+from datetime import date
 
 
 import razorpay
+import calendar
+
+
 
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
@@ -213,26 +217,30 @@ def personal(request):
 
 
 def manage_address(request):
-    if "username" in request.session:
-        user_in = request.session["username"]
-        user_name = MyUser.objects.filter(email=user_in).first()
-        fname = user_name.first_name
-        lname = user_name.last_name
+    user_in = request.session["username"]
 
-        billAddress = BillingAddress.objects.filter(user_id=user_name.id).first()
+    userID = MyUser.objects.filter(email=user_in).first().id
 
-        Billform = BillingAddressForm(instance=billAddress)
+    if request.method == "POST":
 
-        if request.method == "POST":
-            Billform = BillingAddressForm(request.POST, instance=billAddress)
-            if Billform.is_valid():
-                Billform.save()
-                messages.success(request, "Update Successful")
-            else:
-                messages.success(request, Billform.errors)
+        addressline = request.POST["addressline"]
+        city = request.POST["city"]
+        state = request.POST["state"]
+        pincode = request.POST["pincode"]
 
-    context = {"user_in": user_in, "fname": fname, "lname": lname, "Billform": Billform}
-    return render(request, "user/manageaddress.html", context)
+        billingAddress = BillingAddress.objects.create(
+            user_id=userID,
+            addressline=addressline,
+            state=state,
+            city=city,
+            pincode=pincode,
+        )
+
+        billingAddress.save()
+
+        print("Created billing address ", billingAddress)
+
+    return render(request, "user/manageaddress.html")
 
 
 def myorder(request):
@@ -256,7 +264,72 @@ def myorder(request):
 
 def dashboard(request):
     if "username" in request.session:
-        return render(request, "owner/dashboard.html")
+        
+        orders_today = len(Order.objects.filter(created_at = date.today()))
+        
+        
+        
+        delivered_today = Order.objects.filter(created_at = date.today()) 
+
+        todays_revenue = 0
+        
+        for item in delivered_today:
+            todays_revenue += item.total_price 
+    
+        
+        print("Today's order is ", orders_today) 
+        
+        print("Today's  delivered order is ", delivered_today) 
+
+        #Monthly order 
+        
+        todays_date = date.today() 
+        current_year = todays_date.year 
+        current_month = todays_date.month 
+        last_day_of_month = calendar.monthrange(current_year,current_month)[1] 
+    
+        
+        
+        
+        month_start = todays_date.replace(day=1) 
+        month_end = todays_date.replace(day=last_day_of_month)
+        
+        
+        month_order_count = 0
+        month_revenue = 0
+        
+        for day in range(1,last_day_of_month+1):
+            count_order = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
+            order= Order.objects.filter(created_at=todays_date.replace(day=day))
+            
+            if len(order) == 0:
+                pass       
+            
+            else:
+                for item in order:
+                    month_revenue += item.total_price 
+                    
+                
+            month_order_count += count_order 
+        
+        print("Month order count is ", month_order_count)           
+        print("Monthly revenue is",month_revenue)
+        
+        # print("Month start date is ", month_start) 
+        # print("Month end date is ", month_end)
+        
+        
+        # orders_month_start = len(Order.objects.filter(created_at=month_start).all()) 
+        # order_month_end = len(Order.objects.filter(created_at=month_end).all()) 
+
+        # print("Order at end is ", order_month_end - order_month_start)
+
+        context = {'orders_today':orders_today, 
+                   'todays_revenue': int(todays_revenue), 
+                   'orders_monthly':month_order_count,
+                   'month_revenue': int(month_revenue)}
+        
+        return render(request, "owner/dashboard.html",context)
     else:
         return redirect("signin")
 
@@ -1234,42 +1307,49 @@ def returnOrder(request, itemID):
 
     orderItem = OrderItem.objects.filter(order_id=orderID).all()
 
+    context = {"orderItem": orderItem, "order": order}
 
-    context = {"orderItem": orderItem,"order":order}
-
-    if request.method == 'POST':
-        item = request.POST.getlist('item') 
-        order = request.POST['order']
-        
-        print("Item is ", item) 
-        print("Order id is",order)    
+    if request.method == "POST":
+        item = request.POST.getlist("item")
+        order = request.POST["order"]
 
         IteminOrder = OrderItem.objects.filter(order_id=order).all().count()
 
-        print("Items in order are ", IteminOrder)
+        user_in = request.session["username"]
 
+        userID = MyUser.objects.filter(email=user_in).first().id
 
-        length_of_item = len(item) 
-
-        print("length of items is",length_of_item)   
+        length_of_item = len(item)
 
         for itemid in item:
-            print("Item id is ", itemid)
-            orderItem = OrderItem.objects.filter(id=itemid).first() 
-            print("Orderitem is",orderItem.product.slug)
-            print("Orderitem status before is",orderItem.item_status)
-            orderItem.item_status = 'Returned'
-            print("Orderitem status after is",orderItem.item_status)
-            orderItem.save() 
+            orderItemID = OrderItem.objects.filter(id=itemid).first().id
+            orderItem = OrderItem.objects.filter(id=itemid).first()
+            orderItem.item_status = "Returned"
+            orderItem.save()
+
+            print("Order item is ", orderItemID)
+
+            print("Order item quantity is ", orderItem.quantity)
+
+            wallet = Wallet.objects.create(
+                user_id=userID,
+                orderItem_id=orderItemID,
+                quantity=orderItem.quantity,
+                amount=orderItem.price,
+            )
+
+            print("Wallet created ", wallet)
 
             if length_of_item == IteminOrder:
 
                 get_order = Order.objects.filter(id=order).first()
-                get_order.status = 'Returned'
+                get_order.status = "Returned"
+                print("Total of return is ", get_order.total_price)
                 get_order.save()
 
+        messages.info(request, "Return Confirmed! Our representative will contact you!")
     return render(request, "user/orderreturn.html", context)
 
 
-def confirm_Return(request):
+def chart(request):
     pass

@@ -51,6 +51,7 @@ urlpatterns = [
     path('personal',views.personal,name='personal'),
     path('manageaddresses',views.manage_address,name='manage-address'),
     path('myorders/return/<int:itemID>',views.returnOrder,name='return-order'),
-    path('myorders/return/confirm',views.confirm_Return,name='confirm=return'),
+    path('chart', views.chart,name='chart'),
+
 
 ]

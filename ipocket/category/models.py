@@ -235,7 +235,7 @@ class Order(models.Model):
         max_length=150, choices=orderstatus, default='Order Confirmed')
     message = models.TextField(null=True, blank=True)
     tracking_no = models.CharField(max_length=150, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     coupon = models.CharField(max_length=100, null=True, blank=True)
 
@@ -276,3 +276,14 @@ class Wishlist(models.Model):
 
         else:
             return self.user.email    
+
+#wallet
+class Wallet(models.Model):
+    wallet_id=models.AutoField(primary_key=True)
+    user=models.ForeignKey(MyUser,on_delete=models.CASCADE) 
+    orderItem=models.ForeignKey(OrderItem,on_delete=models.CASCADE,null=True,blank=True)
+    quantity=models.IntegerField(null=True,blank=True)
+    amount=models.FloatField(null=True,blank=True) 
+
+    def __str__(self):
+        return '{}'.format(str(self.wallet_id)) 

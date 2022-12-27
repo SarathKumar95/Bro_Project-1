@@ -20,7 +20,7 @@ class MyUser(AbstractUser):
 
 
 class BillingAddress(models.Model):
-     user_id=models.ForeignKey(MyUser,on_delete=models.CASCADE)
+     user=models.ForeignKey(MyUser,on_delete=models.CASCADE)
      addressline=models.TextField(max_length=500,null=True,blank=True)
      state=models.CharField(max_length=100,null=True,blank=True) 
      city=models.CharField(max_length=100,null=True,blank=True) 
