@@ -22,7 +22,7 @@ from twilio.rest import Client
 from ipocket.settings import account_sid, auth_token
 from indian_cities.dj_city import cities
 from datetime import date
-
+from accounts.models import *
 
 import razorpay
 import calendar
@@ -228,14 +228,6 @@ def manage_address(request):
         state = request.POST["state"]
         pincode = request.POST["pincode"]
 
-        billingAddress = BillingAddress.objects.create(
-            user_id=userID,
-            addressline=addressline,
-            state=state,
-            city=city,
-            pincode=pincode,
-        )
-
         billingAddress.save()
 
         print("Created billing address ", billingAddress)
@@ -351,8 +343,6 @@ def block_user(request, id):
     blocked_user = MyUser.objects.get(id=id)
     blocked_user.is_active = False
     blocked_user.save()
-    print("Blocked user is", blocked_user)
-    print("Is active status of blocked user is", blocked_user.is_active)
     return redirect("usermanager")
 
 
@@ -360,8 +350,6 @@ def unblock_user(request, id):
     user_to_unblock = MyUser.objects.get(id=id)
     user_to_unblock.is_active = True
     user_to_unblock.save()
-    print("Unblocked user is", user_to_unblock)
-    print("Is active status of blocked user is", user_to_unblock.is_active)
     return redirect("usermanager")
 
 
@@ -382,13 +370,13 @@ def products(request):
 
         if "condition" in request.POST and "productType" not in request.POST:
             condition_in = request.POST["condition"]
-            print("Condition is", condition_in)
+        
 
             id_of_condition = (
                 Categories.objects.filter(condition=condition_in).first().category_id
             )
 
-            print("Cat id is", id_of_condition)
+            
 
             product = Products.objects.filter(condition=id_of_condition)
             messages.success(request, "Listing " + condition_in + " products")
@@ -415,24 +403,14 @@ def products(request):
             condition = request.POST["condition"]
             protype = request.POST["productType"]
 
-            print("Condition is", condition, "Protype is", protype)
 
             category_selected = Categories.objects.filter(condition=condition)
             subcategory = ProductType.objects.filter(product_type=protype)
 
-            print(
-                "Category selected is",
-                category_selected,
-                "Product type is",
-                subcategory,
-            )
-
             no_of_category = Categories.objects.filter(condition=condition).count()
             no_of_subcategory = ProductType.objects.filter(product_type=protype).count()
 
-            print("Count is ", no_of_category)
-            print("Count is ", no_of_subcategory)
-
+    
             if no_of_subcategory == 0:
                 return redirect(request.path)
 
@@ -440,18 +418,14 @@ def products(request):
                 for item in category_selected:
                     Cat_id = item.category_id
 
-                print("Cat id is", Cat_id)
-
                 for item in subcategory:
                     SubCat_id = item.sub_cat_id
 
-                print("Sub Cat id is", SubCat_id)
 
                 product = Products.objects.filter(
                     condition=Cat_id, product_type=SubCat_id
                 )
 
-                print("Products are", product)
 
     context = {"product": product, "category": category, "subCategory": subCategory}
     return render(request, "home/shop.html", context)
@@ -519,7 +493,7 @@ def cart_add(request):
             prod_id = request.POST["product_id"]
             prod_qty = 1
             product = Products.objects.filter(product_id=prod_id).first()
-            print("Prod id is", prod_id)
+
 
             cart = Cart.objects.filter(session_id=guest(request))
 
@@ -535,7 +509,6 @@ def cart_add(request):
                 )
 
             else:
-                print("create guest cart")
                 cart = Cart.objects.create(
                     session_id=guest(request), product_id=prod_id, product_qty=prod_qty
                 )
@@ -547,19 +520,13 @@ def cart_add(request):
             product_id = request.POST["product_id"]
             product_quantity = 1
             product_check = Products.objects.get(product_id=product_id)
-            print("Product name is ", product_check)
-            print("Stock is", product_check.quantity)
-            print("Price of the product is", product_check.price)
-            print("Ordered qty is", product_quantity)
-
+            
             if product_check:
                 if Cart.objects.filter(user=email, product_id=product_id):
-                    print("Product already in cart")
                     return JsonResponse({"status": "Product already in cart"})
 
                 else:
                     if product_check.quantity >= product_quantity:
-                        print("adding to cart")
                         Cart.objects.create(
                             user=email,
                             product_id=product_id,
@@ -584,7 +551,7 @@ def cart_add(request):
 def cart_list(request):
 
     guest_cart = Cart.objects.filter(session_id=guest(request)).all()
-    print("No of guest cart items are", guest_cart.count())
+    
 
     if "username" not in request.session:
         cart = Cart.objects.filter(session_id=guest(request))
@@ -596,14 +563,10 @@ def cart_list(request):
             pass
 
         else:
-            print("guest cart is present")
-
-            print("Guest cart is", guest_cart)
-
+    
             for item in guest_cart:
                 # if product in cart
                 if Cart.objects.filter(user=user_in, product=item.product):
-                    print("True")
                     cart = Cart.objects.filter(
                         user=user_in, product=item.product
                     ).first()  # itterate and get the product
@@ -611,18 +574,10 @@ def cart_list(request):
                     cart.product_qty += 1  # increase its quantity
                     cart.save()
 
-                    print(
-                        "The item which is in the cart is",
-                        cart,
-                        "The qty is",
-                        cart.product_qty,
-                    )
 
                     # item.product.delete() # delete that product from guest cart
 
                 else:
-                    print("False")  # add the product
-
                     cart = Cart.objects.create(
                         user=user_in, product=item.product, product_qty=item.product_qty
                     )
@@ -632,9 +587,6 @@ def cart_list(request):
 
             guest_cart.delete()
 
-            # print the guest cart to know if its deleted
-
-            print("Guest cart after deleting the product is", guest_cart)
 
     sub_total = 0
 
@@ -648,10 +600,6 @@ def cart_list(request):
             Item_total = item.product.price * item.product_qty
 
         sub_total += Item_total
-
-        print("Quantity is", product_qtyCheck)
-
-        print("Sub total is", sub_total)
 
     no_of_cart_items = cart.count()
     context = {
@@ -671,9 +619,6 @@ def cart_update(request):
 
         product = Products.objects.filter(product_id=product_id)
 
-        print("Product Qty is", product_qty)
-        print("Cart Id is", cart_id)
-
         if "username" not in request.session:
             user_in = guest(request)
             cart = Cart.objects.filter(session_id=user_in, product=product_id).first()
@@ -684,8 +629,6 @@ def cart_update(request):
 
         CartTotal = Cart.objects.filter(user=user_in)
 
-        print("Cart total is ", CartTotal)
-
         total = 0
 
         for item in CartTotal:
@@ -694,26 +637,18 @@ def cart_update(request):
             else:
                 itemPrice = item.product.price
 
-            print("Item price is", itemPrice)
 
             total = total + itemPrice
-
-            print("Total is", total)
 
         if cart.product.price_after_offer > 0:
             cartPrice = cart.product.price_after_offer
         else:
             cartPrice = cart.product.price
 
-        print("Cart product price is", cartPrice)
-
         on_change_price = total - cartPrice  # minus the existing cart price from total
 
         update_price = on_change_price + (cartPrice * float(product_qty))
 
-        print("Total to cart is", on_change_price)
-
-        print("Updated price is ", update_price)
 
         cart.product_qty = product_qty
         cart.save()
@@ -751,7 +686,7 @@ def OrderPage(request, tracking_no):
     for item in order:
         orderid = item.id
         orderitem = OrderItem.objects.filter(order_id=orderid).all()
-        print("Order item is", orderitem)
+        
 
     orderTotal = 0
 
@@ -761,7 +696,6 @@ def OrderPage(request, tracking_no):
         else:
             orderTotal = orderTotal + item.product.price * item.quantity
 
-    print("Order item total is", orderTotal)
 
     context = {"order": order, "orderitem": orderitem, "orderTotal": orderTotal}
     return render(request, "home/orderplaced.html", context)
@@ -788,7 +722,6 @@ def order_manager(request):
 
         order.save()
 
-        print("Order status now is", order.status)
 
     return render(request, "owner/ordermanager.html", context)
 
@@ -822,10 +755,6 @@ def order_edit(request, id):
 def order_info(request, id):
     order = Order.objects.filter(id=id).first()
     orderitem = OrderItem.objects.filter(order_id=order.id).all()
-    print("Order item is", orderitem)
-
-    for item in orderitem:
-        print("Product in order", item.product.product_name)
 
     context = {"orderitem": orderitem}
     return render(request, "owner/orderinfo.html", context)
@@ -842,10 +771,7 @@ def orderitem_delete(request, id):
     orderitem = OrderItem.objects.filter(id=id)
 
     for item in orderitem:
-        print("Item id is", item.id)
         orderid = item.order.id
-
-    print("Order id is", orderid)
 
     orderitem.delete()
     messages.info(request, "Removed Product")
@@ -857,7 +783,6 @@ def orderitem_cancel(request, id):
 
     for item in orderitem:
         status = item.item_status
-        print("Item status is", status)
 
     messages.info(request, "Removed Product")
     return HttpResponse(item)
@@ -865,7 +790,6 @@ def orderitem_cancel(request, id):
 
 
 def orderitem_edit(request, id):
-    print("Id is", id)
     orderitem = OrderItem.objects.filter(id=id).first()
 
     form = OrderItemForm(instance=orderitem)
@@ -1053,16 +977,10 @@ def coupon_post(request):
 
         coupon_check = Coupon.objects.filter(coupon_code=coupon).first()
 
-        print("disc percentage is", coupon_check.discount_percentage)
-
-        print("Item count when adding coupon is", itemcount)
-
         global item_count_on_couponAdd
         item_count_on_couponAdd = itemcount
 
         if coupon_check:
-
-            print("Item coupon is", itemCoupon)
 
             if itemCoupon == coupon:
                 return JsonResponse({"status": "Coupon Already Applied!"})
@@ -1093,9 +1011,6 @@ def coupon_post(request):
                             coupon_check.discount_percentage / itemcount
                         )
 
-                        print("Coupon check discount is", item_Discount_to_apply)
-                        print(item.product.product_name)
-
                         if item.product.price_after_offer:
                             price = item.product.price_after_offer
                         else:
@@ -1105,13 +1020,9 @@ def coupon_post(request):
                         price_after_discount = price - (
                             price * item_Discount_to_apply / 100
                         )
-                        print("Price is", price)
-                        print("Price after discount is", price_after_discount)
-                        print("Amount to discount", amount_to_be_discounted)
 
                         total_after_coupon = total_after_coupon + price_after_discount
 
-                        print("Total after discount is", total_after_coupon)
 
                         if item.coupon_applied == None:
                             item.coupon_applied = coupon
@@ -1119,7 +1030,6 @@ def coupon_post(request):
                             item.amount_discounted = amount_to_be_discounted
                             item.grand_total = price_after_discount
                             item.save()
-                            print("saved")
 
                         elif item.coupon_applied != None:
                             return JsonResponse(
@@ -1167,15 +1077,34 @@ def checkout(request):
 
     user_in = request.session["username"]
     cart = Cart.objects.filter(user=user_in)
-    user_filt = MyUser.objects.filter(email=user_in)
+    user_filt = MyUser.objects.filter(email=user_in) 
+    
+    
+    userID = MyUser.objects.filter(email = request.session["username"]).first().id 
+
+    customer_billAddress = BillingAddress.objects.filter(user_id=userID).first() 
+    customer_shipAddress = ShippingAddress.objects.filter(user_id=userID).first()
+
+
+    if customer_billAddress == ' ' or customer_billAddress == ' ' :
+        customer_billAddress = None
+
+    else:
+        pass
+
+
+    if customer_shipAddress == None or customer_shipAddress == ' ':
+        customer_shipAddress = None     
+
+    else:
+        pass
 
     sub_total = 0
-    coupon_name = None
+    coupon_name = None  
     total_discount = 0
 
     for item in cart:
         coupon_name = item.coupon_applied
-        print("Coupon name is", coupon_name)
         if item.product.price_after_offer > 0:
             Item_total = item.product.price_after_offer * item.product_qty
         else:
@@ -1192,11 +1121,10 @@ def checkout(request):
     itemCount = len(cartAll)
 
     if cartAll[0].coupon_applied != cartAll[(itemCount - 1)].coupon_applied:
-        print("there is a diff")
         coupon_delete(request)
         total_discount = 0
     else:
-        print("No worries")
+        pass
 
     if sub_total <= 100000:
         shipping = 150
@@ -1209,13 +1137,39 @@ def checkout(request):
     else:
         grandTotal_with_shipping = sub_total + shipping
 
-    print("Grand Total with shipping", grandTotal_with_shipping)
+   
     if request.method == "POST":
 
         if cart.count() == 0:
             messages.info(request, "Cannot create an order as the cart is empty!")
 
         else:
+            if customer_billAddress == None:
+                billAddress = BillingAddress()
+                billAddress.user_id = userID
+                billAddress.addressline = request.POST['billaddressline'] 
+                billAddress.city = request.POST['state']
+                billAddress.state = request.POST['city']
+                billAddress.pincode = request.POST['zip']    
+                billAddress.save()
+
+
+            elif request.POST['billaddressline'] == customer_billAddress.addressline:
+                pass        
+        
+                if request.POST.get('save-info',True):
+                    shipAddress = ShippingAddress()
+                    shipAddress.user_id=userID
+                    shipAddress.addressline = request.POST['shipaddressline']
+                    shipAddress.city = request.POST['ship-city']
+                    shipAddress.state = request.POST['ship-state']
+                    shipAddress.pincode = request.POST['ship-zip']    
+                    shipAddress.save()
+                    print("Shipping address saved!")
+
+                else:
+                    print("Which save??")
+                    
 
             neworder = Order()
             neworder.user = request.session["username"]
@@ -1223,7 +1177,7 @@ def checkout(request):
             neworder.last_name = request.POST["lname"]
             neworder.email = request.POST["email"]
             neworder.phone = request.POST["phno"]
-            neworder.address = request.POST["add"]
+            neworder.address = request.POST["billaddressline"]
             neworder.city = request.POST["city"]
             neworder.state = request.POST["state"]
             neworder.pincode = request.POST["zip"]
@@ -1237,7 +1191,6 @@ def checkout(request):
             neworder.ship_amount = shipping
             neworder.payment_mode = request.POST["paymentMethod"]
 
-            print("The payment mode used is ", request.POST["paymentMethod"])
 
             track_no = "IPOrder" + str(random.randint(111111, 999999))
             while Order.objects.filter(tracking_no=track_no) is None:
@@ -1264,10 +1217,6 @@ def checkout(request):
                     quantity=item.product_qty,
                 )
 
-                print("Item added is", item.product.slug)
-                print("Item price added is", item.product.price)
-                print("Item qty added is", item.product_qty)
-
                 orderproduct = Products.objects.filter(
                     product_id=item.product.product_id
                 ).first()
@@ -1293,6 +1242,8 @@ def checkout(request):
         "total_discount": total_discount,
         "total": grandTotal_with_shipping,
         "api_key": RAZOR_KEY_ID,
+        "customer_billAddress":customer_billAddress,
+        "customer_shipAddress":customer_shipAddress,
     }
     return render(request, "home/checkout.html", context)
 

@@ -31,4 +31,19 @@ class BillingAddress(models.Model):
         verbose_name_plural="Billing Addresses"   
 
      def __str__(self):
-        return self.user_id.email    
+        return self.user.email    
+
+
+class ShippingAddress(models.Model):
+     user=models.ForeignKey(MyUser,on_delete=models.CASCADE)
+     addressline=models.TextField(max_length=500,null=True,blank=True)
+     state=models.CharField(max_length=100,null=True,blank=True) 
+     city=models.CharField(max_length=100,null=True,blank=True) 
+     pincode=models.CharField(max_length=100,null=True,blank=True) 
+
+     class Meta:
+        verbose_name="Shipping Address"
+        verbose_name_plural="Shipping Addresses"   
+
+     def __str__(self):
+        return '{}'.format(self.user.email)    

@@ -63,24 +63,25 @@
 
     // Worldwide Sales Chart
     var ctx1 = $("#worldwide-sales").get(0).getContext("2d");
+    let decemberOrder = 
     var myChart1 = new Chart(ctx1, {
         type: "bar",
         data: {
-            labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022"],
+            labels: ["January", "February", "March", "April", "May", "June", "July","August","September","October","November","December"],
             datasets: [{
-                    label: "USA",
-                    data: [15, 30, 55, 65, 60, 80, 95],
-                    backgroundColor: "rgba(0, 156, 255, .7)"
+                    label: "Orders",
+                    data: [10, 10, 10, 10, 60, 80, 95,90],
+                    backgroundColor: "rgba(255, 99, 71, 0.5)"
                 },
                 {
-                    label: "UK",
+                    label: "Delivered",
                     data: [8, 35, 40, 60, 70, 55, 75],
                     backgroundColor: "rgba(0, 156, 255, .5)"
                 },
                 {
-                    label: "AU",
+                    label: "Returned or Cancelled",
                     data: [12, 25, 45, 55, 65, 70, 60],
-                    backgroundColor: "rgba(0, 156, 255, .3)"
+                    backgroundColor: "rgb(192,192,192)"
                 }
             ]
             },
@@ -95,7 +96,7 @@
     var myChart2 = new Chart(ctx2, {
         type: "line",
         data: {
-            labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022"],
+            labels: ["January", "February", "2018", "2019", "2020", "2021", "2022"],
             datasets: [{
                     label: "Salse",
                     data: [15, 30, 55, 45, 70, 65, 85],
