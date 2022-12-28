@@ -6,7 +6,25 @@
     {% block content %}
         <!-- Content Start -->
         <div class="wrapper">
-
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-danger" role="alert">
+                    {{message}}
+                  </div>
+                {% endfor %}
+            </div>
+            <div class="pt-4" id="calendar-filter">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <span class="ms-4"><strong>Filter By : </strong>
+                    <input type="date" name="from_date" id="from_date"><span> to </span>
+                    <input type="date" name="to_date" id="to_date">                
+                    </span>
+                    <button class="btn btn-sm btn-primary" type="submit">Apply Filter</button>
+                </form>
+        
+            </div>
+            
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">

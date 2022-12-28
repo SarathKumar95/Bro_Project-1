@@ -20,9 +20,11 @@ from xhtml2pdf import pisa
 from django.views.generic import View
 from twilio.rest import Client
 from ipocket.settings import account_sid, auth_token
-from indian_cities.dj_city import cities
 from datetime import date
 from accounts.models import *
+from django.utils.dateparse import parse_date
+
+
 
 import razorpay
 import calendar
@@ -258,8 +260,7 @@ def dashboard(request):
     if "username" in request.session:
         
         orders_today = len(Order.objects.filter(created_at = date.today()))
-        
-        
+            
         
         delivered_today = Order.objects.filter(created_at = date.today()) 
 
@@ -268,11 +269,6 @@ def dashboard(request):
         for item in delivered_today:
             todays_revenue += item.total_price 
     
-        
-        print("Today's order is ", orders_today) 
-        
-        print("Today's  delivered order is ", delivered_today) 
-
         #Monthly order 
         
         todays_date = date.today() 
@@ -315,6 +311,41 @@ def dashboard(request):
         # order_month_end = len(Order.objects.filter(created_at=month_end).all()) 
 
         # print("Order at end is ", order_month_end - order_month_start)
+
+        if request.method == "POST":
+            from_date = parse_date(request.POST['from_date'])
+            to_date = parse_date(request.POST['to_date']) 
+
+            month_order_count = 0
+            month_revenue = 0
+            
+            if from_date == '':
+                messages.info(request,"Select a from date")
+            elif to_date == '':
+                messages.info(request,"Select a to date")
+
+            elif from_date and to_date == '':
+                messages.info(request,"Select to and from date")    
+            
+            else:
+                for day in range(from_date.day,to_date.day+1):
+                    print("day is ",day)
+                    order_count = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
+                    order = Order.objects.filter(created_at=todays_date.replace(day=day)) 
+                    
+                    if len(order) == 0:
+                        print("Order is empty this",day) 
+                    else:
+                        for item in order: 
+                            print("Order price is ", item.total_price)
+                            month_revenue+=item.total_price
+
+                    month_order_count+=order_count 
+
+                print("monthly order in post is ", month_order_count)
+                print("monthly revenue in post is ", month_revenue)
+
+
 
         context = {'orders_today':orders_today, 
                    'todays_revenue': int(todays_revenue), 
@@ -1304,3 +1335,4 @@ def returnOrder(request, itemID):
 
 def chart(request):
     pass
+
