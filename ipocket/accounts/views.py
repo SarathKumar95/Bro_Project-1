@@ -308,47 +308,6 @@ def dashboard(request):
                 
             month_order_count += count_order 
         print("Day count order is ", day_order_count)
-
-        if request.method == "POST":
-            from_date = parse_date(request.POST['from_date'])
-            to_date = parse_date(request.POST['to_date']) 
-
-            month_order_count = 0
-            month_revenue = 0
-            labels = list()
-
-            if from_date == '':
-                messages.info(request,"Select a from date")
-            elif to_date == '':
-                messages.info(request,"Select a to date")
-
-            elif from_date and to_date == '':
-                messages.info(request,"Select to and from date")    
-            
-            else:
-                for day in range(from_date.day,to_date.day+1):
-                    print("day is ",day)
-                    order_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)))
-                    delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
-                    order = Order.objects.filter(created_at=todays_date.replace(day=day)) 
-                    
-                    if len(order) == 0:
-                        pass 
-                    else:
-                        for item in order: 
-                            print("Order price is ", item.total_price)
-                            month_revenue+=item.total_price
-
-                    month_order_count+=order_count 
-
-                for day in range(1,32):
-                    labels.append(day)
-
-                print("monthly order in post is ", month_order_count)
-                print("monthly revenue in post is ", month_revenue)
-                print("Delivered orders is",delivered_count)
-                print("label is",labels)
-
                 
         context = {'orders_today':orders_today, 
                    'todays_revenue': int(todays_revenue), 
@@ -1368,6 +1327,38 @@ def chart(request):
         day_delivered_count.append(delivered_count)
         day_return_count.append(returned_count)
         day_cancel_count.append(cancelled_count)
+
+
+    if request.method == 'POST':
+        from_Date = parse_date(request.POST.get('fromDate'))
+        to_Date = parse_date(request.POST.get('toDate')) 
+
+        
+        day_order_count.clear() 
+        day_delivered_count.clear()
+        day_return_count.clear()
+        day_cancel_count.clear()
+        labels.clear() 
+
+        
+        for days in range(from_Date.day,to_Date.day + 1):
+            labels.append(days)
+
+
+        print("Labels is ",labels)    
+
+        
+        for day in range(from_Date.day,to_Date.day+1):
+            count_order = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
+            delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
+            returned_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned'))
+            cancelled_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled'))
+            order= Order.objects.filter(created_at=todays_date.replace(day=day))
+            day_order_count.append(count_order)
+            day_delivered_count.append(delivered_count)
+            day_return_count.append(returned_count)
+            day_cancel_count.append(cancelled_count)
+
     return JsonResponse(data={
         'labels':labels,
         'ordered' : day_order_count,

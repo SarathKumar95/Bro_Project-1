@@ -50,16 +50,23 @@
     });
 
 
-    // Testimonials carousel
-    $(".testimonial-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 1000,
-        items: 1,
-        dots: true,
-        loop: true,
-        nav : false
-    });
 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
 
     // Worldwide Sales Chart
 
@@ -69,6 +76,7 @@
     let delivered = []
     let returned = []
     let cancelled = []
+    
     $.ajax({
         method : "GET",
         url: endpoint,
@@ -87,11 +95,46 @@
         }
     });
 
+    $('#filter-form').submit(function (e) { 
+        e.preventDefault();
+        let fromDate = document.getElementById('from_date').value 
+        let toDate = document.getElementById('to_date').value    
+    
+        $.ajax({
+            method:"POST",
+            url: endpoint,
+            data: {
+                'fromDate':fromDate,
+                'toDate' : toDate,
+                csrfmiddlewaretoken:csrftoken
+            },
+            success: function (response) {
+                console.log("Labels is",response.labels);
+                ordered = response.ordered
+                delivered = response.delivered
+                returned = response.returned
+                cancelled = response.cancelled
+                labels = response.labels
+
+                let chartStatus = Chart.getChart("worldwide-sales"); // <canvas> id
+                
+                if (chartStatus != undefined) {
+                    chartStatus.destroy();
+                }
+                document.getElementById('from_dateText').innerText = fromDate
+                document.getElementById('to_dateText').innerText = toDate    
+                mySales()
+                
+                 
+            }
+        });
+    });
     function mySales(){
         
     var ctx1 = $("#worldwide-sales").get(0).getContext("2d");
+    
     var myChart1 = new Chart(ctx1, {
-        type: "bar",
+        type: "line",
         data: {
             labels: labels,
             datasets: [{
@@ -128,13 +171,13 @@
     // Salse & Revenue Chart
     var ctx2 = $("#salse-revenue").get(0).getContext("2d");
     var myChart2 = new Chart(ctx2, {
-        type: "line",
+        type: "pie",
         data: {
-            labels: days,
+            labels: ["Orders", "Delivered","Returned","Cancelled"] ,
             datasets: [{
                     label: "Salse",
-                    data: day_order,
-                    backgroundColor: "rgba(0, 156, 255, .5)",
+                    data: [9, 13, 17, 13, 19, 18, 27],
+                    backgroundColor: "rgba(0, 156, 256, .5)",
                     fill: true
                 },
                 {

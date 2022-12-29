@@ -1,0 +1,41 @@
+
+        if request.method == "POST":
+            from_date = parse_date(request.POST['from_date'])
+            to_date = parse_date(request.POST['to_date']) 
+
+            month_order_count = 0
+            month_revenue = 0
+            labels = list()
+
+            if from_date == '':
+                messages.info(request,"Select a from date")
+            elif to_date == '':
+                messages.info(request,"Select a to date")
+
+            elif from_date and to_date == '':
+                messages.info(request,"Select to and from date")    
+            
+            else:
+                for day in range(from_date.day,to_date.day+1):
+                    print("day is ",day)
+                    order_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)))
+                    delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
+                    order = Order.objects.filter(created_at=todays_date.replace(day=day)) 
+                    
+                    if len(order) == 0:
+                        pass 
+                    else:
+                        for item in order: 
+                            print("Order price is ", item.total_price)
+                            month_revenue+=item.total_price
+
+                    month_order_count+=order_count 
+
+                for day in range(1,32):
+                    labels.append(day)
+
+                print("monthly order in post is ", month_order_count)
+                print("monthly revenue in post is ", month_revenue)
+                print("Delivered orders is",delivered_count)
+                print("label is",labels)
+
