@@ -131,7 +131,7 @@
                 document.getElementById('to_dateText').innerText = toDate
                 document.getElementById('monthrev').innerText =  response.total_revenue
                 document.getElementById('monthly_order').innerText = response.period_total
-                               
+
                 mySales()
                 
                  
@@ -180,21 +180,20 @@
     // Salse & Revenue Chart
     var ctx2 = $("#salse-revenue").get(0).getContext("2d");
     var myChart2 = new Chart(ctx2, {
-        type: "pie",
+        type: "doughnut",
         data: {
             labels: ["Orders", "Delivered","Returned","Cancelled"] ,
             datasets: [{
                     label: "Salse",
-                    data: [9, 13, 17, 13, 19, 18, 27],
-                    backgroundColor: "rgba(0, 156, 256, .5)",
-                    fill: true
+                    data: [9, 13, 17, 13],
+                    backgroundColor: [
+                                     'rgb(255, 205, 86)',   
+                                     'rgba(0, 255, 52, 0.5)',   
+                                     'rgb(54, 162, 235)',
+                                     'rgb(255, 99, 132)',
+                                     
+            ]
                 },
-                {
-                    label: "Revenue",
-                    data: [99, 135, 170, 130, 190, 180, 270],
-                    backgroundColor: "rgba(0, 156, 255, .3)",
-                    fill: true
-                }
             ]
             },
         options: {
