@@ -1389,8 +1389,9 @@ def chart(request):
 
         else:
             for item in returned:
-                monthly_cancelled_amount+=item.total_price    
-
+                monthly_cancelled_amount+=item.total_price  
+                  
+    
     less_cancelled = monthly_delivered_amount - monthly_cancelled_amount - monthly_returned_amount
     
     total_revenue = less_cancelled 
@@ -1447,7 +1448,7 @@ def chart(request):
                     monthly_amount+=item.total_price 
                     if item != 0:
                         period_total +=1
-    
+
             if len(delivered) == 0:
                 pass
 
@@ -1476,6 +1477,10 @@ def chart(request):
     
         total_revenue = less_cancelled    
 
+    
+    piedata = [monthly_amount,monthly_delivered_amount,monthly_returned_amount,monthly_cancelled_amount] 
+
+
     return JsonResponse(data={
         'labels':labels,
         'ordered' : day_order_count,
@@ -1486,7 +1491,7 @@ def chart(request):
         'today_order':todays_order,
         'period_total':period_total,
         'todays_revenue':todays_order_revenue,
-        
+        'piedata':piedata           
         
     })    
 

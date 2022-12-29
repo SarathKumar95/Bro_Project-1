@@ -120,6 +120,8 @@
                 returned = response.returned
                 cancelled = response.cancelled
                 labels = response.labels
+                piedata = response.piedata
+                
                 
 
                 let chartStatus = Chart.getChart("worldwide-sales"); // <canvas> id
@@ -127,13 +129,21 @@
                 if (chartStatus != undefined) {
                     chartStatus.destroy();
                 }
+
+                
+                let chartPie = Chart.getChart("salse-revenue"); // <canvas> id
+                
+                if (chartPie != undefined) {
+                    chartPie.destroy();
+                }
+
                 document.getElementById('from_dateText').innerText = fromDate
                 document.getElementById('to_dateText').innerText = toDate
                 document.getElementById('monthrev').innerText =  response.total_revenue
                 document.getElementById('monthly_order').innerText = response.period_total
 
                 mySales()
-                
+                myPie()
                  
             }
         });
@@ -177,15 +187,29 @@
 
     }
     
-    // Salse & Revenue Chart
-    var ctx2 = $("#salse-revenue").get(0).getContext("2d");
-    var myChart2 = new Chart(ctx2, {
+    // Salse & Revenue Chart 
+
+    let piedata = []
+
+    $.ajax({
+        method : "GET",
+        url: endpoint,
+        success: function (response) {
+            piedata = response.piedata
+            myPie() 
+        }
+    });
+    
+
+    function myPie(){
+        var ctx2 = $("#salse-revenue").get(0).getContext("2d");
+        var myChart2 = new Chart(ctx2, {
         type: "doughnut",
         data: {
             labels: ["Orders", "Delivered","Returned","Cancelled"] ,
             datasets: [{
-                    label: "Salse",
-                    data: [9, 13, 17, 13],
+                    label: "Sales",
+                    data: piedata,
                     backgroundColor: [
                                      'rgb(255, 205, 86)',   
                                      'rgba(0, 255, 52, 0.5)',   
@@ -202,6 +226,9 @@
     });
     
 
+
+    }
+    
     
 })(jQuery);
 
