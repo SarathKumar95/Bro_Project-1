@@ -122,6 +122,16 @@
                 labels = response.labels
                 piedata = response.piedata
                 
+                let allzero = piedata.every(item => item == 0); 
+
+                if(allzero == true){
+                    document.getElementById('dataCheck').hidden = false                    
+                }
+
+                else{
+                    document.getElementById('dataCheck').hidden = true
+                }
+                
                 
 
                 let chartStatus = Chart.getChart("worldwide-sales"); // <canvas> id
