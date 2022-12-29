@@ -276,20 +276,28 @@ def dashboard(request):
         current_month = todays_date.month 
         last_day_of_month = calendar.monthrange(current_year,current_month)[1] 
     
+        from_date = todays_date.replace(day=1,month=current_month,year=current_year)
+        to_date = todays_date
         
-        
-        
+
+
         month_start = todays_date.replace(day=1) 
         month_end = todays_date.replace(day=last_day_of_month)
         
-        
+        day_order = 0
         month_order_count = 0
         month_revenue = 0
-        
+        delivered_count = 0
+        day_order_count = list()
+        day_delivered_count = list()
+
         for day in range(1,last_day_of_month+1):
             count_order = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
+            delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
             order= Order.objects.filter(created_at=todays_date.replace(day=day))
-            
+            day_order_count.append(count_order)
+            day_delivered_count.append(delivered_count)
+
             if len(order) == 0:
                 pass       
             
@@ -299,18 +307,7 @@ def dashboard(request):
                     
                 
             month_order_count += count_order 
-        
-        print("Month order count is ", month_order_count)           
-        print("Monthly revenue is",month_revenue)
-        
-        # print("Month start date is ", month_start) 
-        # print("Month end date is ", month_end)
-        
-        
-        # orders_month_start = len(Order.objects.filter(created_at=month_start).all()) 
-        # order_month_end = len(Order.objects.filter(created_at=month_end).all()) 
-
-        # print("Order at end is ", order_month_end - order_month_start)
+        print("Day count order is ", day_order_count)
 
         if request.method == "POST":
             from_date = parse_date(request.POST['from_date'])
@@ -318,7 +315,8 @@ def dashboard(request):
 
             month_order_count = 0
             month_revenue = 0
-            
+            labels = list()
+
             if from_date == '':
                 messages.info(request,"Select a from date")
             elif to_date == '':
@@ -330,11 +328,12 @@ def dashboard(request):
             else:
                 for day in range(from_date.day,to_date.day+1):
                     print("day is ",day)
-                    order_count = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
+                    order_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)))
+                    delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
                     order = Order.objects.filter(created_at=todays_date.replace(day=day)) 
                     
                     if len(order) == 0:
-                        print("Order is empty this",day) 
+                        pass 
                     else:
                         for item in order: 
                             print("Order price is ", item.total_price)
@@ -342,15 +341,25 @@ def dashboard(request):
 
                     month_order_count+=order_count 
 
+                for day in range(1,32):
+                    labels.append(day)
+
                 print("monthly order in post is ", month_order_count)
                 print("monthly revenue in post is ", month_revenue)
+                print("Delivered orders is",delivered_count)
+                print("label is",labels)
 
-
-
+                
         context = {'orders_today':orders_today, 
                    'todays_revenue': int(todays_revenue), 
                    'orders_monthly':month_order_count,
-                   'month_revenue': int(month_revenue)}
+                   'month_revenue': int(month_revenue),
+                   'delivered_count':delivered_count,
+                   'day_delivery':day_delivered_count,
+                   'from_date':from_date,
+                   'to_date':to_date,
+                   'day_orders':day_order_count
+                   }
         
         return render(request, "owner/dashboard.html",context)
     else:
@@ -1334,5 +1343,37 @@ def returnOrder(request, itemID):
 
 
 def chart(request):
-    pass
+    labels = [] 
+    
+    todays_date = date.today() 
+    current_year = todays_date.year 
+    current_month = todays_date.month 
+    last_day_of_month = calendar.monthrange(current_year,current_month)[1] 
+    
+    day_order_count = [] 
+    day_delivered_count = []
+    day_return_count = []
+    day_cancel_count = []
+    
+    for days in range(1,32):
+        labels.append(days)
 
+    for day in range(1,last_day_of_month+1):
+        count_order = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
+        delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
+        returned_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned'))
+        cancelled_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled'))
+        order= Order.objects.filter(created_at=todays_date.replace(day=day))
+        day_order_count.append(count_order)
+        day_delivered_count.append(delivered_count)
+        day_return_count.append(returned_count)
+        day_cancel_count.append(cancelled_count)
+    return JsonResponse(data={
+        'labels':labels,
+        'ordered' : day_order_count,
+        'delivered' : day_delivered_count,
+        'returned' : day_return_count,
+        'cancelled':day_cancel_count,
+    })    
+
+    
