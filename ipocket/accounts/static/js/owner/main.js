@@ -75,7 +75,7 @@
     let ordered = [] 
     let delivered = []
     let returned = []
-    let cancelled = []
+    let cancelled = [] 
     
     $.ajax({
         method : "GET",
@@ -86,7 +86,12 @@
             delivered = response.delivered
             returned = response.returned
             cancelled = response.cancelled
-            mySales()            
+            mySales() 
+
+            document.getElementById('todays-revenue').innerText = response.todays_revenue
+            document.getElementById('monthly_order').innerText = response.period_total
+            document.getElementById('monthrev').innerText =  response.total_revenue           
+            document.getElementById('todayOrder').innerText = response.today_order              
         },
 
         error: function (error_data){
@@ -115,6 +120,7 @@
                 returned = response.returned
                 cancelled = response.cancelled
                 labels = response.labels
+                
 
                 let chartStatus = Chart.getChart("worldwide-sales"); // <canvas> id
                 
@@ -122,7 +128,10 @@
                     chartStatus.destroy();
                 }
                 document.getElementById('from_dateText').innerText = fromDate
-                document.getElementById('to_dateText').innerText = toDate    
+                document.getElementById('to_dateText').innerText = toDate
+                document.getElementById('monthrev').innerText =  response.total_revenue
+                document.getElementById('monthly_order').innerText = response.period_total
+                               
                 mySales()
                 
                  

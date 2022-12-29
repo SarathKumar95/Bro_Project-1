@@ -31,7 +31,7 @@
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Today's Order</p>
-                                <h6 class="mb-0">{{orders_today}}</h6>
+                                <h6 class="mb-0" id="todayOrder">0</h6>
                             </div>
                         </div>
                     </div>
@@ -41,8 +41,8 @@
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-bar fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Total Order</p>
-                                <h6 class="mb-0" id="monthly_order">{{orders_monthly}}</h6>
+                                <p class="mb-2">Period Order</p>
+                                <h6 class="mb-0" id="monthly_order">0</h6>
                             </div>
                         </div>
                     </div>
@@ -50,8 +50,8 @@
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-area fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Today Revenue</p>
-                                <h6 class="mb-0"><span>₹</span> {{todays_revenue}}</h6>
+                                <p class="mb-2">Today's Revenue</p>
+                                <h6 class="mb-0">₹ <span id="todays-revenue"></span></h6>
                             </div>
                         </div>
                     </div>
@@ -59,8 +59,8 @@
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-pie fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Total Revenue</p>
-                                <h6 class="mb-0">{{month_revenue}}</h6>
+                                <p class="mb-2">Period Revenue</p>
+                                <h6 class="mb-0">₹ <span id="monthrev">0</span></h6>
                             </div>
                         </div>
                     </div>

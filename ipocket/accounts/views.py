@@ -1313,7 +1313,31 @@ def chart(request):
     day_delivered_count = []
     day_return_count = []
     day_cancel_count = []
+
+    period_total = 0
+
+    #pie 
+
+    monthly_amount = 0 
+    monthly_delivered_amount = 0
+    monthly_cancelled_amount = 0
+    monthly_returned_amount = 0 
+
+    # todays calcualtion 
+
+
+
+    todays_order= len(Order.objects.filter(created_at=todays_date)) 
+    todays_order_delivered= len(Order.objects.filter(created_at=todays_date).filter(status='Delivered'))    
     
+    if todays_order_delivered == 0:
+        todays_order_revenue = 0
+    else:
+        today_delivered_price = Order.objects.filter(created_at=todays_date).filter(status='Delivered').first().total_price 
+        todays_order_returned_price = Order.objects.filter(created_at=todays_date).filter(status='Returned').first().total_price 
+        todays_order_cancelled_price = Order.objects.filter(created_at=todays_date).filter(status='Cancelled').first().total_price
+        todays_order_revenue =  today_delivered_price - todays_order_cancelled_price - todays_order_returned_price 
+
     for days in range(1,32):
         labels.append(days)
 
@@ -1323,12 +1347,55 @@ def chart(request):
         returned_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned'))
         cancelled_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled'))
         order= Order.objects.filter(created_at=todays_date.replace(day=day))
+        delivered = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered')
+        cancelled = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled')
+        returned = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned')
         day_order_count.append(count_order)
         day_delivered_count.append(delivered_count)
         day_return_count.append(returned_count)
-        day_cancel_count.append(cancelled_count)
+        day_cancel_count.append(cancelled_count) 
+        
 
 
+        if len(order) == 0:
+            pass
+
+        else:
+            for item in order:
+                monthly_amount+=item.total_price 
+                if item != 0:
+                    period_total+=1
+        
+        
+        if len(delivered) == 0:
+            pass
+
+        else:
+            for item in delivered:
+                monthly_delivered_amount+=item.total_price    
+    
+
+                
+        if len(returned) == 0:
+            pass
+
+        else:
+            for item in returned:
+                monthly_returned_amount+=item.total_price    
+
+                    
+        if len(cancelled) == 0:
+            pass
+
+        else:
+            for item in returned:
+                monthly_cancelled_amount+=item.total_price    
+
+    less_cancelled = monthly_delivered_amount - monthly_cancelled_amount - monthly_returned_amount
+    
+    total_revenue = less_cancelled 
+
+    
     if request.method == 'POST':
         from_Date = parse_date(request.POST.get('fromDate'))
         to_Date = parse_date(request.POST.get('toDate')) 
@@ -1340,6 +1407,15 @@ def chart(request):
         day_cancel_count.clear()
         labels.clear() 
 
+
+        
+        #pie 
+
+        monthly_amount = 0 
+        monthly_delivered_amount = 0
+        monthly_cancelled_amount = 0
+        monthly_returned_amount = 0
+        period_total = 0
         
         for days in range(from_Date.day,to_Date.day + 1):
             labels.append(days)
@@ -1354,10 +1430,51 @@ def chart(request):
             returned_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned'))
             cancelled_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled'))
             order= Order.objects.filter(created_at=todays_date.replace(day=day))
+            delivered = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered')
+            cancelled = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled')
+            returned = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned')
             day_order_count.append(count_order)
             day_delivered_count.append(delivered_count)
             day_return_count.append(returned_count)
-            day_cancel_count.append(cancelled_count)
+            day_cancel_count.append(cancelled_count) 
+
+            
+            if len(order) == 0:
+                pass
+
+            else:
+                for item in order:
+                    monthly_amount+=item.total_price 
+                    if item != 0:
+                        period_total +=1
+    
+            if len(delivered) == 0:
+                pass
+
+            else:
+                for item in delivered:
+                    monthly_delivered_amount+=item.total_price    
+                    
+
+                
+            if len(returned) == 0:
+                pass
+
+            else:
+                for item in returned:
+                    monthly_returned_amount+=item.total_price    
+
+                    
+            if len(cancelled) == 0:
+                pass
+
+            else:
+                for item in returned:
+                    monthly_cancelled_amount+=item.total_price    
+
+        less_cancelled = monthly_delivered_amount - monthly_cancelled_amount - monthly_returned_amount
+    
+        total_revenue = less_cancelled    
 
     return JsonResponse(data={
         'labels':labels,
@@ -1365,6 +1482,12 @@ def chart(request):
         'delivered' : day_delivered_count,
         'returned' : day_return_count,
         'cancelled':day_cancel_count,
+        'total_revenue' : total_revenue,
+        'today_order':todays_order,
+        'period_total':period_total,
+        'todays_revenue':todays_order_revenue,
+        
+        
     })    
 
     
