@@ -23,7 +23,9 @@ from ipocket.settings import account_sid, auth_token
 from datetime import date
 from accounts.models import *
 from django.utils.dateparse import parse_date
-
+import sys 
+import pandas as pd 
+from bs4 import BeautifulSoup
 
 
 import razorpay
@@ -1479,7 +1481,7 @@ def sales_report(request):
                 no_of_orders+=1
             order_total += order_price   
         
-        print("Order total is ",order_total)
+        
         if len(delivered) == 0:
             delivered_price = 0
          
@@ -1513,4 +1515,40 @@ def sales_report(request):
     'revenue':revenue,'order_count':no_of_orders,'deliver_count':no_of_delivered,
     'return_count':no_of_returned, 'cancel_count':no_of_cancelled}
 
-    return render(request,'owner/salesreport.html',context)
+    return render(request,'owner/salesreport.html',context) 
+
+
+def sales_csv(request):
+    path = '/salesreport' 
+
+    data = []
+
+    list_header = []
+    soup = BeautifulSoup(open(path),'html.parser') 
+    header = soup.find_all("table")[0].find("tr") 
+
+    for items in header:
+        try:
+            list_header.append(items.get_text())
+        except:
+            continue 
+
+    HTML_data = soup.find_all("table")[0].find_all("tr")[1:] 
+
+    for element in HTML_data:
+        sub_data = []
+        for sub_element in element:
+            try:
+                sub_data.append(sub_element.get_text())
+            except: 
+                continue
+        data.append(sub_data)
+ 
+    # Storing the data into Pandas
+    # DataFrame
+    dataFrame = pd.DataFrame(data = data, columns = list_header)
+  
+    # Converting Pandas DataFrame
+    # into CSV file
+    dataFrame.to_csv('SalesReport.csv')
+

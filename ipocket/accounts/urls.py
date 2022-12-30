@@ -53,6 +53,6 @@ urlpatterns = [
     path('myorders/return/<int:itemID>',views.returnOrder,name='return-order'),
     path('chart', views.chart,name='chart'),
     path('salesreport',views.sales_report,name='sales-report'),
-
+    path('salescsv',views.sales_csv,name='sales-csv'),
 
 ]
