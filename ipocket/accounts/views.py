@@ -1446,3 +1446,71 @@ def chart(request):
     })    
 
     
+def sales_report(request):
+
+
+    data = []
+
+    order_price = 0
+    delivered_price = 0
+    cancelled_price = 0
+    returned_price = 0
+    order_total = 0
+    deliver_total = 0
+    cancelled_total = 0
+    returned_total = 0
+    no_of_orders = 0
+    no_of_delivered = 0 
+    no_of_returned = 0
+    no_of_cancelled = 0
+
+    for day in range(1,32):
+        todays_date = date.today().replace(day=day)
+        order = Order.objects.filter(created_at=date.today().replace(day=day))
+        delivered = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Delivered') 
+        cancelled = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Cancelled') 
+        returned =  Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Returned') 
+
+        if len(order) == 0:
+            order_price = 0 
+        else:
+            for item in order:
+                order_price += item.total_price    
+                no_of_orders+=1
+            order_total += order_price   
+        
+        print("Order total is ",order_total)
+        if len(delivered) == 0:
+            delivered_price = 0
+         
+        else:
+            for item in delivered:
+                delivered_price += item.total_price    
+                no_of_delivered+=1
+            deliver_total+=delivered_price
+        
+        if len(cancelled) == 0:
+            cancelled_price = 0 
+        else:
+            for item in cancelled:
+                cancelled_price += item.total_price
+                no_of_cancelled+=1    
+            cancelled_total+=cancelled_price
+        
+        if len(returned) == 0:
+            returned_price = 0 
+        else:
+            for item in returned:
+                returned_price += item.total_price
+                no_of_returned+=1    
+            returned_total += returned_price
+
+        data.append((todays_date,order_price,delivered_price,cancelled_price,returned_price))
+        revenue = order_total - cancelled_total - returned_total
+
+    context = {'data':data,'order':order_total,'deliver':deliver_total,
+    'cancel':cancelled_total,'return': returned_total,
+    'revenue':revenue,'order_count':no_of_orders,'deliver_count':no_of_delivered,
+    'return_count':no_of_returned, 'cancel_count':no_of_cancelled}
+
+    return render(request,'owner/salesreport.html',context)

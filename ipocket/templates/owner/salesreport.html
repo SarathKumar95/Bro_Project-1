@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <title>View Invoice</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">  
+<style>
+  .clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+a {
+  text-decoration: underline;
+}
+
+body {
+  position: relative;
+  margin: 0 50px; 
+  color: #001028;
+  background: #FFFFFF; 
+  font-family: Arial, sans-serif; 
+  font-size: 14px; 
+  font-family: Arial;
+}
+
+header {
+  padding: 10px 0;
+  margin-bottom: 30px;
+}
+
+#logo {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#logo img {
+  width: 90px;
+}
+
+h1 {
+  
+  color: #5D6975;
+  font-size: 2.4em;
+  line-height: 1.4em;
+  font-weight: normal;
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+#project {
+  float: left;
+}
+
+#project span {
+  color: #5D6975;
+  text-align: right;
+  width: 52px;
+  margin-right: 10px;
+  display: inline-block;
+  font-size: 14px;
+}
+
+#company {
+  float: right;
+  text-align: right;
+}
+
+#project div,
+#company div {
+  white-space: nowrap;        
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 20px;
+}
+
+
+
+table th,
+table td {
+  text-align: center;
+}
+
+table th {
+  
+  
+  color: #5D6975;
+  border-bottom: 1px solid #C1CED9;
+  white-space: nowrap;        
+  font-weight: bold;
+}
+
+table .service,
+table .desc {
+  text-align: left;
+}
+
+table td {
+ padding-top:5px;
+ padding-bottom:5px;
+  
+}
+
+table tr {
+  border-bottom: 1px solid #C1CED9;
+}
+
+table td.service,
+table td.desc {
+  vertical-align: top;
+}
+
+table td.unit,
+table td.qty,
+table td.total {
+  font-size: 1.2em;
+}
+
+table td.grand {
+  border-top: 1px solid #5D6975;;
+}
+
+#notices .notice {
+  color: #5D6975;
+  font-size: 1.2em;
+}
+
+footer {
+  color: #5D6975;
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #C1CED9;
+  padding: 8px 0;
+  text-align: center;
+}
+
+
+  </style>
+</head>
+
+<body>
+  <header class="clearfix">
+    <div id="logo" style="display:flex;flex-direction: column; justify-content:center; align-items:center;">
+      <!-- {#<img src="static/firstapp/images/logo.png" class="brand-logo" width=60 height=60>#}
+      {#<img src="static/logo.png" class="brand-logo" height="200px">#}--> 
+    <div class="mt-3 mb-1">
+         <h2>Sales Report</h2>   
+         <!--  <img src="{% static 'images/home/apple.png' %}" class="brand-logo" width=5 height=100> -->
+      </div>
+    </div>
+    <br>
+    <br>
+  </header>
+    <div class="table-container" style="overflow-x:auto">
+      <table class="table" style="width:100%">
+          <thead>
+              <tr>
+                  <th class="h6" scope="col">Date</th>
+                  <th class="h6" scope="col">Orders (in ₹)</th>
+                  <th class="h6" scope="col">Delivered (in ₹)</th>
+                  <th class="h6" scope="col">Cancelled (in ₹)</th>
+                  <th class="h6" scope="col">Returned (in ₹)</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for item in data %}
+                    
+                <tr>
+                    
+                  <td scope="row">{{item.0}}</td>
+                  <td scope="row">{{item.1}}</td>
+                  <td scope="row">{{item.2}}</td>  
+                  <td scope="row">{{item.3}}</td>
+                  <td scope="row">{{item.4}}</td>
+                  
+              </tr>
+            {% endfor %}  
+
+            <tr>
+                <td scope="row" style="font-weight: bolder;">Total</td>
+                <td scope="row">{{order}}</td>
+                <td scope="row">{{deliver}}</td>  
+                <td scope="row">{{cancel}}</td>
+                <td scope="row">{{return}}</td>  
+            </tr>
+
+            <tr>
+                <td scope="row" style="font-weight: bolder;">Revenue</td>
+                <td scope="row" style="font-weight: bolder;">{{revenue}}</td>  
+            </tr>
+
+            
+            <tr>
+                <td scope="row" style="font-weight: bolder;">Total Orders</td>
+                <td scope="row" style="font-weight: bolder;">{{order_count}}</td>  
+            </tr>
+
+            
+            <tr>
+                <td scope="row" style="font-weight: bolder;">Total Orders Delivered</td>
+                <td scope="row" style="font-weight: bolder;">{{deliver_count}}</td>  
+            </tr>
+
+            
+            <tr>
+                <td scope="row" style="font-weight: bolder;">Total Cancelled Orders</td>
+                <td scope="row" style="font-weight: bolder;">{{cancel_count}}</td>  
+            </tr>
+
+            
+            <tr>
+                <td scope="row" style="font-weight: bolder;">Total Returned Orders`</td>
+                <td scope="row" style="font-weight: bolder;">{{return_count}}</td>  
+            </tr>
+                            
+          </tbody>
+      </table>
+
+    </div>    
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+</html>

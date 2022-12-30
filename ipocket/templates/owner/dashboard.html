@@ -20,7 +20,7 @@
                     <input type="date" name="to_date" id="to_date">                
                     <button class="btn btn-sm btn-primary" type="submit">Apply Filter</button>         
                 </form>
-                <h5 class="mt-3 mb-2 ms-4 text-primary text-center">Showing data from <span id="from_dateText">{{from_date}}</span> to <span id="to_dateText">{{to_date}}</span> </h5>    
+                <h5 class="mt-3 mb-2 ms-4 text-dark text-center">Showing data from <span id="from_dateText">{{from_date}}</span> to <span id="to_dateText">{{to_date}}</span> </h5>    
             </div>
              
             <!-- Sale & Revenue Start -->
@@ -79,6 +79,11 @@
                             </div>
                             <canvas id="worldwide-sales" data-url="{% url 'chart' %}"></canvas>
                         </div>
+                        <div class="row">
+                            <div class="d-flex mt-4">
+                                    <a href="{% url 'sales-report' %}" class="btn btn-sm btn-primary ms-2 me-3">See Sales Report > > ></a>
+                            </div>
+                    </div>
                     </div>
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-light text-center rounded p-4">
@@ -87,12 +92,12 @@
                             </div>
                             <p class="h3" id="dataCheck" hidden>No Data</p>
                             <canvas id="salse-revenue" data-url="{% url 'chart' %}"></canvas>
+                           
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Sales Chart End -->
-    
+            <!-- Sales Chart End -->    
     <script>
         
     </script>        
