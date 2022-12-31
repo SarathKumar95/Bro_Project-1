@@ -54,5 +54,5 @@ urlpatterns = [
     path('chart', views.chart,name='chart'),
     path('salesreport',views.sales_report,name='sales-report'),
     path('salescsv',views.sales_csv,name='sales-csv'),
-
+        
 ]

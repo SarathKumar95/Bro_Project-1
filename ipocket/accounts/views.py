@@ -1551,4 +1551,3 @@ def sales_csv(request):
     # Converting Pandas DataFrame
     # into CSV file
     dataFrame.to_csv('SalesReport.csv')
-
