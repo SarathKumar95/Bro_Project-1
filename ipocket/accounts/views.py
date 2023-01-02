@@ -263,10 +263,8 @@ def dashboard(request):
         
         todays_date = date.today() 
         
-        from_date = todays_date
+        from_date = todays_date.replace(day=1)
         to_date = todays_date  
-
-        print("From date is ", from_date)
 
         context = {
                    'from_date':from_date,
@@ -1466,47 +1464,68 @@ def sales_report(request):
     no_of_delivered = 0 
     no_of_returned = 0
     no_of_cancelled = 0
+    revenue = 0
+
+    fromDate = date.today().replace(day=1) 
+    toDate = date.today()
+    todays_date = date.today()
+    fromObj = 1
+    toObj = 31 
+
+    # if request.method == 'POST':
+    #     fromDate = request.POST['fromDate']
+    #     toDate = request.POST['toDate']
+
+    #     print("from ", fromDate)
+    #     print("to ", toDate)
+
+
+    #     fromObj = fromDate[8] + fromDate[9] 
+    #     toObj = toDate[8] + toDate[9]
 
     if request.method == 'POST':
         fromDate = request.POST['fromDate']
         toDate = request.POST['toDate']
 
-        print("From ",fromDate)
-        print("to", toDate)
+        print("From",fromDate)
+        print("to",toDate)
 
+        fromObj = fromDate[8] + fromDate[9] 
+        toObj = toDate[8] + toDate[9]
 
-        for day in range(1,31):
-            todays_date = date.today().replace(day=day)
-            order = Order.objects.filter(created_at=date.today().replace(day=day))
-            delivered = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Delivered') 
-            cancelled = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Cancelled') 
-            returned =  Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Returned') 
+    for day in range(int(fromObj),int(toObj) + 1):
+        print("Day",day)
+        todays_date = date.today().replace(day=day)
+        order = Order.objects.filter(created_at=date.today().replace(day=day))
+        delivered = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Delivered') 
+        cancelled = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Cancelled') 
+        returned =  Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Returned') 
 
-            if len(order) == 0:
-                order_price = 0 
-            else:
-                for item in order:
-                    order_price += item.total_price    
-                    no_of_orders+=1
-                order_total += order_price   
+        if len(order) == 0:
+            order_price = 0 
+        else:
+            for item in order:
+                order_price += item.total_price    
+                no_of_orders+=1
+            order_total += order_price   
             
             
-            if len(delivered) == 0:
-                delivered_price = 0
+        if len(delivered) == 0:
+            delivered_price = 0
             
-            else:
-                for item in delivered:
-                    delivered_price += item.total_price    
-                    no_of_delivered+=1
-                deliver_total+=delivered_price
+        else:
+            for item in delivered:
+                delivered_price += item.total_price    
+                no_of_delivered+=1
+            deliver_total+=delivered_price
             
-            if len(cancelled) == 0:
-                cancelled_price = 0 
-            else:
-                for item in cancelled:
-                    cancelled_price += item.total_price
-                    no_of_cancelled+=1    
-                cancelled_total+=cancelled_price
+        if len(cancelled) == 0:
+            cancelled_price = 0 
+        else:
+            for item in cancelled:
+                cancelled_price += item.total_price
+                no_of_cancelled+=1    
+            cancelled_total+=cancelled_price
             
             if len(returned) == 0:
                 returned_price = 0 
@@ -1514,17 +1533,17 @@ def sales_report(request):
                 for item in returned:
                     returned_price += item.total_price
                     no_of_returned+=1    
-                returned_total += returned_price
+            returned_total += returned_price
 
-            data.append((todays_date,order_price,delivered_price,cancelled_price,returned_price))
-            revenue = order_total - cancelled_total - returned_total
+        data.append((todays_date,order_price,delivered_price,cancelled_price,returned_price))
+        revenue = order_total - cancelled_total - returned_total
 
-            print("Data", data)
+        print("Data", data)
 
-    context = {'data':data,'order':order_total,'deliver':deliver_total,
-    'cancel':cancelled_total,'return': returned_total,
-    'revenue':revenue,'order_count':no_of_orders,'deliver_count':no_of_delivered,
-    'return_count':no_of_returned, 'cancel_count':no_of_cancelled}
+        context = {'data':data,'order':order_total,'deliver':deliver_total,
+        'cancel':cancelled_total,'return': returned_total,
+        'revenue':revenue,'order_count':no_of_orders,'deliver_count':no_of_delivered,
+        'return_count':no_of_returned, 'cancel_count':no_of_cancelled}
 
     return render(request,'owner/salesreport.html',context) 
 
