@@ -86,7 +86,7 @@
             delivered = response.delivered
             returned = response.returned
             cancelled = response.cancelled
-            mySales() 
+            mySales()
 
             document.getElementById('todays-revenue').innerText = response.todays_revenue
             document.getElementById('monthly_order').innerText = response.period_total
@@ -158,12 +158,13 @@
             }
         });
     });
+    
     function mySales(){
         
     var ctx1 = $("#worldwide-sales").get(0).getContext("2d");
     
     var myChart1 = new Chart(ctx1, {
-        type: "line",
+        type: "bar",
         data: {
             labels: labels,
             datasets: [{
@@ -174,7 +175,7 @@
                 
                 {
                     label: "Delivered",
-                    data:delivered ,
+                    data:delivered,
                     backgroundColor: "rgba(0, 255, 52, 0.5)"
                 },
                 {

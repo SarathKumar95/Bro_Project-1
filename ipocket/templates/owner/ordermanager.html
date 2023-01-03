@@ -51,8 +51,6 @@
                             <td>
                                 <div>
                                    <p><span style="font-weight:bold;">Tracking No : </span>{{item.tracking_no}}</p> 
-                                   <p><span style="font-weight:bold;">Sub Total : </span>{{item.price_before_tax}}</p>
-                                   <p><span style="font-weight:bold;">Tax : </span>₹{{item.tax_amount}}</p> 
                                    <p><span style="font-weight:bold;">Shipping Amount : </span>{{item.ship_amount}}</p>
                                    <p><span style="font-weight:bold;">Grand Total : </span>₹{{item.total_price}}</p>
                                    <p><span style="font-weight:bold;">Payment Mode : </span>{{item.payment_mode}}</p>
@@ -61,7 +59,7 @@
                                 </div>
                             
                             </td>
-                            <td style="min-width: 200px;">{{item.created_at.date}}</td>
+                            <td style="min-width: 200px;">{{item.created_at}}</td>
                             <td>{{item.email}}</td>
                             <td>
                                 <span id="status{{item.id}}">Current Status :{{item.status}} 

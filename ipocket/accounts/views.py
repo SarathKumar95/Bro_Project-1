@@ -23,14 +23,13 @@ from ipocket.settings import account_sid, auth_token
 from datetime import date
 from accounts.models import *
 from django.utils.dateparse import parse_date
-import sys 
-import pandas as pd 
+import sys
+import pandas as pd
 from bs4 import BeautifulSoup
 
 
 import razorpay
 import calendar
-
 
 
 client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
@@ -260,18 +259,18 @@ def myorder(request):
 
 def dashboard(request):
     if "username" in request.session:
-        
-        todays_date = date.today() 
-        
+
+        todays_date = date.today()
+
         from_date = todays_date.replace(day=1)
-        to_date = todays_date  
+        to_date = todays_date
 
         context = {
-                   'from_date':from_date,
-                   'to_date':to_date,
-                   }
-        
-        return render(request, "owner/dashboard.html",context)
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+
+        return render(request, "owner/dashboard.html", context)
     else:
         return redirect("signin")
 
@@ -320,13 +319,10 @@ def products(request):
 
         if "condition" in request.POST and "productType" not in request.POST:
             condition_in = request.POST["condition"]
-        
 
             id_of_condition = (
                 Categories.objects.filter(condition=condition_in).first().category_id
             )
-
-            
 
             product = Products.objects.filter(condition=id_of_condition)
             messages.success(request, "Listing " + condition_in + " products")
@@ -353,14 +349,12 @@ def products(request):
             condition = request.POST["condition"]
             protype = request.POST["productType"]
 
-
             category_selected = Categories.objects.filter(condition=condition)
             subcategory = ProductType.objects.filter(product_type=protype)
 
             no_of_category = Categories.objects.filter(condition=condition).count()
             no_of_subcategory = ProductType.objects.filter(product_type=protype).count()
 
-    
             if no_of_subcategory == 0:
                 return redirect(request.path)
 
@@ -371,11 +365,9 @@ def products(request):
                 for item in subcategory:
                     SubCat_id = item.sub_cat_id
 
-
                 product = Products.objects.filter(
                     condition=Cat_id, product_type=SubCat_id
                 )
-
 
     context = {"product": product, "category": category, "subCategory": subCategory}
     return render(request, "home/shop.html", context)
@@ -444,7 +436,6 @@ def cart_add(request):
             prod_qty = 1
             product = Products.objects.filter(product_id=prod_id).first()
 
-
             cart = Cart.objects.filter(session_id=guest(request))
 
             for item in cart:
@@ -470,7 +461,7 @@ def cart_add(request):
             product_id = request.POST["product_id"]
             product_quantity = 1
             product_check = Products.objects.get(product_id=product_id)
-            
+
             if product_check:
                 if Cart.objects.filter(user=email, product_id=product_id):
                     return JsonResponse({"status": "Product already in cart"})
@@ -501,7 +492,6 @@ def cart_add(request):
 def cart_list(request):
 
     guest_cart = Cart.objects.filter(session_id=guest(request)).all()
-    
 
     if "username" not in request.session:
         cart = Cart.objects.filter(session_id=guest(request))
@@ -513,7 +503,7 @@ def cart_list(request):
             pass
 
         else:
-    
+
             for item in guest_cart:
                 # if product in cart
                 if Cart.objects.filter(user=user_in, product=item.product):
@@ -523,7 +513,6 @@ def cart_list(request):
 
                     cart.product_qty += 1  # increase its quantity
                     cart.save()
-
 
                     # item.product.delete() # delete that product from guest cart
 
@@ -536,7 +525,6 @@ def cart_list(request):
             cart = Cart.objects.filter(user=user_in)
 
             guest_cart.delete()
-
 
     sub_total = 0
 
@@ -587,7 +575,6 @@ def cart_update(request):
             else:
                 itemPrice = item.product.price
 
-
             total = total + itemPrice
 
         if cart.product.price_after_offer > 0:
@@ -598,7 +585,6 @@ def cart_update(request):
         on_change_price = total - cartPrice  # minus the existing cart price from total
 
         update_price = on_change_price + (cartPrice * float(product_qty))
-
 
         cart.product_qty = product_qty
         cart.save()
@@ -636,7 +622,6 @@ def OrderPage(request, tracking_no):
     for item in order:
         orderid = item.id
         orderitem = OrderItem.objects.filter(order_id=orderid).all()
-        
 
     orderTotal = 0
 
@@ -646,13 +631,12 @@ def OrderPage(request, tracking_no):
         else:
             orderTotal = orderTotal + item.product.price * item.quantity
 
-
     context = {"order": order, "orderitem": orderitem, "orderTotal": orderTotal}
     return render(request, "home/orderplaced.html", context)
 
 
 def order_manager(request):
-    orders = Order.objects.all().order_by("created_at")
+    orders = Order.objects.all().order_by("-created_at")
     form = OrderForm()
     context = {"orders": orders, "form": form}
 
@@ -671,7 +655,6 @@ def order_manager(request):
         order.status = status
 
         order.save()
-
 
     return render(request, "owner/ordermanager.html", context)
 
@@ -973,7 +956,6 @@ def coupon_post(request):
 
                         total_after_coupon = total_after_coupon + price_after_discount
 
-
                         if item.coupon_applied == None:
                             item.coupon_applied = coupon
                             item.discount_percentage = item_Discount_to_apply
@@ -1027,30 +1009,27 @@ def checkout(request):
 
     user_in = request.session["username"]
     cart = Cart.objects.filter(user=user_in)
-    user_filt = MyUser.objects.filter(email=user_in) 
-    
-    
-    userID = MyUser.objects.filter(email = request.session["username"]).first().id 
+    user_filt = MyUser.objects.filter(email=user_in)
 
-    customer_billAddress = BillingAddress.objects.filter(user_id=userID).first() 
+    userID = MyUser.objects.filter(email=request.session["username"]).first().id
+
+    customer_billAddress = BillingAddress.objects.filter(user_id=userID).first()
     customer_shipAddress = ShippingAddress.objects.filter(user_id=userID).first()
 
-
-    if customer_billAddress == ' ' or customer_billAddress == ' ' :
+    if customer_billAddress == " " or customer_billAddress == " ":
         customer_billAddress = None
 
     else:
         pass
 
-
-    if customer_shipAddress == None or customer_shipAddress == ' ':
-        customer_shipAddress = None     
+    if customer_shipAddress == None or customer_shipAddress == " ":
+        customer_shipAddress = None
 
     else:
         pass
 
     sub_total = 0
-    coupon_name = None  
+    coupon_name = None
     total_discount = 0
 
     for item in cart:
@@ -1087,7 +1066,6 @@ def checkout(request):
     else:
         grandTotal_with_shipping = sub_total + shipping
 
-   
     if request.method == "POST":
 
         if cart.count() == 0:
@@ -1097,29 +1075,27 @@ def checkout(request):
             if customer_billAddress == None:
                 billAddress = BillingAddress()
                 billAddress.user_id = userID
-                billAddress.addressline = request.POST['billaddressline'] 
-                billAddress.city = request.POST['state']
-                billAddress.state = request.POST['city']
-                billAddress.pincode = request.POST['zip']    
+                billAddress.addressline = request.POST["billaddressline"]
+                billAddress.city = request.POST["state"]
+                billAddress.state = request.POST["city"]
+                billAddress.pincode = request.POST["zip"]
                 billAddress.save()
 
+            elif request.POST["billaddressline"] == customer_billAddress.addressline:
+                pass
 
-            elif request.POST['billaddressline'] == customer_billAddress.addressline:
-                pass        
-        
-                if request.POST.get('save-info',True):
+                if request.POST.get("save-info", True):
                     shipAddress = ShippingAddress()
-                    shipAddress.user_id=userID
-                    shipAddress.addressline = request.POST['shipaddressline']
-                    shipAddress.city = request.POST['ship-city']
-                    shipAddress.state = request.POST['ship-state']
-                    shipAddress.pincode = request.POST['ship-zip']    
+                    shipAddress.user_id = userID
+                    shipAddress.addressline = request.POST["shipaddressline"]
+                    shipAddress.city = request.POST["ship-city"]
+                    shipAddress.state = request.POST["ship-state"]
+                    shipAddress.pincode = request.POST["ship-zip"]
                     shipAddress.save()
                     print("Shipping address saved!")
 
                 else:
                     print("Which save??")
-                    
 
             neworder = Order()
             neworder.user = request.session["username"]
@@ -1140,7 +1116,6 @@ def checkout(request):
 
             neworder.ship_amount = shipping
             neworder.payment_mode = request.POST["paymentMethod"]
-
 
             track_no = "IPOrder" + str(random.randint(111111, 999999))
             while Order.objects.filter(tracking_no=track_no) is None:
@@ -1192,8 +1167,8 @@ def checkout(request):
         "total_discount": total_discount,
         "total": grandTotal_with_shipping,
         "api_key": RAZOR_KEY_ID,
-        "customer_billAddress":customer_billAddress,
-        "customer_shipAddress":customer_shipAddress,
+        "customer_billAddress": customer_billAddress,
+        "customer_shipAddress": customer_shipAddress,
     }
     return render(request, "home/checkout.html", context)
 
@@ -1253,202 +1228,123 @@ def returnOrder(request, itemID):
 
 
 def chart(request):
-    labels = [] 
+    labels = []
+    ordered = [] 
+    delivered = []
+    returned = []
+    cancelled = []
+
+    order_total = 0    
+    deliver_total = 0
+    return_total = 0
+    cancel_total = 0
+
+    today_order = len(Order.objects.filter(created_at=date.today()))
+    period_order = 0
+
+    start = 1
+    end = 31
+    month = date.today().month
+    year = date.today().year
+
+    total_revenue = 0
+    today_revenue = 0
+
+    deliver_price = 0
+    return_price = 0
+    cancel_price = 0
+
+    if request.method == 'POST':
+        fromDate = parse_date(request.POST['fromDate']) 
+        toDate = parse_date(request.POST['toDate']) 
+
+        year = fromDate.year
+        month = fromDate.month 
+
+        start = fromDate.day
+        end =  toDate.day
     
-    todays_date = date.today() 
-    current_year = todays_date.year 
-    current_month = todays_date.month 
-    last_day_of_month = calendar.monthrange(current_year,current_month)[1] 
-    
-    day_order_count = [] 
-    day_delivered_count = []
-    day_return_count = []
-    day_cancel_count = []
+    for day in range(start,end + 1):
+        labels.append(day)
+        order = Order.objects.filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))
 
-    period_total = 0
-
-    #pie 
-
-    monthly_amount = 0 
-    monthly_delivered_amount = 0
-    monthly_cancelled_amount = 0
-    monthly_returned_amount = 0 
-
-    # todays calcualtion 
-
-
-
-    todays_order= len(Order.objects.filter(created_at=todays_date)) 
-    todays_order_delivered= len(Order.objects.filter(created_at=todays_date).filter(status='Delivered'))    
-    
-    if todays_order_delivered == 0:
-        todays_order_revenue = 0
-    else:
-        today_delivered_price = Order.objects.filter(created_at=todays_date).filter(status='Delivered').first().total_price 
-        todays_order_returned_price = Order.objects.filter(created_at=todays_date).filter(status='Returned').first().total_price 
-        todays_order_cancelled_price = Order.objects.filter(created_at=todays_date).filter(status='Cancelled').first().total_price
-        todays_order_revenue =  today_delivered_price - todays_order_cancelled_price - todays_order_returned_price 
-
-    for days in range(1,32):
-        labels.append(days)
-
-    for day in range(1,last_day_of_month+1):
-        count_order = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
-        delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
-        returned_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned'))
-        cancelled_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled'))
-        order= Order.objects.filter(created_at=todays_date.replace(day=day))
-        delivered = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered')
-        cancelled = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled')
-        returned = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned')
-        day_order_count.append(count_order)
-        day_delivered_count.append(delivered_count)
-        day_return_count.append(returned_count)
-        day_cancel_count.append(cancelled_count) 
-        
-
+        for item in order:
+            order_total+=item.total_price
 
         if len(order) == 0:
-            pass
-
-        else:
-            for item in order:
-                monthly_amount+=item.total_price 
-                if item != 0:
-                    period_total+=1
-        
-        
-        if len(delivered) == 0:
-            pass
-
-        else:
-            for item in delivered:
-                monthly_delivered_amount+=item.total_price    
-    
-
-                
-        if len(returned) == 0:
-            pass
-
-        else:
-            for item in returned:
-                monthly_returned_amount+=item.total_price    
-
-                    
-        if len(cancelled) == 0:
-            pass
-
-        else:
-            for item in returned:
-                monthly_cancelled_amount+=item.total_price  
-                  
-    
-    less_cancelled = monthly_delivered_amount - monthly_cancelled_amount - monthly_returned_amount
-    
-    total_revenue = less_cancelled 
-
-    
-    if request.method == 'POST':
-        from_Date = parse_date(request.POST.get('fromDate'))
-        to_Date = parse_date(request.POST.get('toDate')) 
-
-        
-        day_order_count.clear() 
-        day_delivered_count.clear()
-        day_return_count.clear()
-        day_cancel_count.clear()
-        labels.clear() 
-
-
-        
-        #pie 
-
-        monthly_amount = 0 
-        monthly_delivered_amount = 0
-        monthly_cancelled_amount = 0
-        monthly_returned_amount = 0
-        period_total = 0
-        
-        for days in range(from_Date.day,to_Date.day + 1):
-            labels.append(days)
-
-
-        print("Labels is ",labels)    
-
-        
-        for day in range(from_Date.day,to_Date.day+1):
-            count_order = len(Order.objects.filter(created_at=todays_date.replace(day=day))) 
-            delivered_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered'))
-            returned_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned'))
-            cancelled_count = len(Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled'))
-            order= Order.objects.filter(created_at=todays_date.replace(day=day))
-            delivered = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Delivered')
-            cancelled = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Cancelled')
-            returned = Order.objects.filter(created_at=todays_date.replace(day=day)).filter(status='Returned')
-            day_order_count.append(count_order)
-            day_delivered_count.append(delivered_count)
-            day_return_count.append(returned_count)
-            day_cancel_count.append(cancelled_count) 
-
+            ordered.append(0)
             
-            if len(order) == 0:
-                pass
+        else:
+            ordered.append(len(order))
+            period_order+=len(order)
+         
 
-            else:
-                for item in order:
-                    monthly_amount+=item.total_price 
-                    if item != 0:
-                        period_total +=1
+        print("Per order is ", period_order)    
 
-            if len(delivered) == 0:
-                pass
-
-            else:
-                for item in delivered:
-                    monthly_delivered_amount+=item.total_price    
-                    
-
-                
-            if len(returned) == 0:
-                pass
-
-            else:
-                for item in returned:
-                    monthly_returned_amount+=item.total_price    
-
-                    
-            if len(cancelled) == 0:
-                pass
-
-            else:
-                for item in returned:
-                    monthly_cancelled_amount+=item.total_price    
-
-        less_cancelled = monthly_delivered_amount - monthly_cancelled_amount - monthly_returned_amount
-    
-        total_revenue = less_cancelled    
-
-    
-    piedata = [monthly_amount,monthly_delivered_amount,monthly_returned_amount,monthly_cancelled_amount] 
+        deliver = Order.objects.filter(status='Delivered').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month)) 
 
 
-    return JsonResponse(data={
-        'labels':labels,
-        'ordered' : day_order_count,
-        'delivered' : day_delivered_count,
-        'returned' : day_return_count,
-        'cancelled':day_cancel_count,
-        'total_revenue' : total_revenue,
-        'today_order':todays_order,
-        'period_total':period_total,
-        'todays_revenue':todays_order_revenue,
-        'piedata':piedata           
+        for item in deliver:
+            deliver_total+=item.total_price
+
+        if len(deliver) == 0:
+            delivered.append(0)
+
+        else:
+            delivered.append(len(deliver))        
+
+        returnOrders = Order.objects.filter(status='Returned').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))      
+
+        for item in returnOrders:
+            return_total+=item.total_price
+
+        if len(returnOrders) == 0:
+            returned.append(0)
+        else:
+            returned.append(len(returnOrders))
+
+        cancel = Order.objects.filter(status='Cancelled').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))
+
+        for item in cancel:
+            cancel_total+=item.total_price
+
+        if len(cancel) == 0:
+            cancelled.append(0)
+
+        else:
+            cancelled.append(len(cancel))    
+
+        piedata = [order_total,deliver_total,return_total,cancel_total]
+
+        print("Pie", piedata)
+
+        if deliver_total == 0:
+            total_revenue = 0
+        else:
+            total_revenue = deliver_total - return_total
+
+
+        delivered_today = Order.objects.filter(status='Delivered').filter(created_at=date.today()) 
+        return_today = Order.objects.filter(status='Returned').filter(created_at=date.today())
+        cancelled_today = Order.objects.filter(status='Cancelled').filter(created_at=date.today())
+
+        for item in delivered_today:
+            deliver_price+=item.total_price 
+
         
-    })    
+        for item in return_today:
+            return_price+=item.total_price     
 
-    
+        today_revenue = deliver_price - return_price
+
+    return JsonResponse({"labels": labels, "ordered": ordered,
+    "delivered":delivered,"returned":returned,
+    "cancelled":cancelled,"piedata":piedata,
+    "today_order":today_order,"period_total":period_order,
+    "total_revenue":total_revenue,"todays_revenue":today_revenue})
+
+
 def sales_report(request):
-
 
     data = []
 
@@ -1461,123 +1357,127 @@ def sales_report(request):
     cancelled_total = 0
     returned_total = 0
     no_of_orders = 0
-    no_of_delivered = 0 
+    no_of_delivered = 0
     no_of_returned = 0
     no_of_cancelled = 0
     revenue = 0
 
-    fromDate = date.today().replace(day=1) 
+    fromDate = date.today().replace(day=1)
     toDate = date.today()
     todays_date = date.today()
     fromObj = 1
-    toObj = 31 
+    toObj = 31
 
-    # if request.method == 'POST':
-    #     fromDate = request.POST['fromDate']
-    #     toDate = request.POST['toDate']
+    if request.method == "POST":
+        fromDate = request.POST["fromDate"]
+        toDate = request.POST["toDate"]
 
-    #     print("from ", fromDate)
-    #     print("to ", toDate)
+        print("From", fromDate)
+        print("to", toDate)
 
-
-    #     fromObj = fromDate[8] + fromDate[9] 
-    #     toObj = toDate[8] + toDate[9]
-
-    if request.method == 'POST':
-        fromDate = request.POST['fromDate']
-        toDate = request.POST['toDate']
-
-        print("From",fromDate)
-        print("to",toDate)
-
-        fromObj = fromDate[8] + fromDate[9] 
+        fromObj = fromDate[8] + fromDate[9]
         toObj = toDate[8] + toDate[9]
 
-    for day in range(int(fromObj),int(toObj) + 1):
-        print("Day",day)
+    for day in range(int(fromObj), int(toObj) + 1):
+        print("Day", day)
         todays_date = date.today().replace(day=day)
         order = Order.objects.filter(created_at=date.today().replace(day=day))
-        delivered = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Delivered') 
-        cancelled = Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Cancelled') 
-        returned =  Order.objects.filter(created_at=date.today().replace(day=day)).filter(status='Returned') 
+        delivered = Order.objects.filter(
+            created_at=date.today().replace(day=day)
+        ).filter(status="Delivered")
+        cancelled = Order.objects.filter(
+            created_at=date.today().replace(day=day)
+        ).filter(status="Cancelled")
+        returned = Order.objects.filter(
+            created_at=date.today().replace(day=day)
+        ).filter(status="Returned")
 
         if len(order) == 0:
-            order_price = 0 
+            order_price = 0
         else:
             for item in order:
-                order_price += item.total_price    
-                no_of_orders+=1
-            order_total += order_price   
-            
-            
+                order_price += item.total_price
+                no_of_orders += 1
+            order_total += order_price
+
         if len(delivered) == 0:
             delivered_price = 0
-            
+
         else:
             for item in delivered:
-                delivered_price += item.total_price    
-                no_of_delivered+=1
-            deliver_total+=delivered_price
-            
+                delivered_price += item.total_price
+                no_of_delivered += 1
+            deliver_total += delivered_price
+
         if len(cancelled) == 0:
-            cancelled_price = 0 
+            cancelled_price = 0
         else:
             for item in cancelled:
                 cancelled_price += item.total_price
-                no_of_cancelled+=1    
-            cancelled_total+=cancelled_price
-            
+                no_of_cancelled += 1
+            cancelled_total += cancelled_price
+
             if len(returned) == 0:
-                returned_price = 0 
+                returned_price = 0
             else:
                 for item in returned:
                     returned_price += item.total_price
-                    no_of_returned+=1    
+                    no_of_returned += 1
             returned_total += returned_price
 
-        data.append((todays_date,order_price,delivered_price,cancelled_price,returned_price))
+        data.append(
+            (todays_date, order_price, delivered_price, cancelled_price, returned_price)
+        )
         revenue = order_total - cancelled_total - returned_total
 
         print("Data", data)
 
-        context = {'data':data,'order':order_total,'deliver':deliver_total,
-        'cancel':cancelled_total,'return': returned_total,
-        'revenue':revenue,'order_count':no_of_orders,'deliver_count':no_of_delivered,
-        'return_count':no_of_returned, 'cancel_count':no_of_cancelled}
+        context = {
+            "data": data,
+            "order": order_total,
+            "deliver": deliver_total,
+            "cancel": cancelled_total,
+            "return": returned_total,
+            "revenue": revenue,
+            "order_count": no_of_orders,
+            "deliver_count": no_of_delivered,
+            "return_count": no_of_returned,
+            "cancel_count": no_of_cancelled,
+        }
 
-    return render(request,'owner/salesreport.html',context) 
+    return render(request, "owner/salesreport.html", context)
 
 
 def sales_csv(request):
-    path = '/salesreport' 
+    path = "/salesreport"
 
     data = []
 
     list_header = []
-    soup = BeautifulSoup(open(path),'html.parser') 
-    header = soup.find_all("table")[0].find("tr") 
+    soup = BeautifulSoup(open(path), "html.parser")
+    header = soup.find_all("table")[0].find("tr")
 
     for items in header:
         try:
             list_header.append(items.get_text())
         except:
-            continue 
+            continue
 
-    HTML_data = soup.find_all("table")[0].find_all("tr")[1:] 
+    HTML_data = soup.find_all("table")[0].find_all("tr")[1:]
 
     for element in HTML_data:
         sub_data = []
         for sub_element in element:
             try:
                 sub_data.append(sub_element.get_text())
-            except: 
+            except:
                 continue
         data.append(sub_data)
- 
+
     # Storing the data into Pandas
     # DataFrame
-    dataFrame = pd.DataFrame(data = data, columns = list_header)
-  
+    dataFrame = pd.DataFrame(data=data, columns=list_header)
+
     # Converting Pandas DataFrame
     # into CSV file
-    dataFrame.to_csv('SalesReport.csv')
+    dataFrame.to_csv("SalesReport.csv")
