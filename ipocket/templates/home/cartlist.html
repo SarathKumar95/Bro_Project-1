@@ -28,8 +28,8 @@
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                   <!-- Image -->
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                    {% if item.product.main_image %}
-                    <img src="{{item.product.main_image.url}}"
+                    {% if item.product_attr.first_image %}
+                    <img src="{{item.product_attr.first_image.url}}"
                       class="w-100" alt="Product Image" />
                     {% else %}
                     <img src="{% static 'home/images/no_img' %}"
@@ -45,21 +45,21 @@
                 <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
                   
                   <!-- Data -->
-                  {% if item.product.series == None %}
-                  <p><strong>{{item.product.product_name}} {{item.product.generation}} </strong></p>
-                  {% elif item.product.generation == None %}
-                  <p><strong>{{item.product.product_name}} {{item.product.series}}</strong></p>
-                  {% elif item.product.generation and item.product.series == None %}
-                  <p><strong>{{item.product.product_name}}</strong></p>
+                  {% if item.product_attr.product.series == None %}
+                  <p><strong>{{item.product_attr.product.product_name}} {{item.product_attr.product.generation}} </strong></p>
+                  {% elif item.product_attr.product.generation == None %}
+                  <p><strong>{{item.product_attr.product.product_name}} {{item.product_attr.product.series}}</strong></p>
+                  {% elif item.product.product_attr.generation and item.product_attr.product.series == None %}
+                  <p><strong>{{item.product_attr.product.product_name}}</strong></p>
                   {% else %}
-                  <p><strong>{{item.product.product_name}} {{item.product.generation}} {{item.product.series}}</strong></p>
+                  <p><strong>{{item.product_attr.product.product_name}} {{item.product_attr.product.generation}} {{item.product_attr.product.series}}</strong></p>
                   {% endif %}
-                  <p>Color : {{item.product.color}}</p>
-                  {% if item.product.internal_storage %}
-                  <p>Variant : {{item.product.internal_storage}}gb</p>
+                  <p>Color : {{item.product_attr.color}}</p>
+                  {% if item.product_attr.size %}
+                  <p>Variant : {{item.product_attr.size}}gb</p>
                   {% endif %}
                   <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
-                    title="Remove item" onclick="deleteCartItem('{{item.product.product_id}}')">
+                    title="Remove item" onclick="deleteCartItem('{{item.product_attr_id}}')">  
                     <i class="fas fa-trash"></i>
                   </button>
                   <button type="button" class="btn btn-danger btn-sm mb-2" data-mdb-toggle="tooltip"
@@ -73,7 +73,7 @@
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
                     <button class="btn btn-primary px-3 me-2" id="minusBtn{{item.id}}"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty(productID='{{item.product_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQty(productID='{{item.product_attr_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
                       <i class="fas fa-minus"></i>
                     </button>
   
@@ -81,9 +81,8 @@
                       <input id="cart-prod-qty{{item.id}}" min="1" name="quantity" value="{{item.product_qty}}" type="number" class="form-control" />
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
-  
                     <button class="btn btn-primary px-3 ms-2" id="plusBtn{{item.id}}"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQty(productID='{{item.product_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQty(productID='{{item.product_attr_id}}',cartqty='{{item.product_qty}}',cartID='{{item.id}}')">
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
@@ -93,10 +92,10 @@
                   <!-- Price -->
                   
                   <p class="text-start text-md-center">
-                    {% if item.product.price_after_offer %}
-                    <strong>₹ <span>{{item.product.price_after_offer}}</span></strong>
+                    {% if item.product_attr.price_after_offer %}
+                    <strong>₹ <span>{{item.product_attr.price_after_offer}}</span></strong>
                     {% else %}
-                    <strong>₹ <span>{{item.product.price}}</span></strong>
+                    <strong>₹ <span>{{item.product_attr.price}}</span></strong>
                     {% endif %}
                   </p>
                   
@@ -168,10 +167,8 @@
 
 function changeQty(productID,cartqty,cartID){
     
-    console.log("cart qty is",cartqty)
-    console.log("Product id is", productID)
-    console.log("cart id is", cartID)
-
+    console.log()
+  
     let meme=document.getElementById('cart-prod-qty'+cartID).value;
     let stock=document.getElementById('productStock'+cartID).value; 
 
@@ -198,6 +195,7 @@ function changeQty(productID,cartqty,cartID){
         },
         success: function (response) {
             alertify.success(response.status) 
+            console.log("Updated",response.update_price)
             document.getElementById('sub-total').innerText=response.update_price  
         }
     });
@@ -205,14 +203,13 @@ function changeQty(productID,cartqty,cartID){
   
 
 function deleteCartItem(proId) {   
-    
+
+
     let subTotal = $('#sub-total').text() 
     const qty = $('#cartprod-qty'+proId).val()
     const price = $('#cartprod-price'+proId).val()  
     let cartCount = $('#cartCount').text()
           
-    console.log("Cart count is", cartCount);
-
     var token = $('input[name=csrfmiddlewaretoken]').val(); 
     
     $.ajax({

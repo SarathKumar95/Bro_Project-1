@@ -94,19 +94,15 @@ class Products(models.Model):
     camera = models.CharField(
         max_length=100, default='12 MP', null=True, blank=True)
     color = models.CharField(max_length=20, default='White')
-    price = models.IntegerField(default=100)
-    quantity = models.IntegerField(default=0)
-    main_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True)
-    second_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True)
-    third_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True)
+    #quantity = models.IntegerField(default=0)
     slug = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    product_offer = models.IntegerField(null=True, blank=True) 
-    applied_offer = models.CharField(max_length=100, null=True,blank=True)
-    price_after_offer = models.FloatField(null=True,blank=True)
+    main_image = models.ImageField(
+        upload_to='images/products', null=True, blank=True) 
+    price = models.FloatField(default=100)    
+    #product_offer = models.IntegerField(null=True, blank=True) 
+    #applied_offer = models.CharField(max_length=100, null=True,blank=True)
+    #price_after_offer = models.FloatField(null=True,blank=True)
     
     
     class Meta:
@@ -115,64 +111,80 @@ class Products(models.Model):
     def __str__(self):
         return '{} - {} - {}'.format(self.product_name, self.generation, self.series)
 
-    def save(self, *args, **kwargs):
+    # def save(self, *args, **kwargs):
 
-        if self.product_type.offer_percentage == None and self.product_offer != None:
+    #     if self.product_type.offer_percentage == None and self.product_offer != None:
             
-            print("1st condition hit, Product offer is",self.product_offer)
-
-            print("Category offer is",self.product_type.offer_percentage) 
-
-            Price_on_Offer = (self.price * self.product_offer)/100     
-            price_after_productoffer = self.price - Price_on_Offer
-            self.price_after_offer=price_after_productoffer 
-            self.applied_offer="Product Offer"
-            
-            print("Price after product offer is", price_after_productoffer)
+    #         Price_on_Offer = (self.price * self.product_offer)/100     
+    #         price_after_productoffer = self.price - Price_on_Offer
+    #         self.price_after_offer=price_after_productoffer 
+    #         self.applied_offer="Product Offer"
 
         
-        elif self.product_type.offer_percentage != None and self.product_offer == None:
+    #     elif self.product_type.offer_percentage != None and self.product_offer == None:
             
-            print("1st condition hit, Product offer is",self.product_offer)
+    #         Price_on_Offer = (self.price * self.product_type.offer_percentage)/100     
+    #         price_after_categoryoffer = self.price - Price_on_Offer
+    #         self.price_after_offer=price_after_categoryoffer 
+    #         self.applied_offer="Category Offer"
+    #         print("Price after product offer is", price_after_categoryoffer) 
 
-            print("Category offer is",self.product_type.offer_percentage) 
-
-            Price_on_Offer = (self.price * self.product_type.offer_percentage)/100     
-            price_after_categoryoffer = self.price - Price_on_Offer
-            self.price_after_offer=price_after_categoryoffer 
-            self.applied_offer="Category Offer"
-            print("Price after product offer is", price_after_categoryoffer) 
-
-        elif self.product_type.offer_percentage != None and self.product_offer != None:
+    #     elif self.product_type.offer_percentage != None and self.product_offer != None:
 
     
-            Price_on_Offer = (self.price * self.product_offer)/100
+    #         Price_on_Offer = (self.price * self.product_offer)/100
 
-            Price_on_categoryOffer=(self.price * self.product_type.offer_percentage)/100 
+    #         Price_on_categoryOffer=(self.price * self.product_type.offer_percentage)/100 
 
-            price_after_productoffer = self.price - Price_on_Offer
-            price_after_categoryoffer = self.price - Price_on_categoryOffer
+    #         price_after_productoffer = self.price - Price_on_Offer
+    #         price_after_categoryoffer = self.price - Price_on_categoryOffer
             
-            print("Price after category offer is", price_after_categoryoffer)
-            print("Price after product offer is", price_after_productoffer)
-
-            if price_after_productoffer < price_after_categoryoffer:
-                self.price_after_offer=price_after_productoffer 
-                self.applied_offer="Product Offer"
-
-            elif price_after_categoryoffer < price_after_productoffer:     
-                self.price_after_offer=price_after_categoryoffer
-                self.applied_offer="Category Offer"
-            elif price_after_categoryoffer == price_after_productoffer:
-                self.price_after_offer=price_after_categoryoffer
-                self.applied_offer="Both Offer are Same" 
             
-        else:
-            self.price_after_offer=0
-            self.applied_offer=''       
+    #         if price_after_productoffer < price_after_categoryoffer:
+    #             self.price_after_offer=price_after_productoffer 
+    #             self.applied_offer="Product Offer"
+
+    #         elif price_after_categoryoffer < price_after_productoffer:     
+    #             self.price_after_offer=price_after_categoryoffer
+    #             self.applied_offer="Category Offer"
+    #         elif price_after_categoryoffer == price_after_productoffer:
+    #             self.price_after_offer=price_after_categoryoffer
+    #             self.applied_offer="Both Offer are Same" 
+            
+    #     else:
+    #         self.price_after_offer=0
+    #         self.applied_offer=''       
             
 
-        super(Products, self).save(*args, **kwargs)
+    #     super(Products, self).save(*args, **kwargs)
+
+
+
+
+class ProductAttribute(models.Model):
+    product = models.ForeignKey(Products,on_delete=models.CASCADE,default=1)
+    size = models.IntegerField(default=0)
+    price = models.FloatField(default=0)
+    quantity = models.IntegerField(default=0) 
+    color = models.CharField(max_length=100,default='black')
+    first_image = models.ImageField(
+        upload_to='images/products', null=True, blank=True)
+    second_image = models.ImageField(
+        upload_to='images/products', null=True, blank=True)
+    third_image = models.ImageField(
+        upload_to='images/products', null=True, blank=True)
+
+    def __str__(self):
+        return self.product.product_name
+
+    # def save(self,*args,**kwargs):
+    #     product = ProductAttribute.objects.filter(id=self.id)
+    #     Products.price = self.price    
+    #     Products.save() 
+    #     super(ProductAttribute, self).save(*args, **kwargs)
+
+
+
 
 
 class Coupon(models.Model):
@@ -245,7 +257,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True)
     order_itemstatus = [

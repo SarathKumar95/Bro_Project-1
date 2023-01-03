@@ -126,7 +126,7 @@
                                 {% if item.internal_storage == None %}
                                 <li>{{item.color}}</li>
                                 {% else %}
-                                <li>{{item.color}} {{item.internal_storage}}</li>
+                                <li>{{item.color}} {{item.internal_storage}} GB</li>
                                 {% endif %}
                                 <li class="pt-2">
                                     <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
@@ -140,7 +140,7 @@
                                         class="product-color-dot color-dot-green float-left rounded-circle ml-1"></span>
                                 </li>
                             </ul>
-                            <ul class="list-unstyled d-flex justify-content-center mb-1">
+                            <!-- <ul class="list-unstyled d-flex justify-content-center mb-1">
                                 <li>
                                     <i class="text-warning fa fa-star"></i>
                                     <i class="text-warning fa fa-star"></i>
@@ -148,12 +148,12 @@
                                     <i class="text-muted fa fa-star"></i>
                                     <i class="text-muted fa fa-star"></i>
                                 </li>
-                            </ul>
+                            </ul> -->
                             {% if item.product_offer > 0 or item.product_type.offer_percentage > 0 %}
-                            <strike><p class="text-center mb-0">₹{{item.price}}.00/-</p></strike>
+                            <strike><p class="text-center mb-0">₹{{item.price}}/-</p></strike>
                             <p class="text-center text-success mb-0">₹{{item.price_after_offer}}/-</p>
                             {% else %}
-                            <p class="text-center mb-0">₹{{item.price}}.00/-</p>
+                            <p class="text-center mb-0">₹{{item.price}}/-</p>
                             {% endif %}
                         </div>
                     </div>

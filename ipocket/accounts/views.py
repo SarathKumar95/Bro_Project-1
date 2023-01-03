@@ -305,7 +305,9 @@ def unblock_user(request, id):
 def products(request):
     product = Products.objects.all()
     category = Categories.objects.all()
-    subCategory = ProductType.objects.all()
+    subCategory = ProductType.objects.all() 
+    product_attr = ProductAttribute.objects.all() 
+
 
     if request.method == "POST":
 
@@ -420,8 +422,15 @@ def sortbynew(request):
 
 def item(request, product_id):
     product = Products.objects.filter(product_id=product_id)
+    product_attr = ProductAttribute.objects.filter(product_id=product_id) 
+    price = product_attr.first().price
+    image = product_attr.first().first_image
+    first_pro = product_attr.first()
+
     products = Products.objects.all()
-    context = {"product": product, "products": products}
+    context = {"product": product, "products": products,
+    "product_attr":product_attr, "price":price,
+    "image" : image,"first_pro":first_pro}
     return render(request, "home/shop-single.html", context)
 
 
@@ -431,64 +440,51 @@ def item(request, product_id):
 def cart_add(request):
 
     if request.method == "POST":
-        if "username" not in request.session:
-            prod_id = request.POST["product_id"]
-            prod_qty = 1
-            product = Products.objects.filter(product_id=prod_id).first()
+        prod_id = request.POST["product_id"]
+        pro_color = request.POST["color"] 
+        prod_qty = 1
 
-            cart = Cart.objects.filter(session_id=guest(request))
+        pro_size = ProductAttribute.objects.filter(id=prod_id).first().size    
 
-            for item in cart:
-                cart_product_ID = item.product.product_id
+        print("User wants",pro_color, "pro size", pro_size)
 
-            # if same product in cart
-            if Cart.objects.filter(session_id=guest(request), product_id=prod_id):
-                return JsonResponse(
-                    {
-                        "status": "Product already in cart, Please increase the quantity from cart"
-                    }
-                )
+        product_check = ProductAttribute.objects.filter(size=pro_size).filter(color=pro_color)
 
-            else:
-                cart = Cart.objects.create(
-                    session_id=guest(request), product_id=prod_id, product_qty=prod_qty
-                )
+        if len(product_check) == 0:
+            return JsonResponse({'status':"Sorry, that combination does not exist!"})
 
-                return JsonResponse({"status": "Product added succesfully"})
+        else:
 
-        elif "username" in request.session:
-            email = request.session["username"]
-            product_id = request.POST["product_id"]
-            product_quantity = 1
-            product_check = Products.objects.get(product_id=product_id)
+            if 'username' not in request.session:
+                cart = Cart.objects.filter(session_id=guest(request))      
 
-            if product_check:
-                if Cart.objects.filter(user=email, product_id=product_id):
-                    return JsonResponse({"status": "Product already in cart"})
+                #check if same product exists in cart 
+                    
+                if Cart.objects.filter(session_id=guest(request), product_attr_id=prod_id):
+                    return JsonResponse({'status':"Product already in cart"}) 
 
                 else:
-                    if product_check.quantity >= product_quantity:
-                        Cart.objects.create(
-                            user=email,
-                            product_id=product_id,
-                            product_qty=product_quantity,
-                        )
-                        return JsonResponse({"status": "Product added succesfully"})
+                    cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id, product_qty=prod_qty)
+                    return JsonResponse({"status": "Product added succesfully"})
 
-                    else:
-                        return JsonResponse(
-                            {
-                                "status": "Only "
-                                + str(product_check.quantity)
-                                + " quantity is available."
-                            }
-                        )
-            else:
-                return JsonResponse({"status": "No such product found"})
+            elif 'username' in request.session:
+                user_in = request.session['username'] 
 
+                cart = Cart.objects.filter(user=user_in)      
+
+                #check if same product exists in cart 
+                    
+                if Cart.objects.filter(user=user_in, product_attr_id=prod_id):
+                    return JsonResponse({'status':"Product already in cart"}) 
+
+                else:
+                    cart = Cart.objects.create(user=user_in, product_attr_id=prod_id, product_qty=prod_qty)
+                    return JsonResponse({"status": "Product added succesfully"})
+
+                
     return redirect("/")
 
-
+ 
 def cart_list(request):
 
     guest_cart = Cart.objects.filter(session_id=guest(request)).all()
@@ -506,9 +502,9 @@ def cart_list(request):
 
             for item in guest_cart:
                 # if product in cart
-                if Cart.objects.filter(user=user_in, product=item.product):
+                if Cart.objects.filter(user=user_in, product_attr=item.product_attr):
                     cart = Cart.objects.filter(
-                        user=user_in, product=item.product
+                        user=user_in, product_attr=item.product_attr
                     ).first()  # itterate and get the product
 
                     cart.product_qty += 1  # increase its quantity
@@ -518,7 +514,7 @@ def cart_list(request):
 
                 else:
                     cart = Cart.objects.create(
-                        user=user_in, product=item.product, product_qty=item.product_qty
+                        user=user_in, product_attr=item.product_attr, product_qty=item.product_qty
                     )
                     cart.save()
 
@@ -530,12 +526,14 @@ def cart_list(request):
 
     tax = 0
     for item in cart:
-        product_qtyCheck = item.product.quantity
+        product_qtyCheck = item.product_attr.quantity
 
-        if item.product.price_after_offer > 0:
-            Item_total = item.product.price_after_offer * item.product_qty
-        else:
-            Item_total = item.product.price * item.product_qty
+        # if item.product.price_after_offer > 0:
+        #     Item_total = item.product.price_after_offer * item.product_qty
+        # else:
+        #     Item_total = item.product.price * item.product_qty
+
+        Item_total = item.product_attr.price * item.product_qty
 
         sub_total += Item_total
 
@@ -555,36 +553,38 @@ def cart_update(request):
         product_qty = request.POST["cart_qty"]
         cart_id = request.POST["cart_id"]
 
-        product = Products.objects.filter(product_id=product_id)
+        product = ProductAttribute.objects.filter(id=product_id) 
+
+        print("Qty is ",product_qty)    
 
         if "username" not in request.session:
             user_in = guest(request)
-            cart = Cart.objects.filter(session_id=user_in, product=product_id).first()
+            cart = Cart.objects.filter(session_id=user_in, product_attr_id=product_id).first()
 
         else:
             user_in = request.session["username"]
-            cart = Cart.objects.filter(user=user_in, product=product_id).first()
+            cart = Cart.objects.filter(user=user_in, product_attr_id=product_id).first()
 
         CartTotal = Cart.objects.filter(user=user_in)
 
         total = 0
 
         for item in CartTotal:
-            if item.product.price_after_offer > 0:
-                itemPrice = item.product.price_after_offer
-            else:
-                itemPrice = item.product.price
+        #     if item.product.price_after_offer > 0:
+        #         itemPrice = item.product.price_after_offer
+        #     else:
+            itemPrice = item.product_attr.price
 
             total = total + itemPrice
 
-        if cart.product.price_after_offer > 0:
-            cartPrice = cart.product.price_after_offer
-        else:
-            cartPrice = cart.product.price
+        # if cart.product.price_after_offer > 0:
+        #     cartPrice = cart.product.price_after_offer
+        # else:
+        
+        cartPrice = cart.product_attr.price 
 
-        on_change_price = total - cartPrice  # minus the existing cart price from total
 
-        update_price = on_change_price + (cartPrice * float(product_qty))
+        update_price = cartPrice * float(product_qty)
 
         cart.product_qty = product_qty
         cart.save()
@@ -600,12 +600,12 @@ def cart_delete(request):
 
         if "username" not in request.session:
             cart_item = Cart.objects.filter(
-                session_id=guest(request), product_id=prod_id
+                session_id=guest(request), product_attr_id=prod_id
             )
             cart_item.delete()
         else:
             user_in = request.session["username"]
-            cart_item = Cart.objects.filter(user=user_in, product_id=prod_id)
+            cart_item = Cart.objects.filter(user=user_in, product_attr_id=prod_id)
             cart_item.delete()
 
         return JsonResponse({"status": "Deleted Product Successfully!"})
@@ -626,10 +626,10 @@ def OrderPage(request, tracking_no):
     orderTotal = 0
 
     for item in orderitem:
-        if item.product.price_after_offer:
-            orderTotal = orderTotal + item.product.price_after_offer * item.quantity
-        else:
-            orderTotal = orderTotal + item.product.price * item.quantity
+        # if item.product.price_after_offer:
+        #     orderTotal = orderTotal + item.product.price_after_offer * item.quantity
+        # else:
+        orderTotal = orderTotal + item.product.price * item.quantity
 
     context = {"order": order, "orderitem": orderitem, "orderTotal": orderTotal}
     return render(request, "home/orderplaced.html", context)
@@ -1034,10 +1034,10 @@ def checkout(request):
 
     for item in cart:
         coupon_name = item.coupon_applied
-        if item.product.price_after_offer > 0:
-            Item_total = item.product.price_after_offer * item.product_qty
-        else:
-            Item_total = item.product.price * item.product_qty
+        # if item.product.price_after_offer > 0:
+        #     Item_total = item.product.price_after_offer * item.product_qty
+        # else:
+        Item_total = item.product_attr.price * item.product_qty
         sub_total += Item_total
 
         if item.amount_discounted != None:
@@ -1129,21 +1129,22 @@ def checkout(request):
             neworderItems = Cart.objects.filter(user=user_in)
 
             for item in neworderItems:
-                if item.product.price_after_offer:
-                    price = item.product.price_after_offer
+                price = item.product_attr.price
+                # if item.product_attr.price_after_offer:
+                #     price = item.product_attr.price_after_offer
 
-                else:
-                    price = item.product.price
+                # else:
+                    
 
                 OrderItem.objects.create(
                     order=neworder,
-                    product=item.product,
+                    product=item.product_attr,
                     price=price,
                     quantity=item.product_qty,
                 )
 
-                orderproduct = Products.objects.filter(
-                    product_id=item.product.product_id
+                orderproduct = ProductAttribute.objects.filter(
+                    id=item.product_attr_id
                 ).first()
 
                 orderproduct.quantity -= item.product_qty
@@ -1481,3 +1482,20 @@ def sales_csv(request):
     # Converting Pandas DataFrame
     # into CSV file
     dataFrame.to_csv("SalesReport.csv")
+
+
+def get_product(request):    
+    if request.method == 'POST': 
+        itemID = request.POST['itemID'] 
+        product_attr = ProductAttribute.objects.filter(id=itemID).first().price
+        product_size = ProductAttribute.objects.filter(id=itemID).first().size 
+        product_color =  ProductAttribute.objects.filter(id=itemID) 
+
+        for item in product_color:
+            print("1",item.color)
+
+        first_pro = ProductAttribute.objects.filter(id=itemID).first()
+
+        print("first",first_pro.first_image)
+
+        return JsonResponse({'itemID':itemID,'product':product_attr, 'size':product_size})   

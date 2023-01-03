@@ -6,7 +6,7 @@ from category.models import *
 
 class Cart(models.Model):
     user = models.CharField(max_length=255,null=True,blank=True)
-    product = models.ForeignKey(Products,on_delete=models.CASCADE)
+    product_attr = models.ForeignKey(ProductAttribute,on_delete=models.CASCADE,default=1)
     product_qty = models.IntegerField(null=False,blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     session_id = models.CharField(max_length=255,null=True,blank=True)

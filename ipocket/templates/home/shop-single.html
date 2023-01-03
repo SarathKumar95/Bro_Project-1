@@ -14,23 +14,22 @@
                 <div class="col-lg-5 mt-5 product_data">
                     <div class="card mb-3" id="img-container">
                         <div id="lens"></div>
-                        {% if item.images|default_if_none:'#' %} 
-                        <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Card image cap" id="product-detail">
-                        {% endif %} 
+                        {% if image %} 
+                        <img class="card-img img-fluid" src="{{image.url}}" alt="Card image cap" id="product-detail">
+                        {% endif %}
                     </div>
                     <div class="row">
                         <!--Start Carousel Wrapper-->
                         <div id="multi-item-example" class="col-10 carousel slide carousel-multi-item" data-bs-ride="carousel">
                             <!--Start Slides-->
                             <div class="carousel-inner product-links-wap" role="listbox">
-
                                 <!--First slide-->
                                 <div class="carousel-item active">
                                     <div class="row">
                                         <div class="col-4">
-                                            <a href="#">
-                                                {% if item.main_image %}
-                                                    <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Product Image 1">
+                                            <a href="#">    
+                                                {% if first_pro.first_image %}
+                                                    <img class="card-img img-fluid" src="{{first_pro.first_image.url}}" alt="Product Image 1" id="pro-img1">
                                                 {% else %}
                                                     {{"No Image"}}    
                                                 {% endif %}
@@ -38,16 +37,16 @@
                                         </div>
                                         <div class="col-4">
                                             <a href="#">
-                                                {% if item.second_image %}
-                                                    <img class="card-img img-fluid" src="{{item.second_image.url}}" alt="Product Image 2">    
+                                                {% if first_pro.second_image %}
+                                                    <img class="card-img img-fluid" src="{{first_pro.second_image.url}}" alt="Product Image 2">    
                                                 {% endif %}
     
                                             </a>
                                         </div>
                                         <div class="col-4">
                                             <a href="#">
-                                                {% if item.third_image %}
-                                                    <img class="card-img img-fluid" src="{{item.third_image.url}}" alt="Product Image 2">
+                                                {% if first_pro.third_image %}
+                                                    <img class="card-img img-fluid" src="{{first_pro.third_image.url}}" alt="Product Image 2">
                                                 {% endif %}
                                             </a>
                                         </div>   
@@ -74,37 +73,38 @@
                                 {% else %}
                                 <h1 class="h2">{{item.product_name}}</h1>
                                 {% endif %}
-                            {% if item.product_offer > 0 or item.product_type.offer_percentage %}    
-                            <strike><p class="h3 py-2">₹{{item.price}}.00/-</p></strike>
-                            <p class="h3 text-success py-2">₹{{item.price_after_offer}}/-</p>
+                                <p class="h3 text-success py-2">₹ <span id="price">{{price}}</span>/-</p>
+                            <!-- {% if item.product_offer > 0 or item.product_type.offer_percentage %}    
+                            <strike><p class="h3 py-2">₹{{price}}/-</p></strike>
+                            <p class="h3 text-success py-2">₹{{price_after_offer}}/-</p>
                             {% else %}
-                            <p class="h3 py-2">₹{{item.price}}.00/-</p>
-                            {% endif %}                            
-                            <p class="py-2">
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa fa-star text-secondary"></i>
-                                <span class="list-inline-item text-dark">Rating 4.8 | 36 Comments</span>
-                            </p>
+                            <p class="h3 py-2">₹{{price}}/-</p>
+                            {% endif %}-->
+
+                            <div id="product-size">
+                                {% for item in product_attr %}
+                                <button class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.id}}')">{{item.size}} GB</button>    
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mt-2 mb-3" id="product-color">
+                                <select name="color" id="color">
+                                    <option value="Black"> Black </option>
+                                    <option value="White"> White </option>
+                                    <option value="Violet"> Violet </option>
+                                    <option value="Green"> Green </option>
+                                    <option value="Red"> Red </option>
+                                    <option value="Blue"> Blue </option>
+                                </select>
+                            </div>
+                            
                             <ul class="list-inline">
                                 <li class="list-inline-item">
                                     <h6>Brand : Apple</h6>
                                 </li>
                             </ul>
 
-                            <h6>Description:</h6>
-
-                            <div id="color-tag">
-                                <p class="text-dark"><strong>Color : </strong>{{item.color}}</p>
-                            </div>
-
-                            <div id="condition-tag">
-                                <p><strong>Conditon : </strong>{{item.condition}}</p>
-                            </div>
-                              
-                            
+                                                    
                             <h6>Specification:</h6>
                             <ul class="list-unstyled pb-3">
                                 {% if item.processor %}
@@ -120,7 +120,7 @@
                                 <li><strong>Ram:</strong> {{item.ram}}gb</li>
                                 {% endif %} 
                                 {% if item.internal_storage %}
-                                <li><strong>Internal Storage:</strong> {{item.internal_storage}}gb</li>
+                                <li><strong>Internal Storage:</strong><span id="istore">{{item.internal_storage}}</span>gb</li>
                                 {% endif %}
                                 {% if item.camera %}
                                 <li><strong>Back Camera:</strong> {{item.camera}}</li>
@@ -133,7 +133,15 @@
                             <div>
                                 {% csrf_token %}
                                 <input type="hidden" value="{{item.product_id}}" id="prod_id">
-                                {% if item.quantity > 0 %}
+                                <div class="row pb-3">
+                                    <div class="col d-grid">
+                                        <button class="btn btn-success btn-lg addtoCartBtn" name="submit" value="buy">Add to Cart</button>
+                                    </div>
+                                    <div class="col d-grid">
+                                        <button type="submit" class="btn btn-warning btn-lg">Add To Wishlist</button>
+                                    </div>
+                                </div>
+                                <!-- {% if item.quantity > 0 %}
                                 <!-- <div class="col-auto">
                                     <ul class="list-inline pb-3">
                                         <li class="list-inline-item text-right">
@@ -144,22 +152,15 @@
                                         <li class="list-inline-item"><span class="btn btn-dark" id="btn-plus">+</span></li>
                                     </ul>
                                 </div> -->
-                                <div class="row pb-3">
-                                    <div class="col d-grid">
-                                        <button class="btn btn-success btn-lg addtoCartBtn" name="submit" value="buy">Add to Cart</button>
-                                    </div>
-                                    <div class="col d-grid">
-                                        <button type="submit" class="btn btn-warning btn-lg">Add To Wishlist</button>
-                                    </div>
-                                </div>
-                                {% else %}
+                               
+                                <!-- {% else %}
                                 <div>
                                     <p class="text-danger">Out of Stock!</p>
                                 </div>
                                 <div>
                                     <p class="text-dark">We don't know when the product will be back.Click <span class="text-primary">here</span> to get notified</p>
                                 </div>
-                                {% endif %}        
+                                {% endif %}         -->
                             </div>
                                 
                         </div>
@@ -184,6 +185,7 @@
     {% block scripts %} 
 
     <script>    
+
     
     document.getElementById('img-container').addEventListener('mouseover', function(){
         imageZoom('product-detail')
@@ -257,10 +259,12 @@
 
     
 $('.addtoCartBtn').click(function (){
-    //console.log("Here in add!");
+
     var product_id = document.getElementById('prod_id').value;
+    var product_color = document.getElementById('color').value      
     var token = $('input[name=csrfmiddlewaretoken]').val();
     
+
     
     let navCount = Number($('#navcartCount').text()) 
     
@@ -271,6 +275,7 @@ $('.addtoCartBtn').click(function (){
         url: "cart/add",
         data: {
             'product_id' : product_id,
+            'color' : product_color,
             csrfmiddlewaretoken: token     
        },
 
@@ -282,8 +287,46 @@ $('.addtoCartBtn').click(function (){
 
 });
 
-let qtySelected=document.getElementById('var-value').innerText 
-        
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+let endpoint = "{% url 'get-product' %}"
+let first_img = document.getElementById('pro-img1') 
+
+console.log("First",first_img)
+
+
+function changePrice(itemID){
+    $.ajax({
+        method:"POST",
+        url: endpoint,
+        data: {
+            "itemID":itemID,
+            csrfmiddlewaretoken:csrftoken
+        },
+        success: function (response) {
+            document.getElementById('price').innerHTML = response.product
+            document.getElementById('istore').innerHTML = response.size
+            document.getElementById('prod_id').value = itemID
+        }
+    });
+}        
         
     </script>
 

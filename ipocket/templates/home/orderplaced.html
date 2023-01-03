@@ -27,26 +27,26 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-2">
-                      <img src="{{item.product.main_image.url}}"
+                      <img src="{{item.product.first_image.url}}"
                         class="img-fluid" alt="Phone">
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      {% if item.product.generation == None %}
-                        <p class="text-dark mb-0">{{item.product.product_name}} {{item.product.series}}</p>
-                      {% elif item.product.series == None %}
-                        <p class="text-dark mb-0">{{item.product.product_name}} {{item.product.generation}}</p>  
-                      {% elif item.product.generation == None and item.product.series == None %}
-                        <p class="text-dark mb-0">{{item.product.product_name}}</p>
+                      {% if item.product.product.generation == None %}
+                        <p class="text-dark mb-0">{{item.product.product.product_name}} {{item.product.product.series}}</p>
+                      {% elif item.product.product.series == None %}
+                        <p class="text-dark mb-0">{{item.product.product.product_name}} {{item.product.product.generation}}</p>  
+                      {% elif item.product.product.generation == None and item.product.product.series == None %}
+                        <p class="text-dark mb-0">{{item.product.product.product_name}}</p>
                       {% else %}
-                        <p class="text-dark mb-0">{{item.product.product_name}} {{item.product.generation}} {{item.product.series}} </p>        
+                        <p class="text-dark mb-0">{{item.product.product.product_name}} {{item.product.product.generation}} {{item.product.product.series}} </p>        
                       {% endif %}  
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                       <p class="text-dark mb-0 small">{{item.product.color}}</p>
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      {% if item.product.internal_storage != None %}
-                      <p class="text-dark mb-0 small">Capacity : {{item.product.internal_storage}} GB</p>
+                      {% if item.product.size != None %}
+                      <p class="text-dark mb-0 small">Capacity : {{item.product.size}} GB</p>
                       {% endif %}
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
@@ -56,7 +56,7 @@
                       {% if item.product.price_after_offer %}
                       <p class="text-dark mb-0 small">₹{{item.product.price_after_offer}}</p>
                       {% else %}
-                      <p class="text-dark mb-0 small">₹{{item.product.price}}.00</p>
+                      <p class="text-dark mb-0 small">₹{{item.product.price}}</p>
                       {% endif %}
                     </div>
                   </div>
