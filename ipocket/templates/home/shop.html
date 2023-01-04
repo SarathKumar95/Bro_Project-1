@@ -83,7 +83,7 @@
             <div class="row">
                 {% for item in product %}
                 <div class="col-md-4">
-                    <input type="hidden" name="id" value="{{item.product_id}}">
+                    <input type="hidden" name="id" id="xid" value="{{item.product_id}}">
                     <div class="card mb-4 product-wap rounded-0">
                         <div class="card rounded-0">
                             {% if item.main_image %}
@@ -109,6 +109,8 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            
+                            
                             {% if item.generation == None %}
                             <a href="shop-single.html" class="h3 text-decoration-none">
                                 {{item.product_name}} {{item.series}}
@@ -122,6 +124,7 @@
                                 {{item.product_name}} {{item.generation}} {{item.series}}
                             </a>
                             {% endif %}
+                            <input type="hidden" id="colorspec{{item.product_id}}" value="{{item.color}}">
                             <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
                                 {% if item.internal_storage == None %}
                                 <li>{{item.color}}</li>
@@ -149,12 +152,7 @@
                                     <i class="text-muted fa fa-star"></i>
                                 </li>
                             </ul> -->
-                            {% if item.product_offer > 0 or item.product_type.offer_percentage > 0 %}
-                            <strike><p class="text-center mb-0">₹{{item.price}}/-</p></strike>
-                            <p class="text-center text-success mb-0">₹{{item.price_after_offer}}/-</p>
-                            {% else %}
-                            <p class="text-center mb-0">₹{{item.price}}/-</p>
-                            {% endif %}
+                            <p class="text-center mb-0">₹<span>{{item.price}}</span>/-</p>
                         </div>
                     </div>
                 </div>
@@ -187,7 +185,6 @@
 <script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
 <script>
-
 
 function getCookie(name) {
         let cookieValue = null;
@@ -228,15 +225,16 @@ $("input:checkbox").on('click', function() {
 function oneclickCart(proID){
     let product_id = proID 
     let product_qty = 1 
+    let color = document.getElementById('colorspec'+proID).value 
 
-    
+    console.log("Color is", color)
 
     $.ajax({
         method: "POST",
         url: "{% url 'cart-add' %}",
         data: {
             'product_id':product_id,
-            'product_qty':product_qty,
+            'color':color,
             csrfmiddlewaretoken:getCookie('csrftoken')
         },
         success: function (response) {

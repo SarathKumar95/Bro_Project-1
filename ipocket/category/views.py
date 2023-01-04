@@ -194,3 +194,7 @@ def wishlist_list(request):
         print(item.product.price_after_offer)
         
     return render(request,'user/wishlist.html')     
+
+
+def product_attr_add(request):
+    pass 

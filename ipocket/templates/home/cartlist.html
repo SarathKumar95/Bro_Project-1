@@ -23,7 +23,7 @@
               <!-- Single item -->
               {% for item in cart %}
               <input type="hidden" value="{{item.product.quantity}}" id="productStock{{item.id}}">
-              <div class="row" id="single-item{{item.product.product_id}}">
+              <div class="row" id="single-item{{item.product_attr_id}}">
                 <input type="hidden" value="{{item.product.product_id}}" id="cart-prod-id">
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                   <!-- Image -->
@@ -210,7 +210,9 @@ function deleteCartItem(proId) {
     const price = $('#cartprod-price'+proId).val()  
     let cartCount = $('#cartCount').text()
           
-    var token = $('input[name=csrfmiddlewaretoken]').val(); 
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+    
+    
     
     $.ajax({
         method: "POST",

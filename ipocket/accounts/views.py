@@ -306,8 +306,6 @@ def products(request):
     product = Products.objects.all()
     category = Categories.objects.all()
     subCategory = ProductType.objects.all() 
-    product_attr = ProductAttribute.objects.all() 
-
 
     if request.method == "POST":
 
@@ -332,13 +330,11 @@ def products(request):
         elif "productType" in request.POST and "condition" not in request.POST:
             protype = request.POST["productType"]
 
-            print("Product Type is", protype)
 
             id_of_protype = (
                 ProductType.objects.filter(product_type=protype).first().sub_cat_id
             )
 
-            print("Product Type id is", id_of_protype)
 
             product = Products.objects.filter(product_type=id_of_protype)
 
@@ -1499,3 +1495,7 @@ def get_product(request):
         print("first",first_pro.first_image)
 
         return JsonResponse({'itemID':itemID,'product':product_attr, 'size':product_size})   
+
+
+def check_price(request):
+    pass
