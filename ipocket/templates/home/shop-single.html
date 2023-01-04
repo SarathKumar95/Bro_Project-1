@@ -11,6 +11,7 @@
         <div class="container pb-5 ">
             <div class="row">
                 {% for item in product %} 
+                <input type="hidden" id="productIDinput" value="{{item.product_id}}" >
                 <div class="col-lg-5 mt-5 product_data">
                     <div class="card mb-3" id="img-container">
                         <div id="lens"></div>
@@ -73,7 +74,15 @@
                                 {% else %}
                                 <h1 class="h2">{{item.product_name}}</h1>
                                 {% endif %}
-                                <p class="h3 text-success py-2">₹ <span id="price">{{price}}</span>/-</p>
+                                <div id="parastrike">
+                                    <p class="h3 text-dark py-2" >₹ <span id="price1">{{price}}</span>/-</p>
+                                </div>
+
+                                <div id="paraoffer" hidden>
+                                    <strike><p class="h3 text-dark py-2" >₹ <span id="price">{{price}}</span>/-</p></strike>
+                                    <p class="h3 text-success py-2" >₹ <span id="priceOffer">0</span>/-</p>
+                                </div>
+                                
                             <!-- {% if item.product_offer > 0 or item.product_type.offer_percentage %}    
                             <strike><p class="h3 py-2">₹{{price}}/-</p></strike>
                             <p class="h3 text-success py-2">₹{{price_after_offer}}/-</p>
@@ -206,8 +215,7 @@
         img.addEventListener("touchmove", moveLens)
         function moveLens(){
             let pos =   getCursor();
-            console.log('pos',pos)
-
+            
             let posLeft = pos.x - (lens.offsetWidth / 2) 
             let posTop = pos.y - (lens.offsetHeight / 2)
 
@@ -307,9 +315,6 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 let endpoint = "{% url 'get-product' %}"
-let first_img = document.getElementById('pro-img1') 
-
-console.log("First",first_img)
 
 
 function changePrice(itemID){
@@ -321,12 +326,52 @@ function changePrice(itemID){
             csrfmiddlewaretoken:csrftoken
         },
         success: function (response) {
-            document.getElementById('price').innerHTML = response.product
+            
+            if(response.product_offer > 0){
+                document.getElementById('parastrike').hidden = true;
+                document.getElementById('paraoffer').hidden = false;
+                document.getElementById('price').innerHTML = response.product;
+                document.getElementById('priceOffer').innerHTML = response.product_offer;
+            }
+            
+            
             document.getElementById('istore').innerHTML = response.size
-            document.getElementById('prod_id').value = itemID
+            document.getElementById('prod_id').value = itemID 
+
+            if(response.offer_price > 0 ){
+                document.getElementById('parastrike').hidden = true;
+                document.getElementById('paraoffer').hidden = false;
+                document.getElementById('priceOffer').innerHTML = response.offer_price;
+            }
         }
     });
-}        
+}
+
+
+function checkPrice(){
+        let id = document.getElementById('productIDinput').value 
+        
+        $.ajax({
+            method : "POST",
+            url: "/checkprice",
+            data: {
+                'id':id,
+                csrfmiddlewaretoken:csrftoken
+            },
+            success: function (response) {
+                if(response.offer_price > 0 ){
+                    document.getElementById('parastrike').hidden = true;
+                    document.getElementById('paraoffer').hidden = false;
+                    document.getElementById('priceOffer').innerHTML = response.offer_price;
+                }
+                
+            }
+        });
+        
+    }
+
+    window.onload = checkPrice()
+
         
     </script>
 

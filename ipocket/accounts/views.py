@@ -419,6 +419,7 @@ def sortbynew(request):
 def item(request, product_id):
     product = Products.objects.filter(product_id=product_id)
     product_attr = ProductAttribute.objects.filter(product_id=product_id) 
+
     price = product_attr.first().price
     image = product_attr.first().first_image
     first_pro = product_attr.first()
@@ -1487,15 +1488,24 @@ def get_product(request):
         product_size = ProductAttribute.objects.filter(id=itemID).first().size 
         product_color =  ProductAttribute.objects.filter(id=itemID) 
 
-        for item in product_color:
-            print("1",item.color)
+        product_attr_offer = ProductAttribute.objects.filter(id=itemID).first().price_after_offer
+
+        print("Price offer ", product_attr_offer) 
+        print("Price", product_attr)
 
         first_pro = ProductAttribute.objects.filter(id=itemID).first()
 
-        print("first",first_pro.first_image)
-
-        return JsonResponse({'itemID':itemID,'product':product_attr, 'size':product_size})   
+        return JsonResponse({'itemID':itemID,'product':product_attr,'product_offer':product_attr_offer, 'size':product_size})   
 
 
 def check_price(request):
-    pass
+    if request.method == 'POST':
+        pro_id = request.POST['id'] 
+
+        product = ProductAttribute.objects.filter(product_id=pro_id) 
+
+        for item in product:
+            product_offer_price = item.price_after_offer 
+            product_price = item.price 
+
+        return JsonResponse({'offer_price':product_offer_price,'price':product_price})
