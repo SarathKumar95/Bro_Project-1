@@ -525,12 +525,12 @@ def cart_list(request):
     for item in cart:
         product_qtyCheck = item.product_attr.quantity
 
-        # if item.product.price_after_offer > 0:
-        #     Item_total = item.product.price_after_offer * item.product_qty
-        # else:
-        #     Item_total = item.product.price * item.product_qty
+        if item.product_attr.price_after_offer > 0:
+            Item_total = item.product_attr.price_after_offer * item.product_qty
+        else:
+            Item_total = item.product_attr.price * item.product_qty
 
-        Item_total = item.product_attr.price * item.product_qty
+        
 
         sub_total += Item_total
 
@@ -546,13 +546,11 @@ def cart_list(request):
 
 def cart_update(request):
     if request.method == "POST":
-        product_id = request.POST["product_id"]
+        product_id = int(request.POST["product_id"])
         product_qty = request.POST["cart_qty"]
-        cart_id = request.POST["cart_id"]
+        total = float(request.POST["total"])
 
-        product = ProductAttribute.objects.filter(id=product_id) 
-
-        print("Qty is ",product_qty)    
+        product = ProductAttribute.objects.filter(id=product_id).first() 
 
         if "username" not in request.session:
             user_in = guest(request)
@@ -561,32 +559,29 @@ def cart_update(request):
         else:
             user_in = request.session["username"]
             cart = Cart.objects.filter(user=user_in, product_attr_id=product_id).first()
+        
 
-        CartTotal = Cart.objects.filter(user=user_in)
-
-        total = 0
+        CartTotal = Cart.objects.filter(user=user_in) 
 
         for item in CartTotal:
-        #     if item.product.price_after_offer > 0:
-        #         itemPrice = item.product.price_after_offer
-        #     else:
-            itemPrice = item.product_attr.price
+            
+            if item.product_attr_id == product_id:
+                   # minus the old price with old qty 
+                   if item.product_attr.price_after_offer > 0:
+                        price_to_Change = item.product_attr.price_after_offer * item.product_qty 
+                        new_Price = item.product_attr.price_after_offer * float(product_qty) 
+                   else:
+                        price_to_Change = item.product_attr.price * item.product_qty 
+                        new_Price = item.product_attr.price * float(product_qty)
 
-            total = total + itemPrice
-
-        # if cart.product.price_after_offer > 0:
-        #     cartPrice = cart.product.price_after_offer
-        # else:
-        
-        cartPrice = cart.product_attr.price 
-
-
-        update_price = cartPrice * float(product_qty)
-
+                   total = total - price_to_Change + new_Price 
+            else:
+                pass        
+    
         cart.product_qty = product_qty
         cart.save()
 
-        return JsonResponse({"status": "Updated cart!", "update_price": update_price})
+        return JsonResponse({"status": "Updated cart!", "update_price": total})
 
     return redirect("/")
 
