@@ -618,10 +618,10 @@ def OrderPage(request, tracking_no):
     orderTotal = 0
 
     for item in orderitem:
-        # if item.product.price_after_offer:
-        #     orderTotal = orderTotal + item.product.price_after_offer * item.quantity
-        # else:
-        orderTotal = orderTotal + item.product.price * item.quantity
+        if item.product.price_after_offer:
+            orderTotal = orderTotal + item.product.price_after_offer * item.quantity
+        else:
+            orderTotal = orderTotal + item.product.price * item.quantity
 
     context = {"order": order, "orderitem": orderitem, "orderTotal": orderTotal}
     return render(request, "home/orderplaced.html", context)
@@ -893,10 +893,10 @@ def coupon_post(request):
         for item in cart:
             itemcount += 1
             itemCoupon = item.coupon_applied
-            if item.product.price_after_offer:
-                price = item.product.price_after_offer
+            if item.product_attr.price_after_offer:
+                price = item.product_attr.price_after_offer
             else:
-                price = item.product.price
+                price = item.product_attr.price
             itemTotal = item.grand_total
             total += price
 
@@ -936,10 +936,10 @@ def coupon_post(request):
                             coupon_check.discount_percentage / itemcount
                         )
 
-                        if item.product.price_after_offer:
-                            price = item.product.price_after_offer
+                        if item.product_attr.price_after_offer:
+                            price = item.product_attr.price_after_offer
                         else:
-                            price = item.product.price
+                            price = item.product_attr.price
 
                         amount_to_be_discounted = price * item_Discount_to_apply / 100
                         price_after_discount = price - (
@@ -976,7 +976,6 @@ def coupon_post(request):
 
 
 def coupon_delete(request):
-    print("Hit post coupon delete")
     cart = Cart.objects.filter(user=request.session["username"])
 
     for item in cart:
@@ -1026,10 +1025,10 @@ def checkout(request):
 
     for item in cart:
         coupon_name = item.coupon_applied
-        # if item.product.price_after_offer > 0:
-        #     Item_total = item.product.price_after_offer * item.product_qty
-        # else:
-        Item_total = item.product_attr.price * item.product_qty
+        if item.product_attr.price_after_offer > 0:
+            Item_total = item.product_attr.price_after_offer * item.product_qty
+        else:
+            Item_total = item.product_attr.price * item.product_qty
         sub_total += Item_total
 
         if item.amount_discounted != None:
@@ -1087,7 +1086,7 @@ def checkout(request):
                     print("Shipping address saved!")
 
                 else:
-                    print("Which save??")
+                    pass
 
             neworder = Order()
             neworder.user = request.session["username"]

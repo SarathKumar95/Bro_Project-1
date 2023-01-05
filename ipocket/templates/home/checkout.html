@@ -63,20 +63,12 @@
         <input type="hidden" value="{{item.id}}" id="cartId">
         <li class="list-group-item d-flex justify-content-between lh-condensed">
           <div>
-            <input type="hidden" value="{{item.product.product_id}}" id="product_id">
-            {% if item.product_attr.product.series == None %}
-            <h6 class="my-0">{{item.product_attr.product.product_name}} {{item.product_attr.product.generation}} </h6>
-            {% elif item.product_attr.product.generation == None %}
-            <h6 class="my-0">{{item.product_attr.product.product_name}} {{item.product_attr.product.series}}</h6>
-            {% elif item.product_attr.product.generation == None and item.product_attr.product.series == None %}
-            <h6 class="my-0">{{item.product_attr.product.product_name}}</h6>
-            {% else %}
-            <h6 class="my-0">{{item.product_attr.product.product_name}} {{item.product_attr.product.series}}</h6>
-            {% endif %}
+            <input type="hidden" value="{{item.product.product_id}}" id="product_id"> 
+            <h6 class="my-0">{{item.product_attr}}</h6>
           </div>
 
           {% if item.product_attr.price_after_offer %}
-          <span class="text-dark">{{item.product_qty}} x ₹{{item.product.price_after_offer}}</span>
+          <span class="text-dark">{{item.product_qty}} x ₹{{item.product_attr.price_after_offer}}</span>
           {% if item.amount_discounted > 0 %} 
           <span style="color:red;">- ({{item.amount_discounted}})</span>
           {% endif %}

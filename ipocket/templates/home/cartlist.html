@@ -172,10 +172,6 @@ function changeQty(productID,cartqty,cartID){
     let total=document.getElementById('sub-total').innerText 
     
     
-    console.log("Cart qty is ", meme)
-  
-    console.log("Total is ", total)
-
     if (Number(meme) == Number(stock)){
       document.getElementById('plusBtn'+cartID).disabled=true;
     } 
@@ -200,7 +196,6 @@ function changeQty(productID,cartqty,cartID){
         },
         success: function (response) {
             alertify.success(response.status) 
-            alert(response.update_price)
             document.getElementById('sub-total').innerText=response.update_price  
         }
     });
