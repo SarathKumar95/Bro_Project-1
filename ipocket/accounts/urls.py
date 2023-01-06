@@ -55,5 +55,6 @@ urlpatterns = [
     path('salesreport',views.sales_report,name='sales-report'),
     path('salescsv',views.sales_csv,name='sales-csv'),
     path('getprice',views.get_product,name='get-product'),                
-    path('checkprice',views.check_price,name='check-price'),                
+    path('checkprice',views.check_price,name='check-price'),
+    path('productprices',views.product_prices,name='product-prices'),                
 ]

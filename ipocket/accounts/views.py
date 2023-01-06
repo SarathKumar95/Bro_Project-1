@@ -26,7 +26,7 @@ from django.utils.dateparse import parse_date
 import sys
 import pandas as pd
 from bs4 import BeautifulSoup
-
+from django.db.models import Min,Max
 
 import razorpay
 import calendar
@@ -305,69 +305,47 @@ def unblock_user(request, id):
 def products(request):
     product = Products.objects.all()
     category = Categories.objects.all()
-    subCategory = ProductType.objects.all() 
+    subCategory = ProductType.objects.all()
 
+
+    #fetch max product price and min product price 
+
+    max_product = ProductAttribute.objects.order_by('price').last().price      
+    min_product = ProductAttribute.objects.order_by('-price').last().price
+    
     if request.method == "POST":
 
-        # range =
+        if 'price' in request.POST: 
+            priceX = request.POST['price']
+            productPrice = Products.objects.filter(price__lte = priceX) 
 
-        if "rangeprice" in request.POST:
-            print("Range is", request.POST["rangeprice"])
+            if 'condition' in request.POST:
+                conx = request.POST['condition']
+                print("Condition is ", conx, "under ", priceX)
+                messages.success(request,"Showing products filtered "+ conx + " under " + "₹ " 
+                + priceX)
 
-        else:
-            pass
-
-        if "condition" in request.POST and "productType" not in request.POST:
-            condition_in = request.POST["condition"]
-
-            id_of_condition = (
-                Categories.objects.filter(condition=condition_in).first().category_id
-            )
-
-            product = Products.objects.filter(condition=id_of_condition)
-            messages.success(request, "Listing " + condition_in + " products")
-
-        elif "productType" in request.POST and "condition" not in request.POST:
-            protype = request.POST["productType"]
+                id_of_condition = Categories.objects.filter(condition = conx).first().category_id
+                product = productPrice.filter(condition_id = id_of_condition)
+                productY = product
+                if 'productType' in request.POST:
+                    proX = request.POST['productType'] 
+                    print("Condition is ",conx,"Pro type is ", proX, "under ", priceX)                    
+                    id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
+                    product = productY.filter(product_type_id=id_of_pro) 
 
 
-            id_of_protype = (
-                ProductType.objects.filter(product_type=protype).first().sub_cat_id
-            )
-
-
-            product = Products.objects.filter(product_type=id_of_protype)
-
-            messages.success(request, "Listing " + protype)
-
-        elif "condition" and "productType" not in request.POST:
-            messages.error(request, "Please select one condition and product type!")
+            elif 'productType' in request.POST:
+                proX = request.POST['productType'] 
+                print("Pro type is ", proX, "under ", priceX)
+                
+                id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
+                product = productPrice.filter(product_type_id=id_of_pro)  
 
         else:
-            condition = request.POST["condition"]
-            protype = request.POST["productType"]
+            print("Nope!!")
 
-            category_selected = Categories.objects.filter(condition=condition)
-            subcategory = ProductType.objects.filter(product_type=protype)
-
-            no_of_category = Categories.objects.filter(condition=condition).count()
-            no_of_subcategory = ProductType.objects.filter(product_type=protype).count()
-
-            if no_of_subcategory == 0:
-                return redirect(request.path)
-
-            else:
-                for item in category_selected:
-                    Cat_id = item.category_id
-
-                for item in subcategory:
-                    SubCat_id = item.sub_cat_id
-
-                product = Products.objects.filter(
-                    condition=Cat_id, product_type=SubCat_id
-                )
-
-    context = {"product": product, "category": category, "subCategory": subCategory}
+    context = {"product": product, "category": category, "subCategory": subCategory, "max":max_product, "min":min_product}
     return render(request, "home/shop.html", context)
 
 
@@ -1502,4 +1480,8 @@ def check_price(request):
             product_offer_price = item.price_after_offer 
             product_price = item.price 
 
-        return JsonResponse({'offer_price':product_offer_price,'price':product_price})
+        return JsonResponse({'offer_price':product_offer_price,'price':product_price}) 
+
+
+def product_prices(request):
+    pass
