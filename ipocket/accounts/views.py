@@ -65,9 +65,12 @@ def home_page(request):
     subcat = ProductType.objects.all()
     product = Products.objects.all()
     banner = Banner.objects.all()
-    
 
-    context = {"product": product, "category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner}
+    banner_count=len(Banner.objects.all())
+
+    print("Banner count is ", banner_count)
+
+    context = {"product": product, "category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner, 'banner_count':banner_count}
     return render(request, "home/index.html", context)
 
 

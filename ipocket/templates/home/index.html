@@ -32,7 +32,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>  
+            {% if banner_count != 0 %}
             {% for item in banner %}
             <div class="carousel-item">
                 <div class="container">
@@ -53,7 +54,7 @@
                 </div>
             </div>
             {% endfor %}
-            
+            {% endif %}
         </div>
         <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
             <i class="fas fa-chevron-left"></i>
