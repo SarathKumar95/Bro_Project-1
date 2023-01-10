@@ -1,0 +1,27 @@
+{% extends 'owner/base.html' %}  
+
+{% block title %} Landing Page Manager {% endblock %}  
+
+
+{% block content %}
+{% load static %} 
+<div class="main">
+
+    <div class="page-title text-center mt-5 mb-3">
+        <h5>Manage your Landing Page</h5>
+    </div>
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+        <div class="alert alert-warning" role="alert">
+            {{message}}
+          </div>
+        {% endfor %}
+    </div>
+
+    <div>
+        <button>Edit Featured Products</button>
+    </div>
+
+
+{% endblock %}

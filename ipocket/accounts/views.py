@@ -333,7 +333,7 @@ def products(request):
                     print("Condition is ",conx,"Pro type is ", proX, "under ", priceX)                    
                     id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
                     product = productY.filter(product_type_id=id_of_pro) 
-
+            
 
             elif 'productType' in request.POST:
                 proX = request.POST['productType'] 
@@ -1485,3 +1485,7 @@ def check_price(request):
 
 def product_prices(request):
     pass
+
+
+def landing_page(request):
+    return render(request,'owner/pagemanager.html')
