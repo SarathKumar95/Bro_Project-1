@@ -64,7 +64,10 @@ def home_page(request):
     category = Categories.objects.all()
     subcat = ProductType.objects.all()
     product = Products.objects.all()
-    context = {"product": product, "category": category, "subcat": subcat, 'check_user':check_user}
+    banner = Banner.objects.all()
+    
+
+    context = {"product": product, "category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner}
     return render(request, "home/index.html", context)
 
 

@@ -317,3 +317,13 @@ class Wallet(models.Model):
 
     def __str__(self):
         return '{}'.format(str(self.wallet_id)) 
+
+class Banner(models.Model):
+    banner_id = models.AutoField(primary_key=True)
+    banner_name = models.CharField(max_length=100,null=True,blank=True)
+    banner_image = models.ImageField(null=True,blank=True)
+    banner_head = models.CharField(max_length=150,null=True,blank=True)
+    banner_link = models.CharField(max_length=150,null=True,blank=True) 
+
+    def __str__(self):
+        return '{}'.format((self.banner_name))

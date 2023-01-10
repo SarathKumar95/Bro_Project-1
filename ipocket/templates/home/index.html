@@ -33,16 +33,17 @@
                     </div>
                 </div>
             </div>
+            {% for item in banner %}
             <div class="carousel-item">
                 <div class="container">
                     <div class="row p-5">
                         <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                            <img class="img-fluid" src="{% static 'images/home/banner-02.webp' %}" alt="">
+                            <img class="img-fluid" src="{{item.banner_image.url}}" alt="">
                         </div>
                         <div class="col-lg-6 mb-0 d-flex align-items-center">
                             <div class="text-align-left">
-                                <h1 class="h1">Apple Watches</h1>
-                                <h3 class="h2">Starting at as low as ₹ 12999.00</h3>
+                                <h1 class="h1">{{item.banner_head}}</h1>
+                                <a class="h2">{{item.banner_link}}</a>
                                 <!--<p>
 
                                 </p>-->
@@ -51,25 +52,8 @@
                     </div>
                 </div>
             </div>
-            <div class="carousel-item">
-                <div class="container">
-                    <div class="row p-5">
-                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                            <img class="img-fluid" src="{% static 'images/home/banner-03.jpg' %}" alt="banner-03">
-                        </div>
-                        <div class="col-lg-6 mb-0 d-flex align-items-center">
-                            <div class="text-align-left">
-                                <h1 class="h1">Who said the perfect place to own pre-owned apple products doesn't exist?</h1>
-                                <h3 class="h2"><a "{% url 'productspage' %}">Take me to store >>> </a></h3>
-                                <p>
-                                    Along with new apple products we also bring you a collection of pre-owned apple devices which undergo over expert testing. 
-                                   <!--<a href="">Used product link here!</a>--->   
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
+            
         </div>
         <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
             <i class="fas fa-chevron-left"></i>
