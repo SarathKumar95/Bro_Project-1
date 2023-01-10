@@ -118,41 +118,17 @@
                 </div>
             </div>
             <div class="row">
-                
-                    {% for item in product %}
-                    
-                    {% endfor %}
-                
-                
-                </div>
+            </div>
             </div>
         </div>
     </section>
     <!-- End Featured Product -->
 
-    <script>
-        $('.owl-carousel').owlCarousel({
-    loop:true,
-    margin:10,
-    nav:true,
-    responsive:{
-        0:{
-            items:1
-        },
-        600:{
-            items:3
-        },
-        1000:{
-            items:5
-        }
-    }
-})
-
+<script>
 
     
 $( function() {
 
-console.log("Inside the search!");
 
 var availableTags = [
   "ActionScript",
@@ -183,9 +159,11 @@ $( ".searchhere" ).autocomplete({
 });
 } );
 
+
 </script>
 <script src="{% static 'js/home/custom.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
 {% endblock %}
     

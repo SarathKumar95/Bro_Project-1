@@ -55,10 +55,16 @@ def guest(request):
 
 
 def home_page(request):
+    check_user=False
+    if 'username' in request.session:
+        user_in = request.session['username'] 
+        check_user = MyUser.objects.filter(email=user_in).first().is_superuser 
+    else:
+        pass    
     category = Categories.objects.all()
     subcat = ProductType.objects.all()
     product = Products.objects.all()
-    context = {"product": product, "category": category, "subcat": subcat}
+    context = {"product": product, "category": category, "subcat": subcat, 'check_user':check_user}
     return render(request, "home/index.html", context)
 
 
