@@ -207,3 +207,10 @@ class CouponForm(ModelForm):
 
         }
 
+class BannerForm(ModelForm):
+    
+    class Meta:
+        model = Banner
+        fields = '__all__'
+
+    

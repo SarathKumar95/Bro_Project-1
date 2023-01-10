@@ -4,6 +4,7 @@
 
 
 {% block content %}
+{% load crispy_forms_tags %}
 {% load static %} 
 <div class="main">
   
@@ -12,19 +13,19 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Banners</h1>
-          <div id="banner1">
-            
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Banner</h1>  
+          
         </div>
         <div class="modal-body">
-          ...
+            <form enctype="multipart/form-data" action="" method="POST" >
+                {% csrf_token %}
+                {{form|crispy}}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
+    </form>
       </div>
     </div>
   </div>

@@ -68,9 +68,7 @@ def home_page(request):
 
     banner_count=len(Banner.objects.all())
 
-    print("Banner count is ", banner_count)
-
-    context = {"product": product, "category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner, 'banner_count':banner_count}
+    context = {"product": product,  "category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner, 'banner_count':banner_count}
     return render(request, "home/index.html", context)
 
 
@@ -1500,4 +1498,11 @@ def product_prices(request):
 
 
 def landing_page(request):
-    return render(request,'owner/pagemanager.html')
+    form=BannerForm()
+    context={'form':form}
+
+    if request.method == 'POST':
+        form=BannerForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+    return render(request,'owner/pagemanager.html',context)
