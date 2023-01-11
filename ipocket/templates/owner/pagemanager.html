@@ -127,7 +127,7 @@
                     </thead>
                     <tbody>
                         {% for item in banner %}
-                        <tr id="row{{item.id}}">
+                        <tr id="row">
                             <td>{{item.banner_name}}</td>
                             <td style="min-width: 20opx;"><img src="{{item.banner_image.url}}" alt="banner-image" style="width:50px;" ></td>
                             <td>{{item.banner_head}}</td>
@@ -143,7 +143,7 @@
             
                                     <div class="mb-2">
                                         
-                                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrder()" id="deleteOrder-btn"
+                                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteBanner(passId='{{item.banner_id}}')" id="deleteBanner-btn"
                                         data-url="" style="height:25px;" title="Delete Order">
                                     </div>
             
@@ -163,5 +163,48 @@
             </div>
         </div>
     </div>
+
+
+<script>
+
+  
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+
+  function deleteBanner(passId){
+    var endpoint = '{% url "delete-Banner" %}'
+    $.ajax({
+      method: "POST",
+      url:endpoint,
+      data: {
+        'banner_id':passId,
+        csrfmiddlewaretoken:csrftoken,
+      },
+      success: function (response) {
+        alert(response.status)
+        location.reload()
+      },
+
+      error:function (response) {
+        alert(response.errorX)
+        }
+    });
+  }
+</script>
 
 {% endblock %}

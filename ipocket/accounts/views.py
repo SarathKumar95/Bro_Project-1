@@ -1507,6 +1507,18 @@ def landing_page(request):
     context={'banner':banner, 'banner_form':banner_form, 'product':product}     
     return render(request,'owner/pagemanager.html',context) 
 
+
+def delete_banner(request):
+
+    if request.method == 'POST':
+        banner_id = request.POST['banner_id']
+        
+        banner = Banner.objects.filter(banner_id=banner_id)
+
+        banner.delete()
+
+        return JsonResponse({'status':"Deleted Banner!", 'errorX':"Error"})
+
 def list_productattr(request,id):   
         form = ProductAttrForm()
         check_attr = ProductAttribute.objects.filter(product_id=id) 

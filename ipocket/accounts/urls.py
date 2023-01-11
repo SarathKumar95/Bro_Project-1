@@ -62,5 +62,5 @@ urlpatterns = [
     path('productmanager/productattribute/add',views.add_productattr,name='product-attrAdd'), 
     path('productmanager/productattribute/delete/<int:id>/<int:proID>',views.delete_productattr,name='product-attrDel'),                                
     path('productmanager/productattribute/edit/<int:id>/<int:proID>',views.edit_productattr,name='product-attrEdit'),                                
-    
+    path('banner/delete',views.delete_banner,name='delete-Banner')    
 ]
