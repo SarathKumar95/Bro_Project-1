@@ -143,6 +143,7 @@ class ProductAttribute(models.Model):
         product_price = ProductAttribute.objects.filter(product_id=pro_id).order_by('-price')
         product_offer_price = ProductAttribute.objects.filter(product_id=pro_id).order_by('-price_after_offer') 
 
+        print("Check ", product_offer_price)
 
         if self.price_after_offer == 0 or None:
             pass
