@@ -19,7 +19,7 @@
         <div class="modal-body">
             <form enctype="multipart/form-data" action="" method="POST" >
                 {% csrf_token %}
-                {{form|crispy}}
+                {{banner_form|crispy}}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -29,6 +29,63 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="exampleModal-1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Banner</h1>  
+        </div>
+        <div class="modal-body">
+           {% for item in banner %}
+            <div>
+                <h6>{{item}}</h6>
+
+                <div class="mb-2" id="banner-name-div">
+                    <label for="banner-name">Banner Name : </label>
+                    <input type="text" value="{{item.banner_name}}">
+                </div>
+                
+                <div class="mb-2" id="banner-image-div">
+                    <label for="banner-image">Banner Image : </label>
+                    <input type="file" name="" id="" value="{{item.banner_image}}">
+                </div>
+                
+
+            </div>
+           {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+    
+  <div class="modal fade" id="exampleModal-2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Banner</h1>  
+        </div>
+        <div class="modal-body">
+           {% for item in product %}
+                <input type="checkbox" id="productcheck" name="{{item.product_name}}">
+                <label for="productcheck">{{item.slug}}</label>
+                <br>
+           {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+
 
     <div class="page-title text-center mt-5 mb-3">
         <h5>Landing Page Manager</h5>
@@ -43,11 +100,68 @@
     </div>
 
     <div class="ms-4">
-        <button>Edit Featured Products</button>
+    
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-2">
+            Select Featured Products
+        </button>
         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Add Banner
+        </button>
+        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-1">
             Edit Banner
         </button>
     </div>
 
+    <div class="container-fluid mt-3">
+        <div class="bg-light text-center rounded p-4">
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th class="text-center" style="background-color:white;" scope="col">Banner Name</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Banner Image</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Banner Heading</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Banner Link</th>
+                            <th class="text-center" style="background-color:white;" scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in banner %}
+                        <tr id="row{{item.id}}">
+                            <td>{{item.banner_name}}</td>
+                            <td style="min-width: 20opx;"><img src="{{item.banner_image.url}}" alt="banner-image" style="width:50px;" ></td>
+                            <td>{{item.banner_head}}</td>
+                            <td>{{item.banner_link}}</td>
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                    <div class="mb-2">
+
+                                        <a href="" title="Edit ">
+                                            <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                                          </a>    
+                                    </div>
+            
+                                    <div class="mb-2">
+                                        
+                                    <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteOrder()" id="deleteOrder-btn"
+                                        data-url="" style="height:25px;" title="Delete Order">
+                                    </div>
+            
+                                    <div class="mb-2">
+                                        <a href="" title="Order Items">
+                                            <img src="{% static 'images/info.png' %}" alt="infobutton" style="height:25px;">
+                                          </a>     
+                                    </div>
+            
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

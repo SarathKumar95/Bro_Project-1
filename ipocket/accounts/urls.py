@@ -57,5 +57,10 @@ urlpatterns = [
     path('getprice',views.get_product,name='get-product'),                
     path('checkprice',views.check_price,name='check-price'),
     path('productprices',views.product_prices,name='product-prices'),
-    path('landingmanager',views.landing_page,name='landing'),                
+    path('landingmanager',views.landing_page,name='landing'),
+    path('productmanager/productattribute/list/<int:id>',views.list_productattr,name='product-attrList'),                                
+    path('productmanager/productattribute/add',views.add_productattr,name='product-attrAdd'), 
+    path('productmanager/productattribute/delete/<int:id>/<int:proID>',views.delete_productattr,name='product-attrDel'),                                
+    path('productmanager/productattribute/edit/<int:id>/<int:proID>',views.edit_productattr,name='product-attrEdit'),                                
+    
 ]

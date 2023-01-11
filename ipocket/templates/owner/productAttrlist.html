@@ -1,0 +1,152 @@
+{% extends 'owner/base.html' %}  
+
+{% block title %} Product Attributes Manager {% endblock %}  
+
+
+{% block content %}
+{% load crispy_forms_tags%}
+{% load static %} 
+<div class="main">
+
+    <div class="page-title text-center mt-5 mb-3">
+        <h5>Product Attribute List</h5>
+    </div>
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+        <div class="alert alert-warning" role="alert">
+            {{message}}
+          </div>
+        {% endfor %}
+    </div>
+
+    <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Product Attribute</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'product-attrAdd' %}" method="POST">
+            {% csrf_token %}
+            {{form|crispy}}
+            <input type="hidden" value="{{proID}}" name="product-ID">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<div class="table-wrapper">
+    <div class="container-fluid pt-4 px-4">
+        <button type="button" class="btn btn-sm btn-warning mt-3 mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <img class="me-2" src="{% static 'images/plus.png' %}" alt="plus-image" style="height:25px;">Add New Product Attribute
+        </button>
+        
+        <div class="bg-light text-center rounded p-4">
+            <div>
+                
+            </div>
+
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Product Image</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th class="text-center" scope="col">On Offer</th>
+                            <th class="col">Offer Price</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in productAttr %}
+                        
+                        <tr id="productrow{{item.id}}">
+                            <td>{{item.slug}}
+                                <input type="hidden" value="{{item.id}}" name="productAttrID">
+                            </td>
+                            <td >
+                                {% if item.first_image %}
+                                    <img src="{{item.first_image.url}}" alt="item-image" style="height:100px;" id="product-image-owner">
+                                {% else %} 
+                                    {{"No Image"}}
+                                {% endif %}            
+                            </td>
+                            <td>{{item.quantity}}</td>
+                            <td>{{item.price}}</td>
+                            
+                            {% if item.applied_offer %}
+                                {% if item.applied_offer == 'Category Offer' %}
+                                    <td>{{item.applied_offer}} {{item.product_type.offer_percentage}}%</td>
+                                {% elif item.applied_offer == 'Product Offer' %}
+                                    <td>{{item.applied_offer}} {{item.product_offer}}%</td>
+                                {% else %}
+                                    <td>{{item.applied_offer}} {{item.product_offer}}%</td>    
+                                {% endif %}
+                            {% else %}
+                            <td>No Offers</td>
+                            {% endif %}
+                            <td>{{item.price_after_offer}}</td>
+                            <td>  
+                                                              
+                                <a href="{% url 'product-attrEdit' item.id item.product_id %}" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
+                                    <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
+                                </a>
+
+                                <a href="{% url 'product-attrDel' item.id item.product_id  %}" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Attribute"></a>
+                                
+                            </td>
+                        </tr>   
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% block script %}
+<script>
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');    
+
+
+
+</script>
+
+{% endblock %}
+
+
+{% endblock %}

@@ -213,4 +213,11 @@ class BannerForm(ModelForm):
         model = Banner
         fields = '__all__'
 
-    
+class ProductAttrForm(ModelForm):
+
+    class Meta:
+        model = ProductAttribute
+        fields = '__all__'
+        exclude = ['product_id']
+
+        

@@ -800,9 +800,6 @@ def viewInvoice(request, tracking_no):
     order = Order.objects.filter(user=user_in, tracking_no=tracking_no).first()
     orderitem = OrderItem.objects.filter(order=order)
 
-    print("Order is ", order)
-    print("Order item is ", orderitem)
-
     data = {"order": order, "orderitem": orderitem}
 
     pdf = render_to_pdf("user/invoice.html", data)
@@ -1259,8 +1256,6 @@ def chart(request):
             period_order+=len(order)
          
 
-        print("Per order is ", period_order)    
-
         deliver = Order.objects.filter(status='Delivered').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month)) 
 
 
@@ -1295,8 +1290,6 @@ def chart(request):
             cancelled.append(len(cancel))    
 
         piedata = [order_total,deliver_total,return_total,cancel_total]
-
-        print("Pie", piedata)
 
         if deliver_total == 0:
             total_revenue = 0
@@ -1498,11 +1491,67 @@ def product_prices(request):
 
 
 def landing_page(request):
-    form=BannerForm()
-    context={'form':form}
+    banner_form=BannerForm()
+    banner = Banner.objects.all() 
+
+    product=Products.objects.all()
+
+    for item in product:
+        print("Pro ", item.product_name)
 
     if request.method == 'POST':
         form=BannerForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-    return render(request,'owner/pagemanager.html',context)
+
+    context={'banner':banner, 'banner_form':banner_form, 'product':product}     
+    return render(request,'owner/pagemanager.html',context) 
+
+def list_productattr(request,id):   
+        form = ProductAttrForm()
+        check_attr = ProductAttribute.objects.filter(product_id=id) 
+        context={'productAttr':check_attr, 'form':form, 'proID':id}
+        return render(request,'owner/productAttrlist.html',context)    
+
+def add_productattr(request):
+    if request.method == 'POST':
+
+        proID = request.POST['product-ID']
+
+        form = ProductAttrForm(request.POST,request.FILES)
+
+        if form.is_valid():
+            form.save()
+        else:
+            messages.error(request,form.errors)    
+
+        return redirect('product-attrList',proID)          
+
+
+def delete_productattr(request,id,proID):
+        
+        product = ProductAttribute.objects.filter(id=id)
+
+        product.delete()
+
+        messages.success(request,"Deleted Product Attribute Successfully")
+
+        return redirect('product-attrList',proID)
+
+def edit_productattr(request,id,proID):
+    product = ProductAttribute.objects.filter(id=id).first()
+    form = ProductAttrForm(instance=product)
+    if request.method == 'POST':
+        form = ProductAttrForm(request.POST,request.FILES,instance=product)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Product is updated")
+            return redirect('product-attrList',proID)
+        
+        else:
+            messages.success(request,form.errors)        
+
+    context = {'form':form}    
+    return render(request,'owner/editProductAttr.html',context)
+    
