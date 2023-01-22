@@ -30,61 +30,35 @@
     </div>
   </div>
 
-  <div class="modal fade" id="exampleModal-1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Banner</h1>  
-        </div>
-        <div class="modal-body">
-           {% for item in banner %}
-            <div>
-                <h6>{{item}}</h6>
 
-                <div class="mb-2" id="banner-name-div">
-                    <label for="banner-name">Banner Name : </label>
-                    <input type="text" value="{{item.banner_name}}">
-                </div>
-                
-                <div class="mb-2" id="banner-image-div">
-                    <label for="banner-image">Banner Image : </label>
-                    <input type="file" name="" id="" value="{{item.banner_image}}">
-                </div>
-                
-
-            </div>
-           {% endfor %}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
-        </div>
-    
-      </div>
-    </div>
-  </div>
-    
   <div class="modal fade" id="exampleModal-2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Banner</h1>  
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Select Featured Products</h1>  
+          
         </div>
         <div class="modal-body">
-           {% for item in product %}
-                <input type="checkbox" id="productcheck" name="{{item.product_name}}">
-                <label for="productcheck">{{item.slug}}</label>
-                <br>
-           {% endfor %}
+            <form enctype="multipart/form-data" action="{% url 'selectFeat' %}" method="POST" >
+                {% csrf_token %}
+                {% for item in product %}
+                    <div id="pro">
+                        <input type="checkbox" name="proIn" id="proIn" value="{{item.product_id}}">
+                        <label for="proIn">{{item.slug}}</label>
+                    </div>
+                {% endfor %}    
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
-    
+    </form>
       </div>
     </div>
   </div>
+
+
+
 
 
     <div class="page-title text-center mt-5 mb-3">
@@ -107,9 +81,7 @@
         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Add Banner
         </button>
-        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-1">
-            Edit Banner
-        </button>
+     
     </div>
 
     <div class="container-fluid mt-3">
@@ -133,24 +105,18 @@
                             <td>{{item.banner_head}}</td>
                             <td>{{item.banner_link}}</td>
                             <td>
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex">
                                     <div class="mb-2">
-
-                                        <a href="" title="Edit ">
+                                                 
+                                        <a href="{% url 'edit-Banner' item.banner_id %}" title="Edit Banner" class="me-3">
                                             <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
-                                          </a>    
+                                          </a> 
                                     </div>
             
                                     <div class="mb-2">
                                         
                                     <input type="image" src="{% static 'images/delete.png' %}" onclick="deleteBanner(passId='{{item.banner_id}}')" id="deleteBanner-btn"
                                         data-url="" style="height:25px;" title="Delete Order">
-                                    </div>
-            
-                                    <div class="mb-2">
-                                        <a href="" title="Order Items">
-                                            <img src="{% static 'images/info.png' %}" alt="infobutton" style="height:25px;">
-                                          </a>     
                                     </div>
             
                                 </div>

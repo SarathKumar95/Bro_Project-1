@@ -65,10 +65,11 @@ def home_page(request):
     subcat = ProductType.objects.all()
     product = Products.objects.all()
     banner = Banner.objects.all()
+    productAttr = ProductAttribute.objects.all()
 
     banner_count=len(Banner.objects.all())
 
-    context = {"product": product,  "category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner, 'banner_count':banner_count}
+    context = {"product": product,"productAttr":productAttr,"category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner, 'banner_count':banner_count}
     return render(request, "home/index.html", context)
 
 
@@ -1519,6 +1520,23 @@ def delete_banner(request):
 
         return JsonResponse({'status':"Deleted Banner!", 'errorX':"Error"})
 
+
+
+def edit_Banner(request,id):
+    
+    banner = Banner.objects.filter(banner_id=id).first()
+
+    print("Banner is ", banner.banner_name)
+
+
+    form = BannerForm(instance=banner)
+
+
+
+    context = {'form':form}
+    return render(request,'owner/editbanner.html',context)
+
+
 def list_productattr(request,id):   
         form = ProductAttrForm()
         check_attr = ProductAttribute.objects.filter(product_id=id) 
@@ -1566,4 +1584,22 @@ def edit_productattr(request,id,proID):
 
     context = {'form':form}    
     return render(request,'owner/editProductAttr.html',context)
-    
+
+def select_feat(request):
+    proID = [] 
+
+    if request.method == 'POST':
+        product = request.POST.getlist('proIn')
+
+        for item in product:
+            int_item = int(item)
+
+            get_product=ProductAttribute.objects.filter(id=int_item) 
+
+            for item in get_product:
+                item.is_featured = True
+                item.save()
+
+            print("Get prod", get_product)
+    return redirect('landing')
+            
