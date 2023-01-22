@@ -148,60 +148,60 @@ class ProductAttribute(models.Model):
 
         print("Check ", product_offer_price)
 
-        if self.price_after_offer == 0 or None:
-            pass
+        # if self.price_after_offer == 0 or None:
+        #     pass
 
-        else:
-            if product_offer_price.last().price_after_offer < product_price.last().price:
-                self.product.price = product_offer_price.last().price_after_offer
+        # else:
+        #     if product_offer_price.last().price_after_offer < product_price.last().price:
+        #         self.product.price = product_offer_price.last().price_after_offer
 
-            elif product_offer_price.last().price_after_offer > product_price.last().price:
-                self.product.price = product_price.last().price             
+        #     elif product_offer_price.last().price_after_offer > product_price.last().price:
+        #         self.product.price = product_price.last().price             
 
      
-        self.product.save()
+        # self.product.save()
 
-        if self.product.product_type.offer_percentage == None and self.product_offer != None:
+        # if self.product.product_type.offer_percentage == None and self.product_offer != None:
             
-            Price_on_Offer = (self.price * self.product_offer)/100     
-            price_after_productoffer = self.price - Price_on_Offer
-            self.price_after_offer=price_after_productoffer 
-            self.applied_offer="Product Offer"
+        #     Price_on_Offer = (self.price * self.product_offer)/100     
+        #     price_after_productoffer = self.price - Price_on_Offer
+        #     self.price_after_offer=price_after_productoffer 
+        #     self.applied_offer="Product Offer"
 
         
-        elif self.product.product_type.offer_percentage != None and self.product_offer == None:
+        # elif self.product.product_type.offer_percentage != None and self.product_offer == None:
             
-            Price_on_Offer = (self.price * self.product.product_type.offer_percentage)/100     
-            price_after_categoryoffer = self.price - Price_on_Offer
-            self.price_after_offer=price_after_categoryoffer 
-            self.applied_offer="Category Offer"
-            print("Price after product offer is", price_after_categoryoffer) 
+        #     Price_on_Offer = (self.price * self.product.product_type.offer_percentage)/100     
+        #     price_after_categoryoffer = self.price - Price_on_Offer
+        #     self.price_after_offer=price_after_categoryoffer 
+        #     self.applied_offer="Category Offer"
+        #     print("Price after product offer is", price_after_categoryoffer) 
 
-        elif self.product.product_type.offer_percentage != None and self.product_offer != None:
+        # elif self.product.product_type.offer_percentage != None and self.product_offer != None:
 
     
-            Price_on_Offer = (self.price * self.product_offer)/100
+        #     Price_on_Offer = (self.price * self.product_offer)/100
 
-            Price_on_categoryOffer=(self.price * self.product.product_type.offer_percentage)/100 
+        #     Price_on_categoryOffer=(self.price * self.product.product_type.offer_percentage)/100 
 
-            price_after_productoffer = self.price - Price_on_Offer
-            price_after_categoryoffer = self.price - Price_on_categoryOffer
+        #     price_after_productoffer = self.price - Price_on_Offer
+        #     price_after_categoryoffer = self.price - Price_on_categoryOffer
             
             
-            if price_after_productoffer < price_after_categoryoffer:
-                self.price_after_offer=price_after_productoffer 
-                self.applied_offer="Product Offer"
+        #     if price_after_productoffer < price_after_categoryoffer:
+        #         self.price_after_offer=price_after_productoffer 
+        #         self.applied_offer="Product Offer"
 
-            elif price_after_categoryoffer < price_after_productoffer:     
-                self.price_after_offer=price_after_categoryoffer
-                self.applied_offer="Category Offer"
-            elif price_after_categoryoffer == price_after_productoffer:
-                self.price_after_offer=price_after_categoryoffer
-                self.applied_offer="Both Offer are Same" 
+        #     elif price_after_categoryoffer < price_after_productoffer:     
+        #         self.price_after_offer=price_after_categoryoffer
+        #         self.applied_offer="Category Offer"
+        #     elif price_after_categoryoffer == price_after_productoffer:
+        #         self.price_after_offer=price_after_categoryoffer
+        #         self.applied_offer="Both Offer are Same" 
             
-        else:
-            self.price_after_offer=0
-            self.applied_offer=''       
+        # else:
+        #     self.price_after_offer=0
+        #     self.applied_offer=''       
             
 
         super(ProductAttribute, self).save(*args, **kwargs)
