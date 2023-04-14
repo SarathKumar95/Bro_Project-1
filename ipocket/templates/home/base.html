@@ -108,16 +108,6 @@
                     <a class="navbar-sm-brand text-light text-decoration-none"
                         href="tel:010-020-0340">+91-7907-481-991</a>
                 </div>
-                <div>
-                    <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i
-                            class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
-                    <a class="text-light" href="https://www.instagram.com/" target="_blank"><i
-                            class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
-                    <a class="text-light" href="https://twitter.com/" target="_blank"><i
-                            class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
-                    <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i
-                            class="fab fa-linkedin fa-sm fa-fw"></i></a>
-                </div>
             </div>
         </div>
     </nav>
@@ -258,20 +248,9 @@
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
                     <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">iPhones</a></li>
-                        <li><a class="text-decoration-none" href="#">Watches</a></li>
-                        <li><a class="text-decoration-none" href="#">Airpodds</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-md-4 pt-5">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Home</a></li>
-                        <li><a class="text-decoration-none" href="#">About Us</a></li>
-                        <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
-                        <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                        <li><a class="text-decoration-none" href="#">Contact</a></li>
+                        {% for item in subcat %}
+                        <li><a class="text-decoration-none" href="#">{{item.product_type}}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
 
@@ -301,14 +280,14 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-auto">
+                <!-- <div class="col-auto">
                     <label class="sr-only" for="subscribeEmail">Email address</label>
                     <div class="input-group mb-2">
                         <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
                             placeholder="Email address">
                         <div class="input-group-text btn-success text-light">Subscribe</div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -317,9 +296,9 @@
                 <div class="row pt-2">
                     <div class="col-12">
                         <p class="text-left text-light">
-                            Copyright &copy; 2021 Company Name
-                            | Designed by <a rel="sponsored" href="https://templatemo.com"
-                                target="_blank">TemplateMo</a>
+                            Copyright &copy; 2022 ipocket.store
+                            <!-- | Designed by <a rel="sponsored" href="https://templatemo.com"
+                                target="_blank">TemplateMo</a> -->
                         </p>
                     </div>
                 </div>
