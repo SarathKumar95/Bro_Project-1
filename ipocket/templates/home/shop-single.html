@@ -66,16 +66,16 @@
                     <div class="card">
                         <div class="card-body">
                                 {% if item.generation and item.series != None %}
-                                <h1 class="h2">{{item.product_name}} {{item.generation}} {{item.series}}</h1>
+                                <h1 class="h2"><span><strong>Buy</strong></span> {{item.product_name}} {{item.generation}} {{item.series}}</h1>
                                 {% elif item.series == None %} 
-                                <h1 class="h2">{{item.product_name}} {{item.generation}}</h1>
+                                <h1 class="h2"><strong>Buy</strong> {{item.product_name}} {{item.generation}}</h1>
                                 {% elif item.generation == None %} 
-                                <h1 class="h2">{{item.product_name}} {{item.series}}</h1>
+                                <h1 class="h2"><strong>Buy</strong> {{item.product_name}} {{item.series}}</h1>
                                 {% else %}
-                                <h1 class="h2">{{item.product_name}}</h1>
+                                <h1 class="h2"><strong>Buy</strong> {{item.product_name}}</h1>
                                 {% endif %}
                                 <div id="parastrike">
-                                    <p class="h3 text-dark py-2" >₹ <span id="price1">{{price}}</span>/-</p>
+                                    <p class="h3 text-dark py-2" >₹ <span id="price1">{{item.base_price}}</span>/-</p>
                                 </div>
 
                                 <div id="paraoffer" hidden>
@@ -92,7 +92,7 @@
 
                             <div id="product-size">
                                 {% for item in product_attr %}
-                                <button class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.id}}')">{{item.size}} GB</button>    
+                                <button class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.id}}')">{{item.variant_type}} GB</button>    
                                 {% endfor %}
                             </div>
                             

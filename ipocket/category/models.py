@@ -78,28 +78,24 @@ class Categories(models.Model):
 class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=50)
-    condition = models.ForeignKey(
-        Categories, on_delete=models.CASCADE, null=True)
     product_type = models.ForeignKey(
-        ProductType, on_delete=models.CASCADE, default=True)
+         ProductType, on_delete=models.CASCADE, default=True)
     generation = models.IntegerField(null=True, blank=True)
     series = models.CharField(max_length=25, null=True, blank=True)
     ram = models.IntegerField(null=True, blank=True)
-    internal_storage = models.IntegerField(null=True, blank=True)
     processor = models.CharField(max_length=25, null=True, blank=True)
     battery = models.CharField(max_length=20, null=True, blank=True)
     weight = models.IntegerField(null=True, blank=True)
     screen_size = models.DecimalField(
         decimal_places=2, max_digits=4, null=True, blank=True)
     camera = models.CharField(
-        max_length=100, default='12 MP', null=True, blank=True)
-    color = models.CharField(max_length=20, default='White')
-    #total_quantity = models.IntegerField(default=0)
+        max_length=100, default='12 MP', null=True, blank=True)    
     slug = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     main_image = models.ImageField(
         upload_to='images/products', null=True, blank=True) 
-    price = models.FloatField(default=100)    
+    base_price = models.FloatField(default=100)    
+    total_quantity=models.IntegerField(default=0)
          
     
     class Meta:
@@ -109,104 +105,25 @@ class Products(models.Model):
         return '{} - {} - {}'.format(self.product_name, self.generation, self.series)
 
 
-
-
-class ProductAttribute(models.Model):
-    product = models.ForeignKey(Products,on_delete=models.CASCADE,default=1)
-    size = models.IntegerField(default=0)
-    price = models.FloatField(default=0)
-    quantity = models.IntegerField(default=0) 
-    color = models.CharField(max_length=100,default='black')
-    first_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True)
-    second_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True)
-    third_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True)
-    product_offer = models.IntegerField(null=True, blank=True) 
-    applied_offer = models.CharField(max_length=100, null=True,blank=True)
-    price_after_offer = models.FloatField(null=True,blank=True)
-    slug = models.CharField(max_length=100,null=True,blank=True)   
-    is_featured=models.BooleanField(default=False)
-
-
-
+class ProductVariant(models.Model):
+    product_variant_id = models.AutoField(primary_key=True)
+    product=models.ForeignKey(Products,on_delete=models.CASCADE)
+    variant_type=models.CharField(max_length=15,default=32)
+    variant_price_add=models.IntegerField(default=0) 
+    slug=models.SlugField()
+    
     def __str__(self):
         return self.slug
 
     
-    def save(self, *args, **kwargs):
-
-        #need to fetch product id to assign a common price to the product depending on which is lower 
-
-        pro_id = self.product.product_id 
-
-        #check all product attribute belonging to that product 
-
-        product_price = ProductAttribute.objects.filter(product_id=pro_id).order_by('-price')
-        product_offer_price = ProductAttribute.objects.filter(product_id=pro_id).order_by('-price_after_offer') 
-
-        print("Check ", product_offer_price)
-
-        # if self.price_after_offer == 0 or None:
-        #     pass
-
-        # else:
-        #     if product_offer_price.last().price_after_offer < product_price.last().price:
-        #         self.product.price = product_offer_price.last().price_after_offer
-
-        #     elif product_offer_price.last().price_after_offer > product_price.last().price:
-        #         self.product.price = product_price.last().price             
-
-     
-        # self.product.save()
-
-        # if self.product.product_type.offer_percentage == None and self.product_offer != None:
-            
-        #     Price_on_Offer = (self.price * self.product_offer)/100     
-        #     price_after_productoffer = self.price - Price_on_Offer
-        #     self.price_after_offer=price_after_productoffer 
-        #     self.applied_offer="Product Offer"
-
-        
-        # elif self.product.product_type.offer_percentage != None and self.product_offer == None:
-            
-        #     Price_on_Offer = (self.price * self.product.product_type.offer_percentage)/100     
-        #     price_after_categoryoffer = self.price - Price_on_Offer
-        #     self.price_after_offer=price_after_categoryoffer 
-        #     self.applied_offer="Category Offer"
-        #     print("Price after product offer is", price_after_categoryoffer) 
-
-        # elif self.product.product_type.offer_percentage != None and self.product_offer != None:
-
+class Product_Color(models.Model):
+    product_variant=models.ForeignKey(ProductVariant,on_delete=models.CASCADE,default=None)
+    color_name=models.CharField(max_length=10,default='Black')
+    price_increase=models.IntegerField(default=0)
+    quantity=models.IntegerField(default=0)
     
-        #     Price_on_Offer = (self.price * self.product_offer)/100
-
-        #     Price_on_categoryOffer=(self.price * self.product.product_type.offer_percentage)/100 
-
-        #     price_after_productoffer = self.price - Price_on_Offer
-        #     price_after_categoryoffer = self.price - Price_on_categoryOffer
-            
-            
-        #     if price_after_productoffer < price_after_categoryoffer:
-        #         self.price_after_offer=price_after_productoffer 
-        #         self.applied_offer="Product Offer"
-
-        #     elif price_after_categoryoffer < price_after_productoffer:     
-        #         self.price_after_offer=price_after_categoryoffer
-        #         self.applied_offer="Category Offer"
-        #     elif price_after_categoryoffer == price_after_productoffer:
-        #         self.price_after_offer=price_after_categoryoffer
-        #         self.applied_offer="Both Offer are Same" 
-            
-        # else:
-        #     self.price_after_offer=0
-        #     self.applied_offer=''       
-            
-
-        super(ProductAttribute, self).save(*args, **kwargs)
-    
-
+    def __str__(self):
+        return '{} - {}'.format(self.product_variant.slug,self.color_name)
 
 
 class Coupon(models.Model):
@@ -279,7 +196,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True)
     order_itemstatus = [

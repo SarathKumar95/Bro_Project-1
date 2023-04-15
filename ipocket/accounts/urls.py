@@ -60,10 +60,12 @@ urlpatterns = [
     path('landingmanager',views.landing_page,name='landing'),
     path('productmanager/productattribute/list/<int:id>',views.list_productattr,name='product-attrList'),                                
     path('productmanager/productattribute/add',views.add_productattr,name='product-attrAdd'), 
-    path('productmanager/productattribute/delete/<int:id>/<int:proID>',views.delete_productattr,name='product-attrDel'),                                
+    path('productmanager/productattribute/delete/<int:id>',views.delete_productattr,name='product-attrDel'),                                
     path('productmanager/productattribute/edit/<int:id>/<int:proID>',views.edit_productattr,name='product-attrEdit'),                                
     path('banner/delete',views.delete_banner,name='delete-Banner'),
     path('banner/edit/<int:id>',views.edit_Banner,name='edit-Banner'),
     path('select/feat',views.select_feat,name='selectFeat'),
+    path('productmanager/addColor',views.add_color,name='add-Color'), 
+    path('productmanager/listColors/<int:id>',views.list_colors,name='list-Colors'),
 
 ]

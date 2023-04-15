@@ -216,8 +216,14 @@ class BannerForm(ModelForm):
 class ProductAttrForm(ModelForm):
 
     class Meta:
-        model = ProductAttribute
+        model = ProductVariant
         fields = '__all__'
         exclude = ['product_id']
 
+
+class AddColorForm(ModelForm):
+
+    class Meta:
+        model = Product_Color
+        fields = '__all__'
         

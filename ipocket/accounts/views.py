@@ -65,7 +65,7 @@ def home_page(request):
     subcat = ProductType.objects.all()
     product = Products.objects.all()
     banner = Banner.objects.all()
-    productAttr = ProductAttribute.objects.all()
+    productAttr = ProductVariant.objects.all()
 
     banner_count=len(Banner.objects.all())
 
@@ -320,9 +320,10 @@ def products(request):
 
 
     #fetch max product price and min product price 
+    ## need rebuild!!!
+    # max_product = ProductAttribute.objects.order_by('price').last().price      
+    # min_product = ProductAttribute.objects.order_by('-price').last().price 
 
-    max_product = ProductAttribute.objects.order_by('price').last().price      
-    min_product = ProductAttribute.objects.order_by('-price').last().price
     
     if request.method == "POST":
 
@@ -356,7 +357,7 @@ def products(request):
         else:
             print("Nope!!")
 
-    context = {"product": product, "category": category, "subCategory": subCategory, "max":max_product, "min":min_product}
+    context = {"product": product, "category": category, "subCategory": subCategory}
     return render(request, "home/shop.html", context)
 
 
@@ -407,16 +408,10 @@ def sortbynew(request):
 
 def item(request, product_id):
     product = Products.objects.filter(product_id=product_id)
-    product_attr = ProductAttribute.objects.filter(product_id=product_id) 
-
-    price = product_attr.first().price
-    image = product_attr.first().first_image
-    first_pro = product_attr.first()
-
+    product_attr = ProductVariant.objects.filter(product_id=product_id) 
     products = Products.objects.all()
     context = {"product": product, "products": products,
-    "product_attr":product_attr, "price":price,
-    "image" : image,"first_pro":first_pro}
+    "product_attr":product_attr}
     return render(request, "home/shop-single.html", context)
 
 
@@ -1206,116 +1201,117 @@ def returnOrder(request, itemID):
 
 
 def chart(request):
-    labels = []
-    ordered = [] 
-    delivered = []
-    returned = []
-    cancelled = []
+    pass
+    # labels = []
+    # ordered = [] 
+    # delivered = []
+    # returned = []
+    # cancelled = []
 
-    order_total = 0    
-    deliver_total = 0
-    return_total = 0
-    cancel_total = 0
+    # order_total = 0    
+    # deliver_total = 0
+    # return_total = 0
+    # cancel_total = 0
 
-    today_order = len(Order.objects.filter(created_at=date.today()))
-    period_order = 0
+    # today_order = len(Order.objects.filter(created_at=date.today()))
+    # period_order = 0
 
-    start = 1
-    end = 31
-    month = date.today().month
-    year = date.today().year
+    # start = 1
+    # end = 31
+    # month = date.today().month
+    # year = date.today().year
 
-    total_revenue = 0
-    today_revenue = 0
+    # total_revenue = 0
+    # today_revenue = 0
 
-    deliver_price = 0
-    return_price = 0
-    cancel_price = 0
+    # deliver_price = 0
+    # return_price = 0
+    # cancel_price = 0
 
-    if request.method == 'POST':
-        fromDate = parse_date(request.POST['fromDate']) 
-        toDate = parse_date(request.POST['toDate']) 
+    # if request.method == 'POST':
+    #     fromDate = parse_date(request.POST['fromDate']) 
+    #     toDate = parse_date(request.POST['toDate']) 
 
-        year = fromDate.year
-        month = fromDate.month 
+    #     year = fromDate.year
+    #     month = fromDate.month 
 
-        start = fromDate.day
-        end =  toDate.day
+    #     start = fromDate.day
+    #     end =  toDate.day
     
-    for day in range(start,end + 1):
-        labels.append(day)
-        order = Order.objects.filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))
+    # for day in range(start,end + 1):
+    #     labels.append(day)
+    #     order = Order.objects.filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))
 
-        for item in order:
-            order_total+=item.total_price
+    #     for item in order:
+    #         order_total+=item.total_price
 
-        if len(order) == 0:
-            ordered.append(0)
+    #     if len(order) == 0:
+    #         ordered.append(0)
             
-        else:
-            ordered.append(len(order))
-            period_order+=len(order)
+    #     else:
+    #         ordered.append(len(order))
+    #         period_order+=len(order)
          
 
-        deliver = Order.objects.filter(status='Delivered').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month)) 
+    #     deliver = Order.objects.filter(status='Delivered').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month)) 
 
 
-        for item in deliver:
-            deliver_total+=item.total_price
+    #     for item in deliver:
+    #         deliver_total+=item.total_price
 
-        if len(deliver) == 0:
-            delivered.append(0)
+    #     if len(deliver) == 0:
+    #         delivered.append(0)
 
-        else:
-            delivered.append(len(deliver))        
+    #     else:
+    #         delivered.append(len(deliver))        
 
-        returnOrders = Order.objects.filter(status='Returned').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))      
+    #     returnOrders = Order.objects.filter(status='Returned').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))      
 
-        for item in returnOrders:
-            return_total+=item.total_price
+    #     for item in returnOrders:
+    #         return_total+=item.total_price
 
-        if len(returnOrders) == 0:
-            returned.append(0)
-        else:
-            returned.append(len(returnOrders))
+    #     if len(returnOrders) == 0:
+    #         returned.append(0)
+    #     else:
+    #         returned.append(len(returnOrders))
 
-        cancel = Order.objects.filter(status='Cancelled').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))
+    #     cancel = Order.objects.filter(status='Cancelled').filter(created_at=date.today().replace(day=day).replace(year=year).replace(month=month))
 
-        for item in cancel:
-            cancel_total+=item.total_price
+    #     for item in cancel:
+    #         cancel_total+=item.total_price
 
-        if len(cancel) == 0:
-            cancelled.append(0)
+    #     if len(cancel) == 0:
+    #         cancelled.append(0)
 
-        else:
-            cancelled.append(len(cancel))    
+    #     else:
+    #         cancelled.append(len(cancel))    
 
-        piedata = [order_total,deliver_total,return_total,cancel_total]
+    #     piedata = [order_total,deliver_total,return_total,cancel_total]
 
-        if deliver_total == 0:
-            total_revenue = 0
-        else:
-            total_revenue = deliver_total - return_total
+    #     if deliver_total == 0:
+    #         total_revenue = 0
+    #     else:
+    #         total_revenue = deliver_total - return_total
 
 
-        delivered_today = Order.objects.filter(status='Delivered').filter(created_at=date.today()) 
-        return_today = Order.objects.filter(status='Returned').filter(created_at=date.today())
-        cancelled_today = Order.objects.filter(status='Cancelled').filter(created_at=date.today())
+    #     delivered_today = Order.objects.filter(status='Delivered').filter(created_at=date.today()) 
+    #     return_today = Order.objects.filter(status='Returned').filter(created_at=date.today())
+    #     cancelled_today = Order.objects.filter(status='Cancelled').filter(created_at=date.today())
 
-        for item in delivered_today:
-            deliver_price+=item.total_price 
+    #     for item in delivered_today:
+    #         deliver_price+=item.total_price 
 
         
-        for item in return_today:
-            return_price+=item.total_price     
+    #     for item in return_today:
+    #         return_price+=item.total_price     
 
-        today_revenue = deliver_price - return_price
+    #     today_revenue = deliver_price - return_price
 
-    return JsonResponse({"labels": labels, "ordered": ordered,
-    "delivered":delivered,"returned":returned,
-    "cancelled":cancelled,"piedata":piedata,
-    "today_order":today_order,"period_total":period_order,
-    "total_revenue":total_revenue,"todays_revenue":today_revenue})
+    # return JsonResponse({"labels": labels, "ordered": ordered,
+    # "delivered":delivered,"returned":returned,
+    # "cancelled":cancelled,"piedata":piedata,
+    # "today_order":today_order,"period_total":period_order,
+    # "total_revenue":total_revenue,"todays_revenue":today_revenue})
 
 
 def sales_report(request):
@@ -1537,9 +1533,10 @@ def edit_Banner(request,id):
     return render(request,'owner/editbanner.html',context)
 
 
-def list_productattr(request,id):   
+def list_productattr(request,id):  
         form = ProductAttrForm()
-        check_attr = ProductAttribute.objects.filter(product_id=id) 
+        check_attr = ProductVariant.objects.filter(product_id=id)
+        print("HERE!",check_attr)
         context={'productAttr':check_attr, 'form':form, 'proID':id}
         return render(request,'owner/productAttrlist.html',context)    
 
@@ -1558,15 +1555,17 @@ def add_productattr(request):
         return redirect('product-attrList',proID)          
 
 
-def delete_productattr(request,id,proID):
+def delete_productattr(request,id):
         
-        product = ProductAttribute.objects.filter(id=id)
+        product = ProductVariant.objects.filter(product_variant_id=id) 
+
+        print(product)
 
         product.delete()
 
         messages.success(request,"Deleted Product Attribute Successfully")
 
-        return redirect('product-attrList',proID)
+        return redirect('product-attrList')
 
 def edit_productattr(request,id,proID):
     product = ProductAttribute.objects.filter(id=id).first()
@@ -1602,4 +1601,27 @@ def select_feat(request):
 
             print("Get prod", get_product)
     return redirect('landing')
-            
+
+def add_color(request):
+
+    form = AddColorForm() 
+    
+    if request.method == 'POST':
+        form = AddColorForm(request.POST)
+        if form.is_valid:
+            form.save()
+            messages.info(request,"Color added to product") 
+    context = {'form': form}
+    return render(request,'owner/addproductcolor.html',context) 
+
+def list_colors(request,id):
+    #item_from_product_variant = ProductVariant.objects.filter(product_variant_id = id).first()
+    product = Product_Color.objects.filter(product_variant_id = id)
+
+    for item in product:
+        print(item.product_variant)
+
+    context={'product':product}
+    return render(request,'owner/listprocolors.html',context)
+    
+

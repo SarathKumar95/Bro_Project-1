@@ -1,6 +1,6 @@
 {% extends 'owner/base.html' %}  
 
-{% block title %} Product Attributes Manager {% endblock %}  
+{% block title %} Product Color List {% endblock %}  
 
 
 {% block content %}
@@ -9,7 +9,7 @@
 <div class="main">
 
     <div class="page-title text-center mt-5 mb-3">
-        <h5>Product Attribute List</h5>
+        <h5>Product Color List</h5>
     </div>
     
     <div class="message-wrapper text-center mb-2">
@@ -66,22 +66,24 @@
                     <thead>
                         <tr class="text-dark">
                             <th scope="col">Variant Name</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Price Change</th>
                             <th scope="col">Quantity</th>
-                            <th scope="col">Variant Price</th>
                             <th class="text-center" scope="col">On Offer</th>
                             <th class="col">Offer Price</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in productAttr %}
+                        {% for item in product %}
                         
-                        <tr id="productrow{{item.product_variant_id}}">
-                            <td>{{item.slug}}
+                        <tr id="productrow{{item.id}}">
+                            <td>{{item.product_variant}}
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
-                            <td>{{item.variant_quantity}}</td>
-                            <td>{{item.variant_price_add}}</td>
+                            <td>{{item.color_name}}</td>
+                            <td>{{item.price_increase}}</td>
+                            <td>{{item.quantity}}</td>
                             {% if item.applied_offer %}
                                 {% if item.applied_offer == 'Category Offer' %}
                                     <td>{{item.applied_offer}} {{item.product_type.offer_percentage}}%</td>
@@ -95,8 +97,8 @@
                             {% endif %}
                             <td>{{item.price_after_offer}}</td>
                             <td>  
-                                <a href="{% url 'list-Colors' item.product_variant_id %}" title="List all colors" class="pe-2" style="height:25px; position: relative; bottom: 7px;"><img src="{% static 'images/listall.svg' %}" alt="listbutton" style="height:25px;"></a>    
-                                <!-- <a href="{% url 'add-Color'  %}" title="Add Product Color" class="pe-2" style="height:25px; position: relative; bottom: 8px;"><img src="{% static 'images/plus.png' %}" alt="add-image" style="height:25px;"></a>                               -->
+
+                                <a href="{% url 'add-Color'  %}" title="Add Product Color" class="pe-2" style="height:25px; position: relative; bottom: 8px;"><img src="{% static 'images/plus.png' %}" alt="add-image" style="height:25px;"></a>                              
                                 <a href="" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                                 </a>
