@@ -1602,26 +1602,28 @@ def select_feat(request):
             print("Get prod", get_product)
     return redirect('landing')
 
-def add_color(request):
+# def add_color(request):
 
-    form = AddColorForm() 
+#     form = AddColorForm() 
+    
+#     context = {'form': form}
+#     return render(request,'owner/addproductcolor.html',context) 
+
+def list_colors(request,id):
+    #item_from_product_variant = ProductVariant.objects.filter(product_variant_id = id).first()
+    product = Product_Color.objects.filter(product_variant_id = id)
+
+    print(product.first())
+
+    form = AddColorForm()
     
     if request.method == 'POST':
         form = AddColorForm(request.POST)
         if form.is_valid:
             form.save()
             messages.info(request,"Color added to product") 
-    context = {'form': form}
-    return render(request,'owner/addproductcolor.html',context) 
 
-def list_colors(request,id):
-    #item_from_product_variant = ProductVariant.objects.filter(product_variant_id = id).first()
-    product = Product_Color.objects.filter(product_variant_id = id)
-
-    for item in product:
-        print(item.product_variant)
-
-    context={'product':product}
+    context={'product':product,'form':form} 
     return render(request,'owner/listprocolors.html',context)
     
 

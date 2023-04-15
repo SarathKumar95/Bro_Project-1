@@ -65,7 +65,7 @@ urlpatterns = [
     path('banner/delete',views.delete_banner,name='delete-Banner'),
     path('banner/edit/<int:id>',views.edit_Banner,name='edit-Banner'),
     path('select/feat',views.select_feat,name='selectFeat'),
-    path('productmanager/addColor',views.add_color,name='add-Color'), 
+    # path('productmanager/addColor',views.add_color,name='add-Color'), 
     path('productmanager/listColors/<int:id>',views.list_colors,name='list-Colors'),
-
+    #path('productmanager/listColors/delete/')
 ]

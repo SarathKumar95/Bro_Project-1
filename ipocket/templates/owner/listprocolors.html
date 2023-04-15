@@ -28,11 +28,11 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add Product Attribute</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Add New Color</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form enctype="multipart/form-data" action="{% url 'product-attrAdd' %}" method="POST">
+          <form enctype="multipart/form-data" action="" method="POST">
             {% csrf_token %}
             {{form|crispy}}
             <input type="hidden" value="{{proID}}" name="product-ID">
@@ -53,7 +53,7 @@
 <div class="table-wrapper">
     <div class="container-fluid pt-4 px-4">
         <button type="button" class="btn btn-sm btn-warning mt-3 mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            <img class="me-2" src="{% static 'images/plus.png' %}" alt="plus-image" style="height:25px;">Add New Product Attribute
+            <img class="me-2" src="{% static 'images/plus.png' %}" alt="plus-image" style="height:25px;">Add New Product Color
         </button>
         
         <div class="bg-light text-center rounded p-4">
@@ -77,7 +77,7 @@
                     <tbody>
                         {% for item in product %}
                         
-                        <tr id="productrow{{item.id}}">
+                        <tr id="productrow{{item.product_variant_id}}">
                             <td>{{item.product_variant}}
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
@@ -97,13 +97,13 @@
                             {% endif %}
                             <td>{{item.price_after_offer}}</td>
                             <td>  
-
-                                <a href="{% url 'add-Color'  %}" title="Add Product Color" class="pe-2" style="height:25px; position: relative; bottom: 8px;"><img src="{% static 'images/plus.png' %}" alt="add-image" style="height:25px;"></a>                              
+                                
+                              
                                 <a href="" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                                 </a>
 
-                                <a href="" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Attribute"></a>
+                                <a href="" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Color"></a>
                                 
                             </td>
                         </tr>   
