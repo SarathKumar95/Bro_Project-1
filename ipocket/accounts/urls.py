@@ -67,5 +67,7 @@ urlpatterns = [
     path('select/feat',views.select_feat,name='selectFeat'),
     # path('productmanager/addColor',views.add_color,name='add-Color'), 
     path('productmanager/listColors/<int:id>',views.list_colors,name='list-Colors'),
-    #path('productmanager/listColors/delete/')
+    path('productmanager/listColors/delete/<int:id>',views.delete_color,name='delete-color'),
+    path('productmanager/listColors/edit/<int:id>',views.edit_color,name='edit-color'),
+    
 ]

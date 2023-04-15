@@ -118,7 +118,7 @@ class ProductVariant(models.Model):
     
 class Product_Color(models.Model):
     product_variant=models.ForeignKey(ProductVariant,on_delete=models.CASCADE,default=None)
-    color_name=models.CharField(max_length=10,default='Black')
+    color_name=models.CharField(max_length=10,default='Black') 
     price_increase=models.IntegerField(default=0)
     quantity=models.IntegerField(default=0)
     

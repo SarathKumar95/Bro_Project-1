@@ -1,0 +1,41 @@
+{% extends 'owner/base.html' %} 
+
+{% block title %} Edit Color {% endblock %}
+
+{% block content %} 
+{% load crispy_forms_tags %}
+{% load static %}
+<div class="main">
+    
+    <div class="page-title text-center mt-5 mb-3">
+        <h5>Edit Product Color</h5>
+    </div>
+    
+    <div class="message-wrapper text-center mb-2">
+        {% for message in messages %}  
+        <div class="alert alert-warning" role="alert">
+            {{message}}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="formdiv ms-4 me-4">
+        {% for item in product %}
+        <form enctype="multipart/form-data" action="{% url 'edit-color' item.id %}" method="POST">
+        {% endfor %}
+            {% csrf_token %}
+            
+            {{form|crispy}}
+    
+            <div class="mt-3 form-btn">
+                <input class="btn btn-sm btn-secondary" type="submit" value="Update">
+            </div>
+            
+        </form>
+        
+    
+    </div>
+
+</div>
+
+{% endblock %}

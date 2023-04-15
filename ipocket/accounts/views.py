@@ -1609,21 +1609,42 @@ def select_feat(request):
 #     context = {'form': form}
 #     return render(request,'owner/addproductcolor.html',context) 
 
-def list_colors(request,id):
-    #item_from_product_variant = ProductVariant.objects.filter(product_variant_id = id).first()
-    product = Product_Color.objects.filter(product_variant_id = id)
+def list_colors(request, id):
+    product = Product_Color.objects.filter(product_variant_id=id)
 
-    print(product.first())
+    for item in product:
+        print("Check ", item.product_variant.product_variant_id)
 
-    form = AddColorForm()
+    add_form = AddColorForm()
+    edit_form = AddColorForm(instance=product.first())
     
     if request.method == 'POST':
-        form = AddColorForm(request.POST)
-        if form.is_valid:
-            form.save()
-            messages.info(request,"Color added to product") 
-
-    context={'product':product,'form':form} 
-    return render(request,'owner/listprocolors.html',context)
+            add_form = AddColorForm(request.POST)
+            if add_form.is_valid():
+                add_form.save()
+                messages.info(request, "Color added to product") 
     
+    context = {'product': product, 'add_form': add_form, 'edit_form': edit_form}
+    return render(request, 'owner/listprocolors.html', context)
 
+
+
+
+def delete_color(request,id):
+    item = Product_Color.objects.filter(id=id).first()
+    item.delete() 
+    prev_path=request.META.get('HTTP_REFERER')
+    return redirect(prev_path)  
+
+def edit_color(request,id):
+    product=Product_Color.objects.filter(id=id).first() 
+    form=AddColorForm(instance=product) 
+    if request.method == 'POST':
+        form = AddColorForm(request.POST,request.FILES,instance=item)
+
+        if form.is_valid():
+            form.save()
+            messages.info(request,"Color updated")
+
+    context={'form':form}
+    return render(request,'owner/editColor.html',context)

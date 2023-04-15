@@ -19,9 +19,6 @@
           </div>
         {% endfor %}
     </div>
-
-    <!-- Button trigger modal -->
-
   
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -32,9 +29,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            
           <form enctype="multipart/form-data" action="" method="POST">
             {% csrf_token %}
-            {{form|crispy}}
+            {{add_form|crispy}}
             <input type="hidden" value="{{proID}}" name="product-ID">
           
         </div>
@@ -43,6 +41,7 @@
           <button type="submit" class="btn btn-primary">Add</button>
         </div>
     </form>
+    
       </div>
     </div>
   </div>
@@ -97,13 +96,10 @@
                             {% endif %}
                             <td>{{item.price_after_offer}}</td>
                             <td>  
-                                
-                              
-                                <a href="" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
+                                <a href="{% url 'edit-color' item.id  %}" class="pe-2" title="Edit Color" style="position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                                 </a>
-
-                                <a href="" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Color"></a>
+                                <a href="{% url 'delete-color' item.id %}" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Color"></a>
                                 
                             </td>
                         </tr>   
