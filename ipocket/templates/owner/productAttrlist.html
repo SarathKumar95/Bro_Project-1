@@ -66,7 +66,7 @@
                     <thead>
                         <tr class="text-dark">
                             <th scope="col">Variant Name</th>
-                            <th scope="col">Quantity</th>
+                            <th scope="col">Color</th>
                             <th scope="col">Variant Price</th>
                             <th class="text-center" scope="col">On Offer</th>
                             <th class="col">Offer Price</th>
@@ -80,7 +80,7 @@
                             <td>{{item.slug}}
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
-                            <td>{{item.variant_quantity}}</td>
+                            <td>{{item.variant_color}}</td>
                             <td>{{item.variant_price_add}}</td>
                             {% if item.applied_offer %}
                                 {% if item.applied_offer == 'Category Offer' %}

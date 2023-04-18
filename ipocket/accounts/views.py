@@ -1535,9 +1535,10 @@ def edit_Banner(request,id):
 
 def list_productattr(request,id):  
         form = ProductAttrForm()
+        
         check_attr = ProductVariant.objects.filter(product_id=id)
-        print("HERE!",check_attr)
         context={'productAttr':check_attr, 'form':form, 'proID':id}
+
         return render(request,'owner/productAttrlist.html',context)    
 
 def add_productattr(request):
@@ -1593,7 +1594,7 @@ def select_feat(request):
         for item in product:
             int_item = int(item)
 
-            get_product=ProductAttribute.objects.filter(id=int_item) 
+            get_product=ProductVariant.objects.filter(id=int_item) 
 
             for item in get_product:
                 item.is_featured = True
@@ -1611,9 +1612,6 @@ def select_feat(request):
 
 def list_colors(request, id):
     product = Product_Color.objects.filter(product_variant_id=id)
-
-    for item in product:
-        print("Check ", item.product_variant.product_variant_id)
 
     add_form = AddColorForm()
     edit_form = AddColorForm(instance=product.first())
@@ -1637,14 +1635,19 @@ def delete_color(request,id):
     return redirect(prev_path)  
 
 def edit_color(request,id):
-    product=Product_Color.objects.filter(id=id).first() 
+    product=Product_Color.objects.filter(id=id).first()
+     
+    print("check ",product.product_variant_id)
+
     form=AddColorForm(instance=product) 
+ 
     if request.method == 'POST':
-        form = AddColorForm(request.POST,request.FILES,instance=item)
+        form = AddColorForm(request.POST,request.FILES,instance=product)
 
         if form.is_valid():
             form.save()
             messages.info(request,"Color updated")
-
+            return redirect('list-Colors',product.product_variant_id)
+         
     context={'form':form}
     return render(request,'owner/editColor.html',context)

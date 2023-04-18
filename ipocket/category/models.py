@@ -109,7 +109,7 @@ class ProductVariant(models.Model):
     product_variant_id = models.AutoField(primary_key=True)
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     variant_type=models.CharField(max_length=15,default=32)
-    variant_price_add=models.IntegerField(default=0) 
+    variant_price_add=models.IntegerField(default=0)
     slug=models.SlugField()
     
     def __str__(self):

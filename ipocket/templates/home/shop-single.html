@@ -97,14 +97,9 @@
                             </div>
                             
                             <div class="mt-2 mb-3" id="product-color">
-                                <select name="color" id="color">
-                                    <option value="Black"> Black </option>
-                                    <option value="White"> White </option>
-                                    <option value="Violet"> Violet </option>
-                                    <option value="Green"> Green </option>
-                                    <option value="Red"> Red </option>
-                                    <option value="Blue"> Blue </option>
-                                </select>
+                                {% for item in product_attr %}
+                                    <button class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.id}}')">{{item.variant_color}}</button>    
+                                {% endfor %}
                             </div>
                             
                             <ul class="list-inline">

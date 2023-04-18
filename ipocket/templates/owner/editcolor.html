@@ -20,9 +20,9 @@
     </div>
 
     <div class="formdiv ms-4 me-4">
-        {% for item in product %}
-        <form enctype="multipart/form-data" action="{% url 'edit-color' item.id %}" method="POST">
-        {% endfor %}
+
+        <form enctype="multipart/form-data" action="" method="POST">
+    
             {% csrf_token %}
             
             {{form|crispy}}
