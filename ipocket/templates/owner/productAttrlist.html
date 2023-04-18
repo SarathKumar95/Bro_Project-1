@@ -80,6 +80,8 @@
                             <td>{{item.slug}}
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
+                            
+                            
                             <td>{{item.variant_color}}</td>
                             <td>{{item.variant_price_add}}</td>
                             {% if item.applied_offer %}
@@ -96,11 +98,13 @@
                             <td>{{item.price_after_offer}}</td>
                             <td>  
                                 <a href="{% url 'list-Colors' item.product_variant_id %}" title="List all colors" class="pe-2" style="height:25px; position: relative; bottom: 7px;"><img src="{% static 'images/listall.svg' %}" alt="listbutton" style="height:25px;"></a>
-                                <a href="" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
+                                
+
+                                <a href="{% url 'product-attrEdit' item.product_variant_id item.product_id %}" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                                 </a>
 
-                                <a href="" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Attribute"></a>
+                                <a href="{% url 'product-attrDel' item.product_variant_id %}" class="pe-2" style="position: relative; bottom: 8px;"><img src="{% static 'images/delete.png' %}" alt="deletepro" style="height:25px;" title="Delete Product Attribute"></a>
                                 
                             </td>
                         </tr>   

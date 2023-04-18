@@ -27,6 +27,7 @@ import sys
 import pandas as pd
 from bs4 import BeautifulSoup
 from django.db.models import Min,Max
+from django.core import serializers
 
 import razorpay
 import calendar
@@ -408,10 +409,14 @@ def sortbynew(request):
 
 def item(request, product_id):
     product = Products.objects.filter(product_id=product_id)
-    product_attr = ProductVariant.objects.filter(product_id=product_id) 
+    product_attr = ProductVariant.objects.filter(product_id=product_id)
+    product_color = Product_Color.objects.filter(product_variant_id = product_attr.first().product_variant_id)
+
+    print("Color id is ", product_color)
+
     products = Products.objects.all()
     context = {"product": product, "products": products,
-    "product_attr":product_attr}
+    "product_attr":product_attr,'product_color':product_color}
     return render(request, "home/shop-single.html", context)
 
 
@@ -1456,25 +1461,31 @@ def sales_csv(request):
 def get_product(request):    
     if request.method == 'POST': 
         itemID = request.POST['itemID'] 
-        product_attr = ProductAttribute.objects.filter(id=itemID).first().price
-        product_size = ProductAttribute.objects.filter(id=itemID).first().size 
-        product_color =  ProductAttribute.objects.filter(id=itemID) 
+        
+        variantPrice = ProductVariant.objects.filter(product_variant_id = itemID).first().variant_price_add
 
-        product_attr_offer = ProductAttribute.objects.filter(id=itemID).first().price_after_offer
+        return JsonResponse({'itemID':itemID,'product':variantPrice})   
 
-        print("Price offer ", product_attr_offer) 
-        print("Price", product_attr)
+def get_product_colorPrice(request):
+    if request.method == "POST":
+        color_name_req = request.POST['color_name'] 
+        product_Price = request.POST['proPrice']
+         
+        product_color = Product_Color.objects.filter(color_name=color_name_req).first()
 
-        first_pro = ProductAttribute.objects.filter(id=itemID).first()
+        color_Price = product_color.price_increase 
 
-        return JsonResponse({'itemID':itemID,'product':product_attr,'product_offer':product_attr_offer, 'size':product_size})   
-
-
+        total_Price = float(product_Price) + color_Price
+        
+        data = {'price': total_Price}
+        
+        return JsonResponse(data)
+        
 def check_price(request):
     if request.method == 'POST':
         pro_id = request.POST['id'] 
 
-        product = ProductAttribute.objects.filter(product_id=pro_id) 
+        product = ProductVariant.objects.filter(product_id=pro_id) 
 
         for item in product:
             product_offer_price = item.price_after_offer 
@@ -1560,16 +1571,15 @@ def delete_productattr(request,id):
         
         product = ProductVariant.objects.filter(product_variant_id=id) 
 
-        print(product)
-
         product.delete()
 
         messages.success(request,"Deleted Product Attribute Successfully")
 
-        return redirect('product-attrList')
+        return redirect(request.META.get('HTTP_REFERER'))
 
 def edit_productattr(request,id,proID):
-    product = ProductAttribute.objects.filter(id=id).first()
+    product = ProductVariant.objects.filter(product_variant_id=id).first()
+    
     form = ProductAttrForm(instance=product)
     if request.method == 'POST':
         form = ProductAttrForm(request.POST,request.FILES,instance=product)
@@ -1603,13 +1613,6 @@ def select_feat(request):
             print("Get prod", get_product)
     return redirect('landing')
 
-# def add_color(request):
-
-#     form = AddColorForm() 
-    
-#     context = {'form': form}
-#     return render(request,'owner/addproductcolor.html',context) 
-
 def list_colors(request, id):
     product = Product_Color.objects.filter(product_variant_id=id)
 
@@ -1635,6 +1638,7 @@ def delete_color(request,id):
     return redirect(prev_path)  
 
 def edit_color(request,id):
+    
     product=Product_Color.objects.filter(id=id).first()
      
     print("check ",product.product_variant_id)
@@ -1651,3 +1655,4 @@ def edit_color(request,id):
          
     context={'form':form}
     return render(request,'owner/editColor.html',context)
+

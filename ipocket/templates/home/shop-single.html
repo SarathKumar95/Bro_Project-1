@@ -15,8 +15,8 @@
                 <div class="col-lg-5 mt-5 product_data">
                     <div class="card mb-3" id="img-container">
                         <div id="lens"></div>
-                        {% if image %} 
-                        <img class="card-img img-fluid" src="{{image.url}}" alt="Card image cap" id="product-detail">
+                        {% if item.main_image %} 
+                        <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Card image cap" id="product-detail">
                         {% endif %}
                     </div>
                     <div class="row">
@@ -29,8 +29,8 @@
                                     <div class="row">
                                         <div class="col-4">
                                             <a href="#">    
-                                                {% if first_pro.first_image %}
-                                                    <img class="card-img img-fluid" src="{{first_pro.first_image.url}}" alt="Product Image 1" id="pro-img1">
+                                                {% if item.main_image %}
+                                                    <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Product Image 1" id="pro-img1">
                                                 {% else %}
                                                     {{"No Image"}}    
                                                 {% endif %}
@@ -91,14 +91,22 @@
                             {% endif %}-->
 
                             <div id="product-size">
-                                {% for item in product_attr %}
-                                <button class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.id}}')">{{item.variant_type}} GB</button>    
+                                {% for item in product_attr %} 
+
+                                <!-- <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>     -->
+                                
+                                {% if item.variant_type == '64' %}
+                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary selected" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>
+                                {% else %}
+                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>
+                                {% endif %}
                                 {% endfor %}
                             </div>
                             
                             <div class="mt-2 mb-3" id="product-color">
-                                {% for item in product_attr %}
-                                    <button class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.id}}')">{{item.variant_color}}</button>    
+                                {% for item in product_color %}
+                                    <!-- <button class="btn btn-sm btn-secondary" onclick="changePriceonColor(itemID ='{{item.id}}')">{{item.color_name}}</button> -->
+                                    <input type="radio" name="radio-Btn" value="{{item.color_name}}" id="" onclick="handleRadiobtn(this)">{{item.color_name}}
                                 {% endfor %}
                             </div>
                             
@@ -313,33 +321,85 @@ let endpoint = "{% url 'get-product' %}"
 
 
 function changePrice(itemID){
-    $.ajax({
+    
+    let price_before = document.getElementById('price1').innerHTML;
+    
+    let selButton = document.getElementById('selection' + itemID)
+
+    
+    // Remove the 'selected' class from any previously selected button
+    let prevSelectedButton = document.querySelector('.selected');
+    if (prevSelectedButton) {
+        prevSelectedButton.classList.remove('selected');
+    }
+
+    // Add the 'selected' class to the clicked button
+    selButton.classList.add('selected');
+
+        $.ajax({
         method:"POST",
         url: endpoint,
         data: {
             "itemID":itemID,
+            "price": price_before,
             csrfmiddlewaretoken:csrftoken
         },
+        
         success: function (response) {
+             
+            document.getElementById('price1').innerHTML = response.product;  
+             
+            // if(response.product_offer > 0){
+            //     document.getElementById('parastrike').hidden = true;
+            //     document.getElementById('paraoffer').hidden = false;
+            //     
+            //     document.getElementById('priceOffer').innerHTML = response.product_offer;
+            // }
             
-            if(response.product_offer > 0){
-                document.getElementById('parastrike').hidden = true;
-                document.getElementById('paraoffer').hidden = false;
-                document.getElementById('price').innerHTML = response.product;
-                document.getElementById('priceOffer').innerHTML = response.product_offer;
-            }
             
-            
-            document.getElementById('istore').innerHTML = response.size
-            document.getElementById('prod_id').value = itemID 
+            // document.getElementById('istore').innerHTML = response.size
+            // document.getElementById('prod_id').value = itemID 
 
-            if(response.offer_price > 0 ){
-                document.getElementById('parastrike').hidden = true;
-                document.getElementById('paraoffer').hidden = false;
-                document.getElementById('priceOffer').innerHTML = response.offer_price;
-            }
+            // if(response.offer_price > 0 ){
+            //     document.getElementById('parastrike').hidden = true;
+            //     document.getElementById('paraoffer').hidden = false;
+            //     document.getElementById('priceOffer').innerHTML = response.offer_price;
+            // }
         }
     });
+}
+
+
+let endpoint1 = "{% url 'get-product-colorPrice' %}" 
+
+function handleRadiobtn(radioButton){
+
+    let selectedValue = radioButton.value;
+    
+    let productPrice = document.getElementById('price1').innerHTML
+
+    console.log("Price is ", productPrice);
+
+    console.log("Value is ", selectedValue);
+
+    $.ajax({
+        method:"POST",
+        url: endpoint1,
+        data: {
+            "color_name":selectedValue,
+            "proPrice":productPrice,
+            csrfmiddlewaretoken:csrftoken
+        },
+        
+        success: function (response) {
+             
+            console.log("Success!!" , response.price);
+            
+            document.getElementById('price1').innerHTML = response.price;  
+                
+        } 
+    });
+
 }
 
 

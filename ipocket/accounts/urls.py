@@ -69,5 +69,5 @@ urlpatterns = [
     path('productmanager/listColors/<int:id>',views.list_colors,name='list-Colors'),
     path('productmanager/listColors/delete/<int:id>',views.delete_color,name='delete-color'),
     path('productmanager/listColors/edit/<int:id>',views.edit_color,name='edit-color'),
-    
+    path('getColorprice',views.get_product_colorPrice,name='get-product-colorPrice'),        
 ]
