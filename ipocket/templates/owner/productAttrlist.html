@@ -66,10 +66,10 @@
                     <thead>
                         <tr class="text-dark">
                             <th scope="col">Variant Name</th>
-                            <th scope="col">Color</th>
+                            <th scope="col">Base Variant</th>
                             <th scope="col">Variant Price</th>
-                            <th class="text-center" scope="col">On Offer</th>
-                            <th class="col">Offer Price</th>
+                            <!-- <th class="text-center" scope="col">On Offer</th> -->
+                            <th class="col">Variant Quantity</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -82,9 +82,10 @@
                             </td>
                             
                             
-                            <td>{{item.variant_color}}</td>
+                            <td>{{item.is_base_model}}</td>
                             <td>{{item.variant_price_add}}</td>
-                            {% if item.applied_offer %}
+                            <td>{{item.variant_quantity}}</td>
+                            <!-- {% if item.applied_offer %}
                                 {% if item.applied_offer == 'Category Offer' %}
                                     <td>{{item.applied_offer}} {{item.product_type.offer_percentage}}%</td>
                                 {% elif item.applied_offer == 'Product Offer' %}
@@ -94,8 +95,8 @@
                                 {% endif %}
                             {% else %}
                             <td>No Offers</td>
-                            {% endif %}
-                            <td>{{item.price_after_offer}}</td>
+                            {% endif %} -->
+                            <!-- <td>{{item.price_after_offer}}</td> -->
                             <td>  
                                 <a href="{% url 'list-Colors' item.product_variant_id %}" title="List all colors" class="pe-2" style="height:25px; position: relative; bottom: 7px;"><img src="{% static 'images/listall.svg' %}" alt="listbutton" style="height:25px;"></a>
                                 

@@ -98,7 +98,7 @@
                                 {% if item.variant_type == '64' %}
                                     <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary selected" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>
                                 {% else %}
-                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>
+                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}}</button>
                                 {% endif %}
                                 {% endfor %}
                             </div>

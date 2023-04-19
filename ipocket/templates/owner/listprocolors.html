@@ -66,10 +66,9 @@
                         <tr class="text-dark">
                             <th scope="col">Variant Name</th>
                             <th scope="col">Color</th>
+                            <th scope="col">Is Base Color</th>
                             <th scope="col">Price Change</th>
                             <th scope="col">Quantity</th>
-                            <th class="text-center" scope="col">On Offer</th>
-                            <th class="col">Offer Price</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -81,9 +80,10 @@
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
                             <td>{{item.color_name}}</td>
+                            <td>{{item.is_base_color}}</td>
                             <td>{{item.price_increase}}</td>
                             <td>{{item.quantity}}</td>
-                            {% if item.applied_offer %}
+                            <!-- {% if item.applied_offer %}
                                 {% if item.applied_offer == 'Category Offer' %}
                                     <td>{{item.applied_offer}} {{item.product_type.offer_percentage}}%</td>
                                 {% elif item.applied_offer == 'Product Offer' %}
@@ -93,8 +93,8 @@
                                 {% endif %}
                             {% else %}
                             <td>No Offers</td>
-                            {% endif %}
-                            <td>{{item.price_after_offer}}</td>
+                            {% endif %} -->
+                            <!-- <td>{{item.price_after_offer}}</td> -->
                             <td>  
                                 <a href="{% url 'edit-color' item.id  %}" class="pe-2" title="Edit Color" style="position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">

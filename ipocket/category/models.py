@@ -2,6 +2,8 @@ from django.db import models
 
 from accounts.models import MyUser
 from django.utils.timezone import now
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 import datetime
 
@@ -94,7 +96,7 @@ class Products(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     main_image = models.ImageField(
         upload_to='images/products', null=True, blank=True) 
-    base_price = models.FloatField(default=100)
+    base_price = models.FloatField(default=0)
     price_after_offer = models.FloatField(default=0)    
     total_quantity=models.IntegerField(default=0)
          
@@ -111,10 +113,19 @@ class ProductVariant(models.Model):
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     variant_type=models.CharField(max_length=15,default=32)
     variant_price_add=models.IntegerField(default=0)
+    variant_quantity=models.IntegerField(default=0)
+    is_base_model = models.BooleanField(default=False)
     slug=models.SlugField()
     
     def __str__(self):
-        return self.slug
+        return self.slug 
+
+@receiver(post_save, sender=ProductVariant)
+def update_product_base_price(sender, instance, **kwargs):
+    if instance.is_base_model:
+        instance.product.base_price = instance.variant_price_add
+        instance.product.save()    
+    
 
     
 class Product_Color(models.Model):
@@ -122,6 +133,7 @@ class Product_Color(models.Model):
     color_name=models.CharField(max_length=10,default='Black') 
     price_increase=models.IntegerField(default=0)
     quantity=models.IntegerField(default=0)
+    is_base_color=models.BooleanField(default=False) 
     
     def __str__(self):
         return '{} - {}'.format(self.product_variant.slug,self.color_name)

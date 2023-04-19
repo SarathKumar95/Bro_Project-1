@@ -56,12 +56,18 @@ def guest(request):
 
 
 def home_page(request):
+
     check_user=False
+
+
+
     if 'username' in request.session:
-        user_in = request.session['username'] 
-        check_user = MyUser.objects.filter(email=user_in).first().is_superuser 
+          user_in = request.session['username']  
+          check_user = MyUser.objects.filter(email=user_in).first().is_superuser
+          
     else:
         pass    
+
     category = Categories.objects.all()
     subcat = ProductType.objects.all()
     product = Products.objects.all()
@@ -70,7 +76,7 @@ def home_page(request):
 
     banner_count=len(Banner.objects.all())
 
-    context = {"product": product,"productAttr":productAttr,"category": category, "subcat": subcat, 'check_user':check_user, 'banner':banner, 'banner_count':banner_count}
+    context = {"product": product,"productAttr":productAttr,"category": category, "subcat": subcat, 'banner':banner, 'banner_count':banner_count}
     return render(request, "home/index.html", context)
 
 
@@ -1112,7 +1118,7 @@ def checkout(request):
             neworderItems = Cart.objects.filter(user=user_in)
 
             for item in neworderItems:
-                price = item.product_attr.price
+                price = item.product_attr.base_price
                 # if item.product_attr.price_after_offer:
                 #     price = item.product_attr.price_after_offer
 
