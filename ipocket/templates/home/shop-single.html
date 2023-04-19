@@ -145,6 +145,7 @@
                             <div>
                                 {% csrf_token %}
                                 <input type="hidden" value="{{item.product_id}}" id="prod_id">
+                            
                                 <div class="row pb-3">
                                     <div class="col d-grid">
                                         <button class="btn btn-success btn-lg addtoCartBtn" name="submit" value="buy">Add to Cart</button>
@@ -271,12 +272,12 @@
     
 $('.addtoCartBtn').click(function (){
 
-    var product_id = document.getElementById('prod_id').value;
-    var product_color = document.getElementById('color').value      
-    var token = $('input[name=csrfmiddlewaretoken]').val();
-    
+    var product_id = document.getElementById('prod_id').value; 
 
-    
+    console.log("Product id is ", product_id)
+     
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+        
     let navCount = Number($('#navcartCount').text()) 
     
 
@@ -286,7 +287,6 @@ $('.addtoCartBtn').click(function (){
         url: "cart/add",
         data: {
             'product_id' : product_id,
-            'color' : product_color,
             csrfmiddlewaretoken: token     
        },
 

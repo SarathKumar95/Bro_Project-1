@@ -412,7 +412,6 @@ def item(request, product_id):
     product_attr = ProductVariant.objects.filter(product_id=product_id)
     product_color = Product_Color.objects.filter(product_variant_id = product_attr.first().product_variant_id)
 
-    print("Color id is ", product_color)
 
     products = Products.objects.all()
     context = {"product": product, "products": products,
@@ -427,16 +426,22 @@ def cart_add(request):
 
     if request.method == "POST":
         prod_id = request.POST["product_id"]
-        pro_color = request.POST["color"] 
+        
         prod_qty = 1
 
-        pro_size = ProductAttribute.objects.filter(id=prod_id).first().size    
+        product = Products.objects.filter(product_id=prod_id)
 
-        print("User wants",pro_color, "pro size", pro_size)
+        print("Product is ", product)
 
-        product_check = ProductAttribute.objects.filter(size=pro_size).filter(color=pro_color)
+        # pro_size = ProductAttribute.objects.filter(id=prod_id).first().size    
 
-        if len(product_check) == 0:
+        # print("User wants",pro_color, "pro size", pro_size)
+
+        product_check = product.first().total_quantity 
+
+        print("Qty is ", product_check)
+
+        if product_check == 0:
             return JsonResponse({'status':"Sorry, that combination does not exist!"})
 
         else:
@@ -512,12 +517,12 @@ def cart_list(request):
 
     tax = 0
     for item in cart:
-        product_qtyCheck = item.product_attr.quantity
+        product_qtyCheck = item.product_attr.total_quantity
 
         if item.product_attr.price_after_offer > 0:
             Item_total = item.product_attr.price_after_offer * item.product_qty
         else:
-            Item_total = item.product_attr.price * item.product_qty
+            Item_total = item.product_attr.base_price * item.product_qty
 
         
 
@@ -535,33 +540,34 @@ def cart_list(request):
 
 def cart_update(request):
     if request.method == "POST":
-        product_id = int(request.POST["product_id"])
+        productID = int(request.POST["product_id"])
         product_qty = request.POST["cart_qty"]
         total = float(request.POST["total"])
 
-        product = ProductAttribute.objects.filter(id=product_id).first() 
+        product = Products.objects.filter(product_id=productID).first()  
+
 
         if "username" not in request.session:
             user_in = guest(request)
-            cart = Cart.objects.filter(session_id=user_in, product_attr_id=product_id).first()
+            cart = Cart.objects.filter(session_id=user_in, product_attr_id=productID).first()
 
         else:
             user_in = request.session["username"]
-            cart = Cart.objects.filter(user=user_in, product_attr_id=product_id).first()
+            cart = Cart.objects.filter(user=user_in, product_attr_id=productID).first()
         
 
         CartTotal = Cart.objects.filter(user=user_in) 
 
         for item in CartTotal:
             
-            if item.product_attr_id == product_id:
+            if item.product_attr_id == productID:
                    # minus the old price with old qty 
                    if item.product_attr.price_after_offer > 0:
                         price_to_Change = item.product_attr.price_after_offer * item.product_qty 
                         new_Price = item.product_attr.price_after_offer * float(product_qty) 
                    else:
-                        price_to_Change = item.product_attr.price * item.product_qty 
-                        new_Price = item.product_attr.price * float(product_qty)
+                        price_to_Change = item.product_attr.base_price * item.product_qty 
+                        new_Price = item.product_attr.base_price * float(product_qty)
 
                    total = total - price_to_Change + new_Price 
             else:
@@ -1014,7 +1020,7 @@ def checkout(request):
         if item.product_attr.price_after_offer > 0:
             Item_total = item.product_attr.price_after_offer * item.product_qty
         else:
-            Item_total = item.product_attr.price * item.product_qty
+            Item_total = item.product_attr.base_price * item.product_qty
         sub_total += Item_total
 
         if item.amount_discounted != None:
@@ -1641,7 +1647,6 @@ def edit_color(request,id):
     
     product=Product_Color.objects.filter(id=id).first()
      
-    print("check ",product.product_variant_id)
 
     form=AddColorForm(instance=product) 
  

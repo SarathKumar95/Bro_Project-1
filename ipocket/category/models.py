@@ -94,7 +94,8 @@ class Products(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     main_image = models.ImageField(
         upload_to='images/products', null=True, blank=True) 
-    base_price = models.FloatField(default=100)    
+    base_price = models.FloatField(default=100)
+    price_after_offer = models.FloatField(default=0)    
     total_quantity=models.IntegerField(default=0)
          
     
