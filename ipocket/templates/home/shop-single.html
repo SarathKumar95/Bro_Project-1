@@ -321,6 +321,18 @@ let endpoint = "{% url 'get-product' %}"
 
 
 function changePrice(itemID){
+
+    var radioBtns = document.querySelectorAll('input[name="radio-Btn"]');
+    var selectedValue;
+
+    for (var i = 0; i < radioBtns.length; i++) {
+    if (radioBtns[i].checked) {
+        selectedValue = radioBtns[i].value;
+        break;
+    }
+    }
+
+    console.log("Selected value is ", selectedValue);
   
     let ProductId = document.getElementById('productIDhere').value
 
