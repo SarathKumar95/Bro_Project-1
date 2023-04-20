@@ -135,35 +135,35 @@ class OrderForm(ModelForm):
 
 
 
-class OrderItemForm(ModelForm):
+# class OrderItemForm(ModelForm):
 
-    class Meta:
-        model = OrderItem
-        fields = '__all__' 
+#     class Meta:
+#         model = OrderItem
+#         fields = '__all__' 
 
-        widgets= {
-            'order': Select(attrs={
-                'class': "form-control  text-dark",
-                'style' : "max-width: 300px",
-            }),            
-            'product': Select(attrs={
-                'class': "form-control text-dark",
-                'style' : "max-width: 300px",
-            }),            
-            'price': TextInput(attrs={
-                'class': "form-control text-dark",
-                'style' : "max-width: 300px",
-            }),            
-            'quantity': TextInput(attrs={
-                'class': "form-control text-dark",
-                'style' : "max-width: 300px",
-            }),            
+#         widgets= {
+#             'order': Select(attrs={
+#                 'class': "form-control  text-dark",
+#                 'style' : "max-width: 300px",
+#             }),            
+#             'product': Select(attrs={
+#                 'class': "form-control text-dark",
+#                 'style' : "max-width: 300px",
+#             }),            
+#             'price': TextInput(attrs={
+#                 'class': "form-control text-dark",
+#                 'style' : "max-width: 300px",
+#             }),            
+#             'quantity': TextInput(attrs={
+#                 'class': "form-control text-dark",
+#                 'style' : "max-width: 300px",
+#             }),            
             
-             'item_status': Select(attrs={
-                'class': "form-control text-dark",
-                'style' : "max-width: 300px",
-            }),
-        }
+#              'item_status': Select(attrs={
+#                 'class': "form-control text-dark",
+#                 'style' : "max-width: 300px",
+#             }),
+#         }
 
 
 class CouponForm(ModelForm):

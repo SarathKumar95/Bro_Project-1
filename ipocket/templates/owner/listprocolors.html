@@ -76,12 +76,12 @@
                         {% for item in product %}
                         
                         <tr id="productrow{{item.product_variant_id}}">
-                            <td>{{item.product_variant}}
+                            <td>{{item.product}}
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
                             <td>{{item.color_name}}</td>
                             <td>{{item.is_base_color}}</td>
-                            <td>{{item.price_increase}}</td>
+                            <td>{{item.color_price}}</td>
                             <td>{{item.quantity}}</td>
                             <!-- {% if item.applied_offer %}
                                 {% if item.applied_offer == 'Category Offer' %}

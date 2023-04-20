@@ -72,7 +72,7 @@ def home_page(request):
     subcat = ProductType.objects.all()
     product = Products.objects.all()
     banner = Banner.objects.all()
-    productAttr = ProductVariant.objects.all()
+    productAttr = Products.objects.all()
 
     banner_count=len(Banner.objects.all())
 
@@ -414,14 +414,34 @@ def sortbynew(request):
 
 
 def item(request, product_id):
+
     product = Products.objects.filter(product_id=product_id)
-    product_attr = ProductVariant.objects.filter(product_id=product_id)
-    product_color = Product_Color.objects.filter(product_variant_id = product_attr.first().product_variant_id)
+    product_attr = ProductVariant.objects.filter(product_id=product_id) 
+
+    product_color = Product_Color.objects.filter(product_id = product_id)
 
 
-    products = Products.objects.all()
-    context = {"product": product, "products": products,
-    "product_attr":product_attr,'product_color':product_color}
+    fetch_variant = product_attr.first().product_variant_id
+    fetch_color = product_color.first().id
+
+    fetchProduct = VariantColor.objects.filter(variant=fetch_variant,color=fetch_color)
+  
+
+    get_ColorPrice = fetchProduct.first().color.color_price
+    get_VariantPrice = fetchProduct.first().variant.price 
+
+    if get_ColorPrice == None:
+        get_ColorPrice = 0
+
+    print("Color price is ", fetchProduct.first().color.color_price) 
+
+    print("Variant price is ", fetchProduct.first().variant.price) 
+
+    productPrice = float(Products.objects.filter(product_id=product_id).first().price) + float(get_VariantPrice) + float(get_ColorPrice) 
+    
+    print("Pro price is ", productPrice) 
+
+    context = {"product": product,"productAttr":product_attr, "productColor":product_color, "productPrice":productPrice}
     return render(request, "home/shop-single.html", context)
 
 
@@ -1473,8 +1493,18 @@ def sales_csv(request):
 def get_product(request):    
     if request.method == 'POST': 
         itemID = request.POST['itemID'] 
+        productId = request.POST['productID'] 
+
+        fetch_ProductPrice = Products.objects.filter(product_id = productId).first().price 
+
+        print("Product fetched is ", fetch_ProductPrice)
+
+        fetch_variantPrice = ProductVariant.objects.filter(product_variant_id = itemID).first().price
+
         
-        variantPrice = ProductVariant.objects.filter(product_variant_id = itemID).first().variant_price_add
+        print("Variant fetched is ", fetch_variantPrice)
+
+
 
         return JsonResponse({'itemID':itemID,'product':variantPrice})   
 
@@ -1626,7 +1656,10 @@ def select_feat(request):
     return redirect('landing')
 
 def list_colors(request, id):
-    product = Product_Color.objects.filter(product_variant_id=id)
+
+    print("Id is ", id)
+
+    product = Product_Color.objects.filter(product_id=id)
 
     add_form = AddColorForm()
     edit_form = AddColorForm(instance=product.first())
@@ -1651,9 +1684,12 @@ def delete_color(request,id):
 
 def edit_color(request,id):
     
-    product=Product_Color.objects.filter(id=id).first()
-     
+    print("id is ", id)
 
+    product=Product_Color.objects.filter(id=id).first()
+
+    print("Product is ", product)
+    
     form=AddColorForm(instance=product) 
  
     if request.method == 'POST':
@@ -1662,7 +1698,7 @@ def edit_color(request,id):
         if form.is_valid():
             form.save()
             messages.info(request,"Color updated")
-            return redirect('list-Colors',product.product_variant_id)
+            return redirect('list-Colors',id)
          
     context={'form':form}
     return render(request,'owner/editColor.html',context)

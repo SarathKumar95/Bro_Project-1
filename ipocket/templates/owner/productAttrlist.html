@@ -69,7 +69,6 @@
                             <th scope="col">Base Variant</th>
                             <th scope="col">Variant Price</th>
                             <!-- <th class="text-center" scope="col">On Offer</th> -->
-                            <th class="col">Variant Quantity</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -77,14 +76,13 @@
                         {% for item in productAttr %}
                         
                         <tr id="productrow{{item.product_variant_id}}">
-                            <td>{{item.slug}}
+                            <td>{{item}}
                                 <input type="hidden" value="{{item.product_variant_id}}" name="productAttrID">
                             </td>
                             
                             
-                            <td>{{item.is_base_model}}</td>
-                            <td>{{item.variant_price_add}}</td>
-                            <td>{{item.variant_quantity}}</td>
+                            <td>{{item.is_base_variant}}</td>
+                            <td>{{item.price}}</td>
                             <!-- {% if item.applied_offer %}
                                 {% if item.applied_offer == 'Category Offer' %}
                                     <td>{{item.applied_offer}} {{item.product_type.offer_percentage}}%</td>
@@ -98,9 +96,7 @@
                             {% endif %} -->
                             <!-- <td>{{item.price_after_offer}}</td> -->
                             <td>  
-                                <a href="{% url 'list-Colors' item.product_variant_id %}" title="List all colors" class="pe-2" style="height:25px; position: relative; bottom: 7px;"><img src="{% static 'images/listall.svg' %}" alt="listbutton" style="height:25px;"></a>
                                 
-
                                 <a href="{% url 'product-attrEdit' item.product_variant_id item.product_id %}" title="Edit Product Attribute" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                                 </a>

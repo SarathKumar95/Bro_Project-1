@@ -11,7 +11,7 @@
         <div class="container pb-5 ">
             <div class="row">
                 {% for item in product %} 
-                <input type="hidden" id="productIDinput" value="{{item.product_id}}" >
+                <input type="hidden" id="productIDhere" value="{{item.product_id}}" >
                 <div class="col-lg-5 mt-5 product_data">
                     <div class="card mb-3" id="img-container">
                         <div id="lens"></div>
@@ -75,7 +75,7 @@
                                 <h1 class="h2"><strong>Buy</strong> {{item.product_name}}</h1>
                                 {% endif %}
                                 <div id="parastrike">
-                                    <p class="h3 text-dark py-2" >₹ <span id="price1">{{item.base_price}}</span>/-</p>
+                                    <p class="h3 text-dark py-2" >₹ <span id="price1">{{productPrice}}</span>/-</p>
                                 </div>
 
                                 <div id="paraoffer" hidden>
@@ -91,22 +91,22 @@
                             {% endif %}-->
 
                             <div id="product-size">
-                                {% for item in product_attr %} 
-
-                                <!-- <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>     -->
-                                
-                                {% if item.variant_type == '64' %}
-                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary selected" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}} GB</button>
-                                {% else %}
-                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_type}}</button>
-                                {% endif %}
+                                {% for item in productAttr %}
+                                    {% if item.is_base_variant %}
+                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')" autofocus>{{item.variant_name}}</button>
+                                    {% else %}    
+                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_name}}</button>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                             
                             <div class="mt-2 mb-3" id="product-color">
-                                {% for item in product_color %}
-                                    <!-- <button class="btn btn-sm btn-secondary" onclick="changePriceonColor(itemID ='{{item.id}}')">{{item.color_name}}</button> -->
+                                {% for item in productColor %} 
+                                    {% if item.is_base_color %}
+                                    <input type="radio" name="radio-Btn" value="{{item.color_name}}" id="" onclick="handleRadiobtn(this)" checked="checked" >{{item.color_name}}
+                                    {% else %}
                                     <input type="radio" name="radio-Btn" value="{{item.color_name}}" id="" onclick="handleRadiobtn(this)">{{item.color_name}}
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                             
@@ -321,9 +321,9 @@ let endpoint = "{% url 'get-product' %}"
 
 
 function changePrice(itemID){
-    
-    let price_before = document.getElementById('price1').innerHTML;
-    
+  
+    let ProductId = document.getElementById('productIDhere').value
+
     let selButton = document.getElementById('selection' + itemID)
 
     
@@ -341,7 +341,7 @@ function changePrice(itemID){
         url: endpoint,
         data: {
             "itemID":itemID,
-            "price": price_before,
+            "productID": ProductId,
             csrfmiddlewaretoken:csrftoken
         },
         

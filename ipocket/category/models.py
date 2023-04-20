@@ -76,67 +76,90 @@ class Categories(models.Model):
         return self.condition
 
 
-# product model
+# # product model
 class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
-    product_name = models.CharField(max_length=50)
-    product_type = models.ForeignKey(
-         ProductType, on_delete=models.CASCADE, default=True)
-    generation = models.IntegerField(null=True, blank=True)
-    series = models.CharField(max_length=25, null=True, blank=True)
-    ram = models.IntegerField(null=True, blank=True)
-    processor = models.CharField(max_length=25, null=True, blank=True)
-    battery = models.CharField(max_length=20, null=True, blank=True)
-    weight = models.IntegerField(null=True, blank=True)
-    screen_size = models.DecimalField(
-        decimal_places=2, max_digits=4, null=True, blank=True)
-    camera = models.CharField(
-        max_length=100, default='12 MP', null=True, blank=True)    
-    slug = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
-    main_image = models.ImageField(
-        upload_to='images/products', null=True, blank=True) 
-    base_price = models.FloatField(default=0)
-    price_after_offer = models.FloatField(default=0)    
-    total_quantity=models.IntegerField(default=0)
-         
+    product_name = models.CharField(max_length=100, unique=True)
+    product_type = models.ForeignKey(ProductType,on_delete=models.CASCADE)
+
+    description = models.TextField()
+    main_image = models.ImageField(upload_to='products', blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    available = models.BooleanField(default=True)
+    total_quantity = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    # iPhone-specific fields
+    os = models.CharField(max_length=50, blank=True)
+    display = models.CharField(max_length=50, blank=True)
+    #storage = models.CharField(max_length=50, blank=True)
+    camera = models.CharField(max_length=50, blank=True)
+    battery = models.CharField(max_length=50, blank=True)
+    
+    # Watch-specific fields
+    os_version = models.CharField(max_length=50, blank=True)
+    case_material = models.CharField(max_length=50, blank=True)
+    band_material = models.CharField(max_length=50, blank=True)
+    water_resistance = models.CharField(max_length=50, blank=True)
+    size = models.CharField(max_length=50, blank=True)
+    
+    # AirPods-specific fields
+    compatibility = models.CharField(max_length=50, blank=True)
+    battery_life = models.CharField(max_length=50, blank=True)
+    noise_cancellation = models.BooleanField(default=False)
+    wireless_charging = models.BooleanField(default=False)
     
     class Meta:
         verbose_name_plural = 'Products'
 
     def __str__(self):
-        return '{} - {} - {}'.format(self.product_name, self.generation, self.series)
+        return '{}'.format(self.product_name) 
 
 
 class ProductVariant(models.Model):
     product_variant_id = models.AutoField(primary_key=True)
-    product=models.ForeignKey(Products,on_delete=models.CASCADE)
-    variant_type=models.CharField(max_length=15,default=32)
-    variant_price_add=models.IntegerField(default=0)
-    variant_quantity=models.IntegerField(default=0)
-    is_base_model = models.BooleanField(default=False)
-    slug=models.SlugField()
-    
+    variant_name = models.CharField(max_length=100)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='variants')
+    price = models.DecimalField(max_digits=10, decimal_places=2)    
+    is_base_variant = models.BooleanField(default=False)
+
     def __str__(self):
-        return self.slug 
+        return '{} - {}'.format(self.product.product_name,self.variant_name) 
 
-@receiver(post_save, sender=ProductVariant)
-def update_product_base_price(sender, instance, **kwargs):
-    if instance.is_base_model:
-        instance.product.base_price = instance.variant_price_add
-        instance.product.save()    
-    
-
-    
 class Product_Color(models.Model):
-    product_variant=models.ForeignKey(ProductVariant,on_delete=models.CASCADE,default=None)
-    color_name=models.CharField(max_length=10,default='Black') 
-    price_increase=models.IntegerField(default=0)
-    quantity=models.IntegerField(default=0)
-    is_base_color=models.BooleanField(default=False) 
-    
+    color_name = models.CharField(max_length=50)
+    color_price = models.FloatField(null=True,blank=True,default=0)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='colors')
+    #product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE, related_name='variant_colors',null=True,blank=True)
+    image1 = models.ImageField(upload_to='color_images', blank=True)
+    image2 = models.ImageField(upload_to='color_images', blank=True)
+    image3 = models.ImageField(upload_to='color_images', blank=True)
+    is_base_color = models.BooleanField(default=False)
+
     def __str__(self):
-        return '{} - {}'.format(self.product_variant.slug,self.color_name)
+        return '{} - {}'.format(self.product.product_name,self.color_name) 
+
+class VariantColor(models.Model):
+    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
+    color = models.ForeignKey(Product_Color, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0) 
+
+    def get_price(self, variant,color):
+        try:
+            variant_color = VariantColor.objects.get(variant=variant, color=color)
+            if variant_color.quantity > 0:
+                return variant_color.color.color_price or variant.price
+            else:
+                return None
+        except VariantColor.DoesNotExist:
+            return None
+
+    class Meta:
+        unique_together = ('variant', 'color')
+
+    def __str__(self):
+        return "{} - {} ({})".format(self.variant.product.product_name, self.variant.variant_name, self.color.color_name)
 
 
 class Coupon(models.Model):
@@ -207,50 +230,50 @@ class Order(models.Model):
         return '{} - {}'.format(self.user, str(self.tracking_no))
 
 
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    price = models.FloatField(null=True)
-    quantity = models.IntegerField(null=True)
-    order_itemstatus = [
-        ('Order Confirmed', 'Order Confirmed'),
-        ('Shipped', 'Shipped'),
-        ('In Transit', 'In Transit'),
-        ('Out for Delivery', 'Out for Delivery'),
-        ('Delivered', 'Delivered'),
+# # class OrderItem(models.Model):
+# #     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+# #     product = models.ForeignKey(Products, on_delete=models.CASCADE)
+# #     price = models.FloatField(null=True)
+# #     quantity = models.IntegerField(null=True)
+# #     order_itemstatus = [
+# #         ('Order Confirmed', 'Order Confirmed'),
+# #         ('Shipped', 'Shipped'),
+# #         ('In Transit', 'In Transit'),
+# #         ('Out for Delivery', 'Out for Delivery'),
+# #         ('Delivered', 'Delivered'),
         
-    ]
-    item_status = models.CharField(
-        max_length=50, choices=order_itemstatus, default="Order Confirmed", null=True)
+# #     ]
+# #     item_status = models.CharField(
+# #         max_length=50, choices=order_itemstatus, default="Order Confirmed", null=True)
 
-    def __str__(self):
-        return '{} - {}'.format(self.order.user, self.order.tracking_no)
+# #     def __str__(self):
+# #         return '{} - {}'.format(self.order.user, self.order.tracking_no)
 
 
-class Wishlist(models.Model):
-    user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
-    product=models.ForeignKey(Products,on_delete=models.CASCADE)
-    wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
+# # class Wishlist(models.Model):
+# #     user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
+# #     product=models.ForeignKey(Products,on_delete=models.CASCADE)
+# #     wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
       
-    def __str__(self):
+# #     def __str__(self):
 
-        if self.wishlist_name != None:
+# #         if self.wishlist_name != None:
 
-            return '{}' - '{}'.format(self.user.email, self.wishlist_name) 
+# #             return '{}' - '{}'.format(self.user.email, self.wishlist_name) 
 
-        else:
-            return self.user.email    
+# #         else:
+# #             return self.user.email    
 
-#wallet
-class Wallet(models.Model):
-    wallet_id=models.AutoField(primary_key=True)
-    user=models.ForeignKey(MyUser,on_delete=models.CASCADE) 
-    orderItem=models.ForeignKey(OrderItem,on_delete=models.CASCADE,null=True,blank=True)
-    quantity=models.IntegerField(null=True,blank=True)
-    amount=models.FloatField(null=True,blank=True) 
+# #wallet
+# class Wallet(models.Model):
+#     wallet_id=models.AutoField(primary_key=True)
+#     user=models.ForeignKey(MyUser,on_delete=models.CASCADE) 
+#     orderItem=models.ForeignKey(OrderItem,on_delete=models.CASCADE,null=True,blank=True)
+#     quantity=models.IntegerField(null=True,blank=True)
+#     amount=models.FloatField(null=True,blank=True) 
 
-    def __str__(self):
-        return '{}'.format(str(self.wallet_id)) 
+#     def __str__(self):
+#         return '{}'.format(str(self.wallet_id)) 
 
 class Banner(models.Model):
     banner_id = models.AutoField(primary_key=True)

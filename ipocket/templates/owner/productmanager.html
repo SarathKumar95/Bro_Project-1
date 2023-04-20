@@ -72,7 +72,8 @@
                             <td>No Offers</td>
                             {% endif %}
                             <td>
-                                <a href="{% url 'product-attrList' item.product_id %}" title="Add Product Attributes" class="pe-2" style="height:25px; position: relative; bottom: 8px;"><img src="{% static 'images/plus.png' %}" alt="add-image" style="height:25px;"></a>                                
+                                <a href="{% url 'product-attrList' item.product_id %}" title="Add Product Attributes" class="pe-2" style="height:25px; position: relative; bottom: 8px;"><img src="{% static 'images/plus.png' %}" alt="add-image" style="height:25px;"></a> 
+                                <a href="{% url 'list-Colors' item.product_id %}" title="List all colors" class="pe-2" style="height:25px; position: relative; bottom: 7px;"><img src="{% static 'images/listall.svg' %}" alt="listbutton" style="height:25px;"></a>
                                 <a href="{% url 'producteditor' item.product_id %}" title="Edit Product" class="pe-2" style="height:25px; position: relative; bottom: 8px;">
                                     <img src="{% static 'images/edit.png' %}" alt="editbutton" style="height:25px;">
                                 </a>
