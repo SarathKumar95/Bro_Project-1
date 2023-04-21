@@ -1497,16 +1497,11 @@ def get_product(request):
 
         fetch_ProductPrice = Products.objects.filter(product_id = productId).first().price 
 
-        print("Product fetched is ", fetch_ProductPrice)
-
         fetch_variantPrice = ProductVariant.objects.filter(product_variant_id = itemID).first().price
-
-        
-        print("Variant fetched is ", fetch_variantPrice)
 
         totalPrice = float(fetch_ProductPrice) + float(fetch_variantPrice)
 
-        return JsonResponse({'itemID':itemID,'product':totalPrice})   
+        return JsonResponse({'itemID':itemID})   
 
 def get_product_colorPrice(request):
     if request.method == "POST":

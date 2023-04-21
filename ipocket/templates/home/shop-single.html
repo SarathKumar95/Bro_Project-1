@@ -327,16 +327,13 @@ let endpoint = "{% url 'get-product' %}"
 
 
 function changePrice(itemID){
-
-    
     
     colorBtn.style.display = 'block';
-    priceTag.style.display = 'block';
-
-    const radioButtons = document.querySelectorAll('input[name="radio-Btn"]');
-    radioButtons.forEach(function(radioButton) {
-        radioButton.checked = false;
-    });
+    
+    // const radioButtons = document.querySelectorAll('input[name="radio-Btn"]');
+    // radioButtons.forEach(function(radioButton) {
+    //     radioButton.checked = false;
+    // });
     
     let clickedBtn = null;
 
@@ -359,7 +356,6 @@ function changePrice(itemID){
 
     }
 
-    
     // Remove the 'selected' class from any previously selected button
     let prevSelectedButton = document.querySelector('.selected');
     if (prevSelectedButton) {
@@ -379,9 +375,7 @@ function changePrice(itemID){
         },
         
         success: function (response) {
-             
-            document.getElementById('price1').innerHTML = response.product;  
-             
+                          
             // if(response.product_offer > 0){
             //     document.getElementById('parastrike').hidden = true;
             //     document.getElementById('paraoffer').hidden = false;
@@ -446,7 +440,7 @@ function handleRadiobtn(radioButton){
         
         success: function (response) {
             
-            
+            priceTag.style.display = 'block';
             document.getElementById('price1').innerHTML = response.price;  
                 
         } 
