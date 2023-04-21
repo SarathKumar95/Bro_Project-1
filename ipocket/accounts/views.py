@@ -420,28 +420,7 @@ def item(request, product_id):
 
     product_color = Product_Color.objects.filter(product_id = product_id)
 
-
-    fetch_variant = product_attr.first().product_variant_id
-    fetch_color = product_color.first().id
-
-    fetchProduct = VariantColor.objects.filter(variant=fetch_variant,color=fetch_color)
-  
-
-    get_ColorPrice = fetchProduct.first().color.color_price
-    get_VariantPrice = fetchProduct.first().variant.price 
-
-    if get_ColorPrice == None:
-        get_ColorPrice = 0
-
-    print("Color price is ", fetchProduct.first().color.color_price) 
-
-    print("Variant price is ", fetchProduct.first().variant.price) 
-
-    productPrice = float(Products.objects.filter(product_id=product_id).first().price) + float(get_VariantPrice) + float(get_ColorPrice) 
-    
-    print("Pro price is ", productPrice) 
-
-    context = {"product": product,"productAttr":product_attr, "productColor":product_color, "productPrice":productPrice}
+    context = {"product": product,"productAttr":product_attr, "productColor":product_color}
     return render(request, "home/shop-single.html", context)
 
 
@@ -451,21 +430,26 @@ def item(request, product_id):
 def cart_add(request):
 
     if request.method == "POST":
-        prod_id = request.POST["product_id"]
-        
+        prod_id = request.POST["productID"]
+        color_name_req = request.POST["color_name"]
+        variant_id = request.POST["variantID"] 
+
         prod_qty = 1
 
-        product = Products.objects.filter(product_id=prod_id)
+        productPrice = float(Products.objects.filter(product_id=prod_id).first().price)
+        variantPrice = float(ProductVariant.objects.filter(product_variant_id=variant_id).first().price)
+        colorPrice = float(Product_Color.objects.filter(color_name=color_name_req).first().color_price)
 
-        print("Product is ", product)
+        print("Pro price is ", productPrice)
+        print("Var price is ", variantPrice)
+        print("Col price is ", colorPrice)
+        
 
-        # pro_size = ProductAttribute.objects.filter(id=prod_id).first().size    
+        print("ProductPrice is ", productPrice+variantPrice+colorPrice)
 
-        # print("User wants",pro_color, "pro size", pro_size)
-
-        product_check = product.first().total_quantity 
-
-        print("Qty is ", product_check)
+        fetch_colorID = Product_Color.objects.filter(color_name=color_name_req).first().id 
+       
+        product_check = VariantColor.objects.filter(color_id=fetch_colorID,variant_id=variant_id).first().quantity 
 
         if product_check == 0:
             return JsonResponse({'status':"Sorry, that combination does not exist!"})

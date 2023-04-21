@@ -278,21 +278,46 @@
     
 $('.addtoCartBtn').click(function (){
 
-    var product_id = document.getElementById('prod_id').value; 
+    var product_id = document.getElementById('prod_id').value;
+    
+    
+    var proVarBtn = document.querySelectorAll('#product-size button.selected');
+
+    var numericId = '';
+
+    for (var i = 0; i < proVarBtn.length; i++) {
+    var buttonId = proVarBtn[i].getAttribute('id');
+    variant_Id = buttonId.substring(9);
+    }
+
+    
+    const radioBtns = document.querySelectorAll('input[name="radio-Btn"]'); 
+    
+    let colorName = '';
+    for(var i = 0; i < radioBtns.length; i++){
+        if (radioBtns[i].checked){
+            colorName = radioBtns[i].value
+        }
+    }
+
+    console.log("Pro var id is", variant_Id)
 
     console.log("Product id is ", product_id)
+
+    console.log("Color id is ", colorName);
      
     var token = $('input[name=csrfmiddlewaretoken]').val();
         
     let navCount = Number($('#navcartCount').text()) 
     
 
-
     $.ajax({
         method: "POST",
         url: "cart/add",
         data: {
-            'product_id' : product_id,
+            'productID' : product_id,
+            'variantID' : variant_Id,
+            'color_name' : colorName,
             csrfmiddlewaretoken: token     
        },
 
@@ -328,13 +353,19 @@ let endpoint = "{% url 'get-product' %}"
 
 function changePrice(itemID){
     
+    
+    priceTag.style.display = 'none';
     colorBtn.style.display = 'block';
+
+    const radioBtns = document.querySelectorAll('input[name="radio-Btn"]'); 
     
-    // const radioButtons = document.querySelectorAll('input[name="radio-Btn"]');
-    // radioButtons.forEach(function(radioButton) {
-    //     radioButton.checked = false;
-    // });
-    
+
+    for(var i = 0; i < radioBtns.length; i++){
+        if (radioBtns[i].checked){
+            radioBtns[i].checked=false;
+        }
+    }
+
     let clickedBtn = null;
 
     let ProductId = document.getElementById('productIDhere').value
