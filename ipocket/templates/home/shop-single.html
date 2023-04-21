@@ -283,13 +283,16 @@ $('.addtoCartBtn').click(function (){
     
     var proVarBtn = document.querySelectorAll('#product-size button.selected');
 
-    var numericId = '';
+    var variant_Id = '';
 
     for (var i = 0; i < proVarBtn.length; i++) {
     var buttonId = proVarBtn[i].getAttribute('id');
     variant_Id = buttonId.substring(9);
     }
-
+    
+    // if (variant_Id == ''){
+    //     alertify.error('Please select a variant and color first.')
+    // }
     
     const radioBtns = document.querySelectorAll('input[name="radio-Btn"]'); 
     
@@ -299,12 +302,6 @@ $('.addtoCartBtn').click(function (){
             colorName = radioBtns[i].value
         }
     }
-
-    console.log("Pro var id is", variant_Id)
-
-    console.log("Product id is ", product_id)
-
-    console.log("Color id is ", colorName);
      
     var token = $('input[name=csrfmiddlewaretoken]').val();
         

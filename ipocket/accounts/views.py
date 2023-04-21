@@ -430,58 +430,62 @@ def item(request, product_id):
 def cart_add(request):
 
     if request.method == "POST":
-        prod_id = request.POST["productID"]
-        color_name_req = request.POST["color_name"]
-        variant_id = request.POST["variantID"] 
+        try:
+            prod_id = request.POST["productID"]
+            color_name_req = request.POST["color_name"]
+            variant_id = request.POST["variantID"] 
 
-        prod_qty = 1
+            if prod_id is None or color_name_req is None or variant_id is None:
+                raise ValueError("One of the value is None")
 
-        productPrice = float(Products.objects.filter(product_id=prod_id).first().price)
-        variantPrice = float(ProductVariant.objects.filter(product_variant_id=variant_id).first().price)
-        colorPrice = float(Product_Color.objects.filter(color_name=color_name_req).first().color_price)
+            productPrice = float(Products.objects.filter(product_id=prod_id).first().price)
+            variantPrice = float(ProductVariant.objects.filter(product_variant_id=variant_id).first().price)
+            colorPrice = float(Product_Color.objects.filter(color_name=color_name_req).first().color_price)
 
-        print("Pro price is ", productPrice)
-        print("Var price is ", variantPrice)
-        print("Col price is ", colorPrice)
+            print("Pro price is ", productPrice)
+            print("Var price is ", variantPrice)
+            print("Col price is ", colorPrice)
+            
+
+            print("ProductPrice is ", productPrice+variantPrice+colorPrice)
+
+            fetch_colorID = Product_Color.objects.filter(color_name=color_name_req).first().id 
         
+            product_check = VariantColor.objects.filter(color_id=fetch_colorID,variant_id=variant_id).first().quantity 
 
-        print("ProductPrice is ", productPrice+variantPrice+colorPrice)
+            if product_check == 0:
+                return JsonResponse({'status':"Sorry, that combination does not exist!"})
 
-        fetch_colorID = Product_Color.objects.filter(color_name=color_name_req).first().id 
-       
-        product_check = VariantColor.objects.filter(color_id=fetch_colorID,variant_id=variant_id).first().quantity 
+            else:
 
-        if product_check == 0:
-            return JsonResponse({'status':"Sorry, that combination does not exist!"})
+                if 'username' not in request.session:
+                    cart = Cart.objects.filter(session_id=guest(request))      
 
-        else:
+                    #check if same product exists in cart 
+                        
+                    if Cart.objects.filter(session_id=guest(request), product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID):
+                        return JsonResponse({'status':"Product already in cart"}) 
 
-            if 'username' not in request.session:
-                cart = Cart.objects.filter(session_id=guest(request))      
+                    else:
+                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty)
+                        return JsonResponse({"status": "Product added succesfully"})
 
-                #check if same product exists in cart 
-                    
-                if Cart.objects.filter(session_id=guest(request), product_attr_id=prod_id):
-                    return JsonResponse({'status':"Product already in cart"}) 
+                elif 'username' in request.session:
+                    user_in = request.session['username'] 
 
-                else:
-                    cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id, product_qty=prod_qty)
-                    return JsonResponse({"status": "Product added succesfully"})
+                    cart = Cart.objects.filter(user=user_in)      
 
-            elif 'username' in request.session:
-                user_in = request.session['username'] 
+                    #check if same product exists in cart 
+                        
+                    if Cart.objects.filter(user=user_in, product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID):
+                        return JsonResponse({'status':"Product already in cart"}) 
 
-                cart = Cart.objects.filter(user=user_in)      
-
-                #check if same product exists in cart 
-                    
-                if Cart.objects.filter(user=user_in, product_attr_id=prod_id):
-                    return JsonResponse({'status':"Product already in cart"}) 
-
-                else:
-                    cart = Cart.objects.create(user=user_in, product_attr_id=prod_id, product_qty=prod_qty)
-                    return JsonResponse({"status": "Product added succesfully"})
-
+                    else:
+                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty)
+                        return JsonResponse({"status": "Product added succesfully"})
+        except ValueError as e:
+            print(e)
+            return JsonResponse({'status': "Add a product variant and color"})
                 
     return redirect("/")
 
