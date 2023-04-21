@@ -1,6 +1,6 @@
 import os
 import random
-import json
+import json,base64
 from django.shortcuts import render, redirect
 
 from ipocket import settings
@@ -434,6 +434,8 @@ def cart_add(request):
             color_name_req = request.POST["color_name"]
             variant_id = request.POST["variantID"] 
 
+            prod_qty = 1
+
             if prod_id is None or color_name_req is None or variant_id is None:
                 raise ValueError("One of the value is None")
 
@@ -445,7 +447,9 @@ def cart_add(request):
             print("Var price is ", variantPrice)
             print("Col price is ", colorPrice)
             
+            total_Price = productPrice+variantPrice+colorPrice 
 
+    
             print("ProductPrice is ", productPrice+variantPrice+colorPrice)
 
             fetch_colorID = Product_Color.objects.filter(color_name=color_name_req).first().id 
@@ -466,7 +470,7 @@ def cart_add(request):
                         return JsonResponse({'status':"Product already in cart"}) 
 
                     else:
-                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty)
+                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty,grand_total=total_Price)
                         return JsonResponse({"status": "Product added succesfully"})
 
                 elif 'username' in request.session:
@@ -480,7 +484,7 @@ def cart_add(request):
                         return JsonResponse({'status':"Product already in cart"}) 
 
                     else:
-                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty)
+                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty,grand_total=total_Price)
                         return JsonResponse({"status": "Product added succesfully"})
         except ValueError as e:
             print(e)
@@ -493,21 +497,23 @@ def cart_list(request):
 
     guest_cart = Cart.objects.filter(session_id=guest(request)).all()
 
+   
     if "username" not in request.session:
         cart = Cart.objects.filter(session_id=guest(request))
 
     elif "username" in request.session:
         user_in = request.session["username"]
 
+
         if guest_cart.count == 0:
             pass
 
         else:
 
+
             for item in guest_cart:
                 # if product in cart
-                print("chk ", item.product_attr)
-                if Cart.objects.filter(user=user_in, product_attr=item.product_attr):
+                if Cart.objects.filter(user=user_in,product_attr=item.product_attr):
                     cart = Cart.objects.filter(
                         user=user_in, product_attr=item.product_attr
                     ).first()  # itterate and get the product
@@ -1505,14 +1511,47 @@ def get_product_colorPrice(request):
 
         product_color = Product_Color.objects.filter(color_name=color_name_req).first()
 
+        
+
         color_Price =  product_color.color_price 
 
         total_Price = float(productPrice) + float(variantPrice) + float(color_Price)
 
-        data = {'price': total_Price}
+        #requested product images according to color 
+
+        first_Image = product_color.image1
+        second_Image = product_color.image2
+        third_Image = product_color.image3
+
+          # encode image data as base64 string
+        if first_Image:
+            with open(first_Image.path, "rb") as img_file:
+                first_image_data = base64.b64encode(img_file.read()).decode('utf-8')
+        else:
+            first_image_data = None
+        
+        if second_Image:
+            with open(second_Image.path, "rb") as img_file:
+                second_image_data = base64.b64encode(img_file.read()).decode('utf-8')
+        else:
+            second_image_data = None
+
+        if third_Image:
+            with open(third_Image.path, "rb") as img_file:
+                third_image_data = base64.b64encode(img_file.read()).decode('utf-8')
+        else:
+            third_image_data = None
+
+        data = {
+            'price': total_Price,
+            'first_image': first_image_data,
+            'second_image': second_image_data,
+            'third_image': third_image_data,
+        }
         
         return JsonResponse(data)
-        
+
+
 def check_price(request):
     if request.method == 'POST':
         pro_id = request.POST['id'] 

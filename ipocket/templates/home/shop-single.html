@@ -30,7 +30,7 @@
                                         <div class="col-4">
                                             <a href="#">    
                                                 {% if item.main_image %}
-                                                    <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Product Image 1" id="pro-img1">
+                                                    <img class="card-img img-fluid" src="{{item.main_image.url}}" alt="Product Image 1" id="firstImage">
                                                 {% else %}
                                                     {{"No Image"}}    
                                                 {% endif %}
@@ -39,7 +39,7 @@
                                         <div class="col-4">
                                             <a href="#">
                                                 {% if item.second_image %}
-                                                    <img class="card-img img-fluid" src="{{item.second_image.url}}" alt="Product Image 2">    
+                                                    <img class="card-img img-fluid" src="{{item.second_image.url}}" alt="Product Image 2" id="secondImage">    
                                                 {% endif %}
     
                                             </a>
@@ -47,7 +47,7 @@
                                         <div class="col-4">
                                             <a href="#">
                                                 {% if item.third_image %}
-                                                    <img class="card-img img-fluid" src="{{item.third_image.url}}" alt="Product Image 2">
+                                                    <img class="card-img img-fluid" src="{{item.third_image.url}}" alt="Product Image 2" id="thirdImage">
                                                 {% endif %}
                                             </a>
                                         </div>   
@@ -431,6 +431,7 @@ let endpoint1 = "{% url 'get-product-colorPrice' %}"
 
 function handleRadiobtn(radioButton){
 
+
     var productID = document.getElementById('productIDhere').value
 
     var proVarBtn = document.querySelectorAll('#product-size button.selected');
@@ -470,7 +471,11 @@ function handleRadiobtn(radioButton){
             
             priceTag.style.display = 'block';
             document.getElementById('price1').innerHTML = response.price;  
-                
+            
+            
+            // var firstImage = document.getElementById('firstImage');
+            // firstImage.setAttribute('src',response.first_image);
+            // firstImage.setAttribute('alt', 'Product Image 1');
         } 
     });
 
