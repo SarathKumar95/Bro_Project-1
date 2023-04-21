@@ -1511,14 +1511,21 @@ def get_product(request):
 def get_product_colorPrice(request):
     if request.method == "POST":
         color_name_req = request.POST['color_name'] 
-        product_Price = request.POST['proPrice']
-         
+        productID = request.POST['productId']
+        product_VariantID = request.POST['proVarID'] 
+
+        productPrice = Products.objects.filter(product_id=productID).first().price 
+
+
+        variantPrice = ProductVariant.objects.filter(product_variant_id = product_VariantID).first().price 
+
+
         product_color = Product_Color.objects.filter(color_name=color_name_req).first()
 
-        color_Price = product_color.color_price 
+        color_Price =  product_color.color_price 
 
-        total_Price = float(product_Price) + float(color_Price)
-        
+        total_Price = float(productPrice) + float(variantPrice) + float(color_Price)
+
         data = {'price': total_Price}
         
         return JsonResponse(data)

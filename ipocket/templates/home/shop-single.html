@@ -75,7 +75,7 @@
                                 <h1 class="h2"><strong>Buy</strong> {{item.product_name}}</h1>
                                 {% endif %}
                                 <div id="parastrike">
-                                    <p class="h3 text-dark py-2" >₹ <span id="price1">{{productPrice}}</span>/-</p>
+                                    <p class="h3 text-dark py-2" id = 'pricetag'>₹ <span id="price1"></span>/-</p>
                                 </div>
 
                                 <div id="paraoffer" hidden>
@@ -91,9 +91,12 @@
                             {% endif %}-->
 
                             <div id="product-size">
+                                
+                                <p>Select Variant</p>
                                 {% for item in productAttr %}
+                                    
                                     {% if item.is_base_variant %}
-                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')" autofocus>{{item.variant_name}}</button>
+                                    <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')" autofocus value="{{item.product_variant_id}}">{{item.variant_name}}</button>
                                     {% else %}    
                                     <button id="selection{{item.product_variant_id}}" class="btn btn-sm btn-secondary" onclick="changePrice(itemID ='{{item.product_variant_id}}')">{{item.variant_name}}</button>
                                     {% endif %}
@@ -101,12 +104,9 @@
                             </div>
                             
                             <div class="mt-2 mb-3" id="product-color">
-                                {% for item in productColor %} 
-                                    {% if item.is_base_color %}
-                                    <input type="radio" name="radio-Btn" value="{{item.color_name}}" id="" onclick="handleRadiobtn(this)" checked="checked" >{{item.color_name}}
-                                    {% else %}
+                                <p>Select Color</p>
+                                {% for item in productColor %}
                                     <input type="radio" name="radio-Btn" value="{{item.color_name}}" id="" onclick="handleRadiobtn(this)">{{item.color_name}}
-                                    {% endif %}
                                 {% endfor %}
                             </div>
                             
@@ -199,6 +199,12 @@
 
     <script>    
 
+    const colorBtn = document.getElementById("product-color")
+    colorBtn.style.display = 'none';
+
+    const priceTag = document.getElementById('pricetag') 
+    
+    priceTag.style.display = 'none';
     
     document.getElementById('img-container').addEventListener('mouseover', function(){
         imageZoom('product-detail')
@@ -322,21 +328,36 @@ let endpoint = "{% url 'get-product' %}"
 
 function changePrice(itemID){
 
-    var radioBtns = document.querySelectorAll('input[name="radio-Btn"]');
-    var selectedValue;
+    
+    
+    colorBtn.style.display = 'block';
+    priceTag.style.display = 'block';
 
-    for (var i = 0; i < radioBtns.length; i++) {
-    if (radioBtns[i].checked) {
-        selectedValue = radioBtns[i].value;
-        break;
-    }
-    }
+    const radioButtons = document.querySelectorAll('input[name="radio-Btn"]');
+    radioButtons.forEach(function(radioButton) {
+        radioButton.checked = false;
+    });
+    
+    let clickedBtn = null;
 
-    console.log("Selected value is ", selectedValue);
-  
     let ProductId = document.getElementById('productIDhere').value
 
-    let selButton = document.getElementById('selection' + itemID)
+    let selButton = document.getElementById('selection' + itemID);
+
+    if (selButton != clickedBtn){
+        clickedBtn = selButton;
+
+        var buttons = document.querySelectorAll('#product-size button')
+        for(var i = 0; i < buttons.length; i++){
+            if (buttons[i] === clickedBtn){
+                buttons[i].disabled = true;
+            }
+            else{
+                buttons[i].disabled = false;
+            }
+        }
+
+    }
 
     
     // Remove the 'selected' class from any previously selected button
@@ -382,30 +403,49 @@ function changePrice(itemID){
 }
 
 
+
+
 let endpoint1 = "{% url 'get-product-colorPrice' %}" 
 
 function handleRadiobtn(radioButton){
 
-    let selectedValue = radioButton.value;
-    
-    let productPrice = document.getElementById('price1').innerHTML
+    var productID = document.getElementById('productIDhere').value
 
-    console.log("Price is ", productPrice);
+    var proVarBtn = document.querySelectorAll('#product-size button.selected');
 
-    console.log("Value is ", selectedValue);
+    var numericId = '';
+
+    for (var i = 0; i < proVarBtn.length; i++) {
+    var buttonId = proVarBtn[i].getAttribute('id');
+    numericId = buttonId.substring(9);
+    }
+
+
+    let selectedValue = radioButton.value; 
+
+    const radioBtns = document.getElementsByName('radio-Btn');
+
+    for(let i=0; i<radioBtns.length; i++){
+        if(radioBtns[i] === radioButton){
+            radioBtns[i].disabled = true;
+        }else{
+            radioBtns[i].disabled = false;
+        }
+    }
+
 
     $.ajax({
-        method:"POST",
+        method:"POST", 
         url: endpoint1,
         data: {
             "color_name":selectedValue,
-            "proPrice":productPrice,
+            "productId":productID,
+            "proVarID":numericId,
             csrfmiddlewaretoken:csrftoken
         },
         
         success: function (response) {
-             
-            console.log("Success!!" , response.price);
+            
             
             document.getElementById('price1').innerHTML = response.price;  
                 
@@ -413,6 +453,7 @@ function handleRadiobtn(radioButton){
     });
 
 }
+
 
 
 function checkPrice(){
