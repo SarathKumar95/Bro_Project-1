@@ -51,7 +51,6 @@ def guest(request):
     if not guest_user:
         guest_user = request.session.create()
 
-    print("User in is", guest_user)
     return guest_user
 
 
@@ -507,6 +506,7 @@ def cart_list(request):
 
             for item in guest_cart:
                 # if product in cart
+                print("chk ", item.product_attr)
                 if Cart.objects.filter(user=user_in, product_attr=item.product_attr):
                     cart = Cart.objects.filter(
                         user=user_in, product_attr=item.product_attr
@@ -530,23 +530,23 @@ def cart_list(request):
     sub_total = 0
 
     tax = 0
-    for item in cart:
-        product_qtyCheck = item.product_attr.total_quantity
+    # for item in cart:
+    #     product_qtyCheck = item.product_attr.total_quantity
 
-        if item.product_attr.price_after_offer > 0:
-            Item_total = item.product_attr.price_after_offer * item.product_qty
-        else:
-            Item_total = item.product_attr.base_price * item.product_qty
+    #     if item.product_attr.price_after_offer > 0:
+    #         Item_total = item.product_attr.price_after_offer * item.product_qty
+    #     else:
+    #         Item_total = item.product_attr.base_price * item.product_qty
 
         
 
-        sub_total += Item_total
+    #     sub_total += Item_total
 
     no_of_cart_items = cart.count()
     context = {
         "cart": cart,
-        "no_of_cart_items": no_of_cart_items,
-        "sub_total": sub_total,
+        # "no_of_cart_items": no_of_cart_items,
+        # "sub_total": sub_total,
     }
 
     return render(request, "home/cartlist.html", context)

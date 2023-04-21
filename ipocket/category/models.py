@@ -82,8 +82,11 @@ class Products(models.Model):
     product_name = models.CharField(max_length=100, unique=True)
     product_type = models.ForeignKey(ProductType,on_delete=models.CASCADE)
 
-    description = models.TextField()
+    description = models.TextField(null=True,blank=True)
     main_image = models.ImageField(upload_to='products', blank=True)
+    second_image = models.ImageField(upload_to='products', blank=True)
+    third_image = models.ImageField(upload_to='products', blank=True)
+
     price = models.DecimalField(max_digits=10, decimal_places=2)
     available = models.BooleanField(default=True)
     total_quantity = models.IntegerField(default=0)
