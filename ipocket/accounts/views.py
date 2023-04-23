@@ -68,7 +68,12 @@ def home_page(request):
         pass    
 
     category = Categories.objects.all()
-    subcat = ProductType.objects.all()
+    subcat = ProductType.objects.all() 
+
+
+    for item in subcat:
+        print("Check product item ", item.product_type_image)
+
     product = Products.objects.all()
     banner = Banner.objects.all()
     productAttr = Products.objects.all()
@@ -427,134 +432,101 @@ def item(request, product_id):
 
 
 def cart_add(request):
+    if request.method != "POST":
+        return redirect('/') 
+    
+    try:
+        prod_id = request.POST["productID"]
+        color_name_rec = request.POST["color_name"]
+        variant_ID_rec = request.POST["variantID"] 
 
-    if request.method == "POST":
-        try:
-            prod_id = request.POST["productID"]
-            color_name_req = request.POST["color_name"]
-            variant_id = request.POST["variantID"] 
+        if not all([prod_id,color_name_rec,variant_ID_rec]):
+            raise ValueError("One of these value is None") 
+        
+        productPrice = float(Products.objects.get(product_id=prod_id).price)
+        variantPrice = float(ProductVariant.objects.get(product_variant_id=variant_ID_rec).price)
+        colorPrice = float(Product_Color.objects.filter(color_name=color_name_rec).first().color_price)
 
-            prod_qty = 1
+        total_Price = productPrice + variantPrice + colorPrice 
 
-            if prod_id is None or color_name_req is None or variant_id is None:
-                raise ValueError("One of the value is None")
+        fetch_colorID = Product_Color.objects.filter(color_name=color_name_rec).first().id 
 
-            productPrice = float(Products.objects.filter(product_id=prod_id).first().price)
-            variantPrice = float(ProductVariant.objects.filter(product_variant_id=variant_id).first().price)
-            colorPrice = float(Product_Color.objects.filter(color_name=color_name_req).first().color_price)
+        print("Color id is ", fetch_colorID)
+        print("Var id is ", variant_ID_rec)
 
-            print("Pro price is ", productPrice)
-            print("Var price is ", variantPrice)
-            print("Col price is ", colorPrice)
+        fetch_variantColor = VariantColor.objects.filter(color_id__id=fetch_colorID, variant_id=variant_ID_rec) 
+
+        if not fetch_variantColor.exists():
+            return JsonResponse({'status': "Sorry, that combination does not exist!"})
+
+        variantColor_ID = fetch_variantColor.first().id
+        current_Stock = fetch_variantColor.first().quantity 
+
+        if current_Stock == 0:
+            return JsonResponse({'status': "Sorry, we have run out of stock!"})
+
+        if Cart.objects.filter(session_id=guest(request), product_attr_id=prod_id, variant_color_selected_id=variantColor_ID).exists() or \
+                Cart.objects.filter(user=request.session.get('username'), product_attr_id=prod_id, variant_color_selected_id=variantColor_ID).exists():
+            return JsonResponse({'status': "Product already in cart"}) 
+
+        cart_kwargs = {
+            'session_id': guest(request),
+            'product_attr_id': prod_id,
+            'variant_color_selected_id': variantColor_ID,
+            'product_qty': 1,
+            'grand_total': total_Price
+        }
+        if 'username' in request.session:
+            cart_kwargs.pop('session_id')
+            cart_kwargs['user'] = request.session['username']
             
-            total_Price = productPrice+variantPrice+colorPrice 
+        Cart.objects.create(**cart_kwargs)
+
+        return JsonResponse({"status": "Product added succesfully"})
+
+    except (ValueError, Products.DoesNotExist, ProductVariant.DoesNotExist, Product_Color.DoesNotExist, VariantColor.DoesNotExist):
+        return JsonResponse({'status': "Add a product variant and color"}) 
 
     
-            print("ProductPrice is ", productPrice+variantPrice+colorPrice)
-
-            fetch_colorID = Product_Color.objects.filter(color_name=color_name_req).first().id 
-        
-            product_check = VariantColor.objects.filter(color_id=fetch_colorID,variant_id=variant_id).first().quantity 
-
-            if product_check == 0:
-                return JsonResponse({'status':"Sorry, that combination does not exist!"})
-
-            else:
-
-                if 'username' not in request.session:
-                    cart = Cart.objects.filter(session_id=guest(request))      
-
-                    #check if same product exists in cart 
-                        
-                    if Cart.objects.filter(session_id=guest(request), product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID):
-                        return JsonResponse({'status':"Product already in cart"}) 
-
-                    else:
-                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty,grand_total=total_Price)
-                        return JsonResponse({"status": "Product added succesfully"})
-
-                elif 'username' in request.session:
-                    user_in = request.session['username'] 
-
-                    cart = Cart.objects.filter(user=user_in)      
-
-                    #check if same product exists in cart 
-                        
-                    if Cart.objects.filter(user=user_in, product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID):
-                        return JsonResponse({'status':"Product already in cart"}) 
-
-                    else:
-                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_selected_id=variant_id,color_selected_id=fetch_colorID,product_qty=prod_qty,grand_total=total_Price)
-                        return JsonResponse({"status": "Product added succesfully"})
-        except ValueError as e:
-            print(e)
-            return JsonResponse({'status': "Add a product variant and color"})
-                
-    return redirect("/")
-
  
 def cart_list(request):
 
     guest_cart = Cart.objects.filter(session_id=guest(request)).all()
 
-   
-    if "username" not in request.session:
-        cart = Cart.objects.filter(session_id=guest(request))
+    user_in = request.session.get("username",None) 
 
-    elif "username" in request.session:
-        user_in = request.session["username"]
+    for item in guest_cart:
 
+        if user_in is None:
+            break 
 
-        if guest_cart.count == 0:
-            pass
+        if Cart.objects.filter(user=user_in, product_attr=item.product_attr).exists():
+            cart = Cart.objects.filter(user=user_in,product_attr=item.product_attr).first()
+
+            cart.product_qty+=1
+            cart.save()
 
         else:
+            cart, created = Cart.objects.get_or_create(
+                user=user_in,product_attr=item.product_attr,
+                defaults={'product_qty':item.product_qty}
+            )
+
+    cart = Cart.objects.filter(user=user_in)
+    
+    if cart is None or cart.first() is None:
+        sub_Total = 0
+    else:
+        sub_Total = cart.first().grand_total
 
 
-            for item in guest_cart:
-                # if product in cart
-                if Cart.objects.filter(user=user_in,product_attr=item.product_attr):
-                    cart = Cart.objects.filter(
-                        user=user_in, product_attr=item.product_attr
-                    ).first()  # itterate and get the product
+    guest_cart.delete()
 
-                    cart.product_qty += 1  # increase its quantity
-                    cart.save()
-
-                    # item.product.delete() # delete that product from guest cart
-
-                else:
-                    cart = Cart.objects.create(
-                        user=user_in, product_attr=item.product_attr, product_qty=item.product_qty
-                    )
-                    cart.save()
-
-            cart = Cart.objects.filter(user=user_in)
-
-            guest_cart.delete()
-
-    sub_total = 0
-
-    tax = 0
-    # for item in cart:
-    #     product_qtyCheck = item.product_attr.total_quantity
-
-    #     if item.product_attr.price_after_offer > 0:
-    #         Item_total = item.product_attr.price_after_offer * item.product_qty
-    #     else:
-    #         Item_total = item.product_attr.base_price * item.product_qty
-
-        
-
-    #     sub_total += Item_total
-
-    no_of_cart_items = cart.count()
     context = {
-        "cart": cart,
-        # "no_of_cart_items": no_of_cart_items,
-        # "sub_total": sub_total,
-    }
-
+        "cart":cart,
+        "subTotal": sub_Total,
+    }                
+   
     return render(request, "home/cartlist.html", context)
 
 
@@ -1037,11 +1009,11 @@ def checkout(request):
 
     for item in cart:
         coupon_name = item.coupon_applied
-        if item.product_attr.price_after_offer > 0:
-            Item_total = item.product_attr.price_after_offer * item.product_qty
-        else:
-            Item_total = item.product_attr.base_price * item.product_qty
-        sub_total += Item_total
+        # if item.product_attr.price_after_offer > 0:
+        #     Item_total = item.product_attr.price_after_offer * item.product_qty
+        # else:
+        #     Item_total = item.product_attr.base_price * item.product_qty
+        # sub_total += Item_total
 
         if item.amount_discounted != None:
             total_discount += item.amount_discounted
@@ -1132,7 +1104,7 @@ def checkout(request):
             neworderItems = Cart.objects.filter(user=user_in)
 
             for item in neworderItems:
-                price = item.product_attr.base_price
+                price = item.product_attr.price
                 # if item.product_attr.price_after_offer:
                 #     price = item.product_attr.price_after_offer
 
@@ -1146,11 +1118,11 @@ def checkout(request):
                     quantity=item.product_qty,
                 )
 
-                orderproduct = ProductAttribute.objects.filter(
-                    id=item.product_attr_id
+                orderproduct = Products.objects.filter(
+                    product_id=item.product_attr_id
                 ).first()
 
-                orderproduct.quantity -= item.product_qty
+                orderproduct.total_quantity -= item.product_attr.total_quantity
                 orderproduct.save()
 
                 cart = Cart.objects.filter(user=user_in)

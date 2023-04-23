@@ -89,7 +89,9 @@ class Products(models.Model):
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
     available = models.BooleanField(default=True)
-    total_quantity = models.IntegerField(default=0)
+    
+    total_quantity = models.IntegerField(null=True,blank=True)
+    price_after_offer = models.FloatField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -148,15 +150,13 @@ class VariantColor(models.Model):
     color = models.ForeignKey(Product_Color, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0) 
 
-    def get_price(self, variant,color):
-        try:
-            variant_color = VariantColor.objects.get(variant=variant, color=color)
-            if variant_color.quantity > 0:
-                return variant_color.color.color_price or variant.price
-            else:
-                return None
-        except VariantColor.DoesNotExist:
-            return None
+    def save(self,*args,**kwargs):
+        productId = self.variant.product.product_id 
+        product = Products.objects.get(product_id = productId) 
+
+        product.total_quantity = self.quantity
+
+        super(VariantColor,self).save(*args,**kwargs) 
 
     class Meta:
         unique_together = ('variant', 'color')
@@ -233,24 +233,24 @@ class Order(models.Model):
         return '{} - {}'.format(self.user, str(self.tracking_no))
 
 
-# # class OrderItem(models.Model):
-# #     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-# #     product = models.ForeignKey(Products, on_delete=models.CASCADE)
-# #     price = models.FloatField(null=True)
-# #     quantity = models.IntegerField(null=True)
-# #     order_itemstatus = [
-# #         ('Order Confirmed', 'Order Confirmed'),
-# #         ('Shipped', 'Shipped'),
-# #         ('In Transit', 'In Transit'),
-# #         ('Out for Delivery', 'Out for Delivery'),
-# #         ('Delivered', 'Delivered'),
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    price = models.FloatField(null=True)
+    quantity = models.IntegerField(null=True)
+    order_itemstatus = [
+        ('Order Confirmed', 'Order Confirmed'),
+        ('Shipped', 'Shipped'),
+        ('In Transit', 'In Transit'),
+        ('Out for Delivery', 'Out for Delivery'),
+        ('Delivered', 'Delivered'),
         
-# #     ]
-# #     item_status = models.CharField(
-# #         max_length=50, choices=order_itemstatus, default="Order Confirmed", null=True)
+    ]
+    item_status = models.CharField(
+        max_length=50, choices=order_itemstatus, default="Order Confirmed", null=True)
 
-# #     def __str__(self):
-# #         return '{} - {}'.format(self.order.user, self.order.tracking_no)
+    def __str__(self):
+        return '{} - {}'.format(self.order.user, self.order.tracking_no)
 
 
 # # class Wishlist(models.Model):
