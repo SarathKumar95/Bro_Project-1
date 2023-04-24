@@ -1146,6 +1146,7 @@ def checkout(request):
         "coupon_name": coupon_name,
         "total_discount": total_discount,
         "total": grandTotal_with_shipping,
+        "itemPrice":totalProduct_Price,
         "api_key": RAZOR_KEY_ID,
         "customer_billAddress": customer_billAddress,
         "customer_shipAddress": customer_shipAddress,
