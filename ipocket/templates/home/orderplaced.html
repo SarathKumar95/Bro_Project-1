@@ -27,37 +27,25 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-2">
-                      <img src="{{item.product.first_image.url}}"
+                      <img src="{{item.product.main_image.url}}"
                         class="img-fluid" alt="Phone">
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      {% if item.product.product.generation == None %}
-                        <p class="text-dark mb-0">{{item.product.product.product_name}} {{item.product.product.series}}</p>
-                      {% elif item.product.product.series == None %}
-                        <p class="text-dark mb-0">{{item.product.product.product_name}} {{item.product.product.generation}}</p>  
-                      {% elif item.product.product.generation == None and item.product.product.series == None %}
-                        <p class="text-dark mb-0">{{item.product.product.product_name}}</p>
-                      {% else %}
-                        <p class="text-dark mb-0">{{item.product.product.product_name}} {{item.product.product.generation}} {{item.product.product.series}} </p>        
-                      {% endif %}  
+                        <p class="text-dark mb-0">{{item.product.product_name}}</p>         
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      <p class="text-dark mb-0 small">{{item.product.color}}</p>
+                      <p class="text-dark mb-0 small">{{item.variantColor.color.color_name}}</p>
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                       {% if item.product.size != None %}
-                      <p class="text-dark mb-0 small">Capacity : {{item.product.size}} GB</p>
+                      <p class="text-dark mb-0 small">Capacity : {{item.variantColor.variant.variant_name}}</p>
                       {% endif %}
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                       <p class="text-dark mb-0 small">Qty: {{item.quantity}} nos.</p>
                     </div>
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      {% if item.product.price_after_offer %}
-                      <p class="text-dark mb-0 small">₹{{item.product.price_after_offer}}</p>
-                      {% else %}
-                      <p class="text-dark mb-0 small">₹{{item.product.price}}</p>
-                      {% endif %}
+                      <p class="text-dark mb-0 small">₹{{itemPrice}}</p>
                     </div>
                   </div>
                   <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">

@@ -556,19 +556,6 @@ def cart_update(request):
 
             total = (float(itemPrice) * float(product_qty))
 
-            # if item.product_attr_id == productID:
-            #        # minus the old price with old qty 
-            #        if item.product_attr.price_after_offer > 0:
-            #             price_to_Change = item.product_attr.price_after_offer * item.product_qty 
-            #             new_Price = item.product_attr.price_after_offer * float(product_qty) 
-            #        else:
-            #             price_to_Change = total * item.product_qty 
-            #             new_Price = item.product_attr.base_price * float(product_qty)
-
-            #        total = total - price_to_Change + new_Price 
-            # else:
-            #     pass        
-    
         cart.product_qty = product_qty
         cart.save()
 
@@ -609,12 +596,17 @@ def OrderPage(request, tracking_no):
     orderTotal = 0
 
     for item in orderitem:
-        if item.product.price_after_offer:
-            orderTotal = orderTotal + item.product.price_after_offer * item.quantity
-        else:
-            orderTotal = orderTotal + item.product.price * item.quantity
 
-    context = {"order": order, "orderitem": orderitem, "orderTotal": orderTotal}
+        if item.product.price_after_offer > 0:
+            itemPrice = float(item.product.price_after_offer) + float(item.variantColor.variant.price) + float(item.variantColor.color.color_price)
+            orderTotal = orderTotal + itemPrice * item.quantity
+        else:
+            itemPrice = float(item.product.price) + float(item.variantColor.variant.price) + float(item.variantColor.color.color_price)
+            
+            orderTotal = orderTotal + itemPrice * item.quantity 
+
+
+    context = {"order": order, "orderitem": orderitem, "orderTotal": orderTotal,"itemPrice":itemPrice}
     return render(request, "home/orderplaced.html", context)
 
 
@@ -1012,13 +1004,19 @@ def checkout(request):
     total_discount = 0
 
     for item in cart:
+        
         coupon_name = item.coupon_applied
-        if item.product_attr.price_after_offer > 0:
-            Item_total = item.product_attr.price_after_offer * item.product_qty
+        if item.product_attr.price_after_offer <= 0:
+            totalProduct_Price = float(item.variant_color_selected.variant.product.price_after_offer) + float(item.variant_color_selected.variant.price) + float(item.variant_color_selected.color.color_price) 
+            Item_total = totalProduct_Price * item.product_qty
+            
         else:
-            Item_total = item.product_attr.base_price * item.product_qty
-        sub_total += Item_total
+            totalProduct_Price = float(item.variant_color_selected.variant.product.price) + float(item.variant_color_selected.variant.price) + float(item.variant_color_selected.color.color_price) 
+            Item_total = totalProduct_Price * item.product_qty  
+            
 
+        sub_total += Item_total
+        
         if item.amount_discounted != None:
             total_discount += item.amount_discounted
         else:
@@ -1119,6 +1117,7 @@ def checkout(request):
                 OrderItem.objects.create(
                     order=neworder,
                     product=item.product_attr,
+                    variantColor_id=item.variant_color_selected.id,
                     price=price,
                     quantity=item.product_qty,
                 )

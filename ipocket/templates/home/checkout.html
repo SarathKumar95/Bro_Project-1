@@ -68,7 +68,7 @@
           </div>
 
           {% if item.product_attr.price_after_offer %}
-          <span class="text-dark">{{item.product_qty}} x ₹{{item.product_attr.price_after_offer}}</span>
+          <span class="text-dark">{{item.product_qty}} x ₹{{sub_total}}</span>
           {% if item.amount_discounted > 0 %} 
           <span style="color:red;">- ({{item.amount_discounted}})</span>
           {% endif %}

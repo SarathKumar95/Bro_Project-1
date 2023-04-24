@@ -235,7 +235,8 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE) 
+    variantColor = models.ForeignKey(VariantColor,on_delete=models.CASCADE,related_name='variantColor_selected')
     price = models.FloatField(null=True)
     quantity = models.IntegerField(null=True)
     order_itemstatus = [
