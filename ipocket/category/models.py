@@ -154,7 +154,7 @@ class VariantColor(models.Model):
         productId = self.variant.product.product_id 
         product = Products.objects.get(product_id = productId) 
 
-        product.total_quantity = self.quantity
+        product.total_quantity = self.quantity  
 
         super(VariantColor,self).save(*args,**kwargs) 
 

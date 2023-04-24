@@ -226,4 +226,9 @@ class AddColorForm(ModelForm):
     class Meta:
         model = Product_Color
         fields = '__all__'
-        
+
+class StockForm(ModelForm):
+
+    class Meta:
+        model = VariantColor 
+        fields = '__all__'        

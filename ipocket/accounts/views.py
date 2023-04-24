@@ -58,8 +58,6 @@ def home_page(request):
 
     check_user=False
 
-
-
     if 'username' in request.session:
           user_in = request.session['username']  
           check_user = MyUser.objects.filter(email=user_in).first().is_superuser
@@ -69,10 +67,6 @@ def home_page(request):
 
     category = Categories.objects.all()
     subcat = ProductType.objects.all() 
-
-
-    for item in subcat:
-        print("Check product item ", item.product_type_image)
 
     product = Products.objects.all()
     banner = Banner.objects.all()
@@ -1704,3 +1698,40 @@ def edit_color(request,id):
     context={'form':form}
     return render(request,'owner/editColor.html',context)
 
+
+def list_productstock(request):
+    productStock = VariantColor.objects.all()
+    form = StockForm()
+
+    if request.method == 'POST':
+        form = StockForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+    context = {'productStock':productStock,'form':form}
+    return render(request,'owner/stocklist.html',context) 
+
+def edit_productstock(request,variant_id):
+    fetch_variantColor = VariantColor.objects.get(id=variant_id) 
+
+    form = StockForm(instance=fetch_variantColor) 
+
+    if request.method == 'POST':
+        form = StockForm(request.POST,instance=fetch_variantColor)
+
+        if form.is_valid():
+            form.save()
+            return redirect('product-stockList')
+    context = {'form':form} 
+
+    return render(request,'owner/stockEdit.html',context)
+
+
+def delete_productStock(request,variant_id):
+    fetch_variantColor = VariantColor.objects.get(id=variant_id) 
+
+    fetch_variantColor.delete()
+
+    messages.info(request,"Product Stock deleted") 
+
+    return redirect("product-stockList")           
