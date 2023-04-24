@@ -253,19 +253,19 @@ class OrderItem(models.Model):
         return '{} - {}'.format(self.order.user, self.order.tracking_no)
 
 
-# # class Wishlist(models.Model):
-# #     user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
-# #     product=models.ForeignKey(Products,on_delete=models.CASCADE)
-# #     wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
+# class Wishlist(models.Model):
+#     user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
+#     product=models.ForeignKey(Products,on_delete=models.CASCADE)
+#     wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
       
-# #     def __str__(self):
+#     def __str__(self):
 
-# #         if self.wishlist_name != None:
+#         if self.wishlist_name != None:
 
-# #             return '{}' - '{}'.format(self.user.email, self.wishlist_name) 
+#             return '{}' - '{}'.format(self.user.email, self.wishlist_name) 
 
-# #         else:
-# #             return self.user.email    
+#         else:
+#             return self.user.email    
 
 # #wallet
 # class Wallet(models.Model):
