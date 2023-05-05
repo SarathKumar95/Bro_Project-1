@@ -149,52 +149,5 @@ def delete_categories(request, category_id):
 
 
 
-def wishlist_add(request):
-    
-    if request.method=="POST":
-            product_id=request.POST['product_id'] 
-
-            product=Products.objects.filter(product_id=product_id).first() 
-
-            print("Product id is", product_id) 
-
-
-            if 'username' in request.session:
-
-                user_in=request.session['username'] 
-                
-                user=MyUser.objects.filter(email=user_in).first().id 
-                
-                print("User is", user)
-
-                wishlist=Wishlist.objects.create(user_id=user,product_id=product_id)
-
-                return JsonResponse({'status':"Product added to Wishlist"})
-            else:
-                return JsonResponse({'status':"Please login to add to wishlist"})    
-
-
-
-
-
-def wishlist_list(request):
-    user=request.session['username'] 
-    
-    userID=MyUser.objects.filter(email=user).first().id
-    
-    print("User ID is",userID)
-    
-    wishlist=Wishlist.objects.filter(user_id=userID) 
-    
-    print("Wishlist is",wishlist) 
-    
-    
-    for item in wishlist:
-        print(item.product.product_name) 
-        print(item.product.price_after_offer)
-        
-    return render(request,'user/wishlist.html')     
-
-
 def product_attr_add(request):
     pass 

@@ -154,7 +154,8 @@ class VariantColor(models.Model):
         productId = self.variant.product.product_id 
         product = Products.objects.get(product_id = productId) 
 
-        product.total_quantity = self.quantity  
+        product.total_quantity += self.quantity  
+        product.save()
 
         super(VariantColor,self).save(*args,**kwargs) 
 
@@ -254,19 +255,14 @@ class OrderItem(models.Model):
         return '{} - {}'.format(self.order.user, self.order.tracking_no)
 
 
-# class Wishlist(models.Model):
-#     user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
-#     product=models.ForeignKey(Products,on_delete=models.CASCADE)
-#     wishlist_name=models.CharField(max_length=100,null=True,blank=True) 
-      
-#     def __str__(self):
+class Wishlist(models.Model):
+    user=models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True) 
+    product=models.ForeignKey(Products,on_delete=models.CASCADE)
+    variant=models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
+    color=models.ForeignKey(Product_Color,on_delete=models.CASCADE)
 
-#         if self.wishlist_name != None:
-
-#             return '{}' - '{}'.format(self.user.email, self.wishlist_name) 
-
-#         else:
-#             return self.user.email    
+    def __str__(self):
+        return self.user.email    
 
 # #wallet
 # class Wallet(models.Model):

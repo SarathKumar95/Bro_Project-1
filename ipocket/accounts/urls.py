@@ -75,5 +75,7 @@ urlpatterns = [
     path('productmanager/productstock/delete/<int:variant_id>',views.delete_productStock,name='product-StockDel'),                                
     path('productmanager/productstock/edit/<int:variant_id>',views.edit_productstock,name='product-StockEdit'),                                
 
-            
+    path('item/wishlist/add',views.wishlist_add,name='wish-add'),
+    path('wishlist/list', views.wishlist_list,name='wishlist-list'),    
+             
 ]

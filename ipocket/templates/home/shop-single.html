@@ -151,7 +151,7 @@
                                         <button class="btn btn-success btn-lg addtoCartBtn" name="submit" value="buy">Add to Cart</button>
                                     </div>
                                     <div class="col d-grid">
-                                        <button type="submit" class="btn btn-warning btn-lg">Add To Wishlist</button>
+                                        <button type="submit" class="btn btn-warning btn-lg addtoWishlistBtn">Add To Wishlist</button>
                                     </div>
                                 </div>
                                 <!-- {% if item.quantity > 0 %}
@@ -326,6 +326,44 @@ $('.addtoCartBtn').click(function (){
 
 });
 
+
+    
+$('.addtoWishlistBtn').click(function (){
+
+var product_id = document.getElementById('prod_id').value;
+
+
+var variant_Id = '';
+
+
+const radioBtns = document.querySelectorAll('input[name="radio-Btn"]'); 
+
+let colorName = '';
+for(var i = 0; i < radioBtns.length; i++){
+    if (radioBtns[i].checked){
+        colorName = radioBtns[i].value
+    }
+}
+ 
+var token = $('input[name=csrfmiddlewaretoken]').val();
+    
+let navCount = Number($('#navcartCount').text()) 
+
+
+$.ajax({
+    method: "POST",
+    url: "wishlist/add",
+    data: {
+        'productID' : product_id,
+        csrfmiddlewaretoken: token     
+   },
+
+    success: function (response) {
+      alertify.success(response.status)      
+    }
+});
+
+});
 
 
 function getCookie(name) {
