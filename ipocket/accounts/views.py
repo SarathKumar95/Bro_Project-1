@@ -431,15 +431,10 @@ def cart_add(request):
         prod_id = request.POST['productID']
         color_name_req = request.POST["color_name"]
         variant_id = request.POST["variantID"]
-
-        print("Product id is ", prod_id )
-        print("color name is ", color_name_req)
-        print("variant id is ", variant_id)
        
         if prod_id == '' or variant_id == '' or color_name_req == '':
             return JsonResponse({'status':"Please select a variant and color"})    
     
-
         productPrice = float(Products.objects.filter(product_id=prod_id).first().price)
         variantPrice = float(ProductVariant.objects.filter(product_variant_id=variant_id).first().price)
         colorPrice = float(Product_Color.objects.filter(color_name=color_name_req).first().color_price) 
@@ -450,7 +445,8 @@ def cart_add(request):
         print("Var price is ", variantPrice)
         print("Col price is ", colorPrice) 
 
-        print("ProductPrice is ", productPrice+variantPrice+colorPrice) 
+        itemPrice = productPrice+variantPrice+colorPrice
+        print("ProductPrice is ", itemPrice) 
 
         fetch_colorID = Product_Color.objects.filter(color_name=color_name_req).first().id 
 
@@ -472,7 +468,7 @@ def cart_add(request):
                         return JsonResponse({'status':"Product already in cart"}) 
 
                     else:
-                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_color_selected_id = product_check_id, product_qty=prod_qty)
+                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_color_selected_id = product_check_id, product_qty=prod_qty, grand_total = itemPrice)
                         return JsonResponse({"status": "Product added succesfully"}) 
             
             elif 'username' in request.session:
@@ -484,7 +480,7 @@ def cart_add(request):
                         return JsonResponse({'status':"Product already in cart"}) 
                     
                     else:
-                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_color_selected_id = product_check_id, product_qty=prod_qty)
+                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_color_selected_id = product_check_id, product_qty=prod_qty,grand_total = itemPrice)
                         return JsonResponse({"status": "Product added succesfully"})
                     
         return redirect("/")
