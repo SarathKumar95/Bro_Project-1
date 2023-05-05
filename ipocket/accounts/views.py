@@ -1008,7 +1008,7 @@ def checkout(request):
     for item in cart:
         
         coupon_name = item.coupon_applied
-        if item.product_attr.price_after_offer <= 0:
+        if item.product_attr.price_after_offer > 0:
             totalProduct_Price = float(item.variant_color_selected.variant.product.price_after_offer) + float(item.variant_color_selected.variant.price) + float(item.variant_color_selected.color.color_price) 
             Item_total = totalProduct_Price * item.product_qty
             
@@ -1143,7 +1143,7 @@ def checkout(request):
     context = {
         "user_filt": user_filt,
         "cart": cart,
-        "sub_total": sub_total,
+        "sub_total": Item_total,
         "shipping": shipping,
         "coupon_name": coupon_name,
         "total_discount": total_discount,
