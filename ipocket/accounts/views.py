@@ -325,44 +325,62 @@ def products(request):
 
 
     #fetch max product price and min product price 
-    ## need rebuild!!!
-    # max_product = ProductAttribute.objects.order_by('price').last().price      
-    # min_product = ProductAttribute.objects.order_by('-price').last().price 
+    # need rebuild!!!
+    max_product = Products.objects.order_by('price').last().price      
+    min_product = Products.objects.order_by('-price').last().price
 
-    
-    if request.method == "POST":
+    if request.method == "POST": 
+        if request.POST.get('price') == '' and request.POST['productType'] != '':
+            fetch_proType_ID = ProductType.objects.filter(product_type=request.POST['productType']).first().sub_cat_id 
+            product = Products.objects.filter(product_type_id=fetch_proType_ID)
+            messages.success(request,"Showing filtered products")
 
-        if 'price' in request.POST: 
-            priceX = request.POST['price']
-            productPrice = Products.objects.filter(price__lte = priceX) 
+        elif 'price' in request.POST:    
+            fetch_price = float(request.POST['price']) 
+            fetch_products = Products.objects.filter(price__lte=fetch_price)      
+            
+            if 'productType' in request.POST:
+                print("Price and pro type checked ",request.POST['productType'])
+                fetch_proType_ID = ProductType.objects.filter(product_type=request.POST['productType']).first().sub_cat_id 
+                product = fetch_products.filter(product_type_id=fetch_proType_ID)
+                messages.success(request,"Showing filtered products")    
 
-            if 'condition' in request.POST:
-                conx = request.POST['condition']
-                print("Condition is ", conx, "under ", priceX)
-                messages.success(request,"Showing products filtered "+ conx + " under " + "₹ " 
-                + priceX)
+            else:
+                product = fetch_products
+                messages.success(request,"Showing filtered products")
 
-                id_of_condition = Categories.objects.filter(condition = conx).first().category_id
-                product = productPrice.filter(condition_id = id_of_condition)
-                productY = product
-                if 'productType' in request.POST:
-                    proX = request.POST['productType'] 
-                    print("Condition is ",conx,"Pro type is ", proX, "under ", priceX)                    
-                    id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
-                    product = productY.filter(product_type_id=id_of_pro) 
+
+        # if 'price' in request.POST: 
+        #     priceX = request.POST['price']
+        #     productPrice = Products.objects.filter(price__lte = priceX) 
+
+        #     if 'condition' in request.POST:
+        #         conx = request.POST['condition']
+        #         print("Condition is ", conx, "under ", priceX)
+        #         messages.success(request,"Showing products filtered "+ conx + " under " + "₹ " 
+        #         + priceX)
+
+        #         id_of_condition = Categories.objects.filter(condition = conx).first().category_id
+        #         product = productPrice.filter(condition_id = id_of_condition)
+        #         productY = product
+        #         if 'productType' in request.POST:
+        #             proX = request.POST['productType'] 
+        #             print("Condition is ",conx,"Pro type is ", proX, "under ", priceX)                    
+        #             id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
+        #             product = productY.filter(product_type_id=id_of_pro) 
             
 
-            elif 'productType' in request.POST:
-                proX = request.POST['productType'] 
-                print("Pro type is ", proX, "under ", priceX)
+        #     elif 'productType' in request.POST:
+        #         proX = request.POST['productType'] 
+        #         print("Pro type is ", proX, "under ", priceX)
                 
-                id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
-                product = productPrice.filter(product_type_id=id_of_pro)  
+        #         id_of_pro = ProductType.objects.filter(product_type = proX).first().sub_cat_id
+        #         product = productPrice.filter(product_type_id=id_of_pro)  
 
-        else:
-            print("Nope!!")
+        # else:
+        #     print("Nope!!")
 
-    context = {"product": product, "category": category, "subCategory": subCategory}
+    context = {"product": product, "category": category, "subCategory": subCategory,"max":max_product, "min":min_product}
     return render(request, "home/shop.html", context)
 
 
