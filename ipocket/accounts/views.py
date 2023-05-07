@@ -447,7 +447,7 @@ def cart_add(request):
     
     if request.method == 'POST':
         prod_id = request.POST['productID']
-        color_name_req = request.POST["color_name"]
+        color_name_req = request.POST["color_name"] or base_color 
         variant_id = request.POST["variantID"]
        
 
@@ -475,6 +475,66 @@ def cart_add(request):
         print("color id is ",fetch_colorID)
 
         product_check = VariantColor.objects.filter(color_id=fetch_colorID,variant_id=variant_id).first()
+
+        if product_check == None:
+            return JsonResponse({'status':"Sorry, that combination does not exist!"})
+            
+        product_check_quantity = product_check.quantity 
+        product_check_id = product_check.id 
+
+        print("Prod check id is ", product_check_id)
+
+        if product_check_quantity == 0:
+                return JsonResponse({'status':"Sorry,we have run out of stocks!"})
+
+        else:
+            if 'username' not in request.session:
+                    cart = Cart.objects.filter(session_id=guest(request)) 
+
+                    if Cart.objects.filter(session_id=guest(request), product_attr_id=prod_id):
+                        return JsonResponse({'status':"Product already in cart"}) 
+
+                    else:
+                        cart = Cart.objects.create(session_id=guest(request), product_attr_id=prod_id,variant_color_selected_id = product_check_id, product_qty=prod_qty, grand_total = itemPrice)
+                        return JsonResponse({"status": "Product added succesfully"}) 
+            
+            elif 'username' in request.session:
+                    user_in = request.session['username']  
+
+                    cart = Cart.objects.filter(user=user_in)  
+
+                    if Cart.objects.filter(user=user_in, product_attr_id=prod_id):
+                        return JsonResponse({'status':"Product already in cart"}) 
+                    
+                    else:
+                        cart = Cart.objects.create(user=user_in, product_attr_id=prod_id,variant_color_selected_id = product_check_id, product_qty=prod_qty,grand_total = itemPrice)
+                        return JsonResponse({"status": "Product added succesfully"})
+                    
+        return redirect("/")
+    
+
+
+def cart_add_from_shop(request):
+    
+    if request.method == 'POST':
+        print("post hit")
+        prod_id = request.POST['productID']
+        base_color = Product_Color.objects.filter(product_id = prod_id).first().id
+        base_variant = ProductVariant.objects.filter(product_id=prod_id).first().product_variant_id
+        
+        productPrice = float(Products.objects.filter(product_id=prod_id).first().price)
+        variantPrice = float(ProductVariant.objects.filter(product_variant_id=base_variant).first().price)
+        colorPrice = float(Product_Color.objects.filter(id=base_color).first().color_price) 
+
+        prod_qty = 1 
+
+        print("Pro price is ", productPrice)
+        print("Var price is ", variantPrice)
+        print("Col price is ", colorPrice) 
+
+        itemPrice = productPrice+variantPrice+colorPrice
+        
+        product_check = VariantColor.objects.filter(color_id=base_color,variant_id=base_variant).first()
 
         if product_check == None:
             return JsonResponse({'status':"Sorry, that combination does not exist!"})

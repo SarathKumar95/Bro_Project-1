@@ -20,6 +20,7 @@ urlpatterns = [
     path('products/sortbynew',views.sortbynew,name="product-sortybynew"),
     path('item/<int:product_id>',views.item,name="itempage"),
     path('item/cart/add',views.cart_add,name="cart-add"),
+    path('item/cart/add_shop',views.cart_add_from_shop,name="cart-add-shop"),
     path('item/cart/list',views.cart_list,name="cart-list"),
     path('item/cart/list/delete',views.cart_delete,name="cart-delete"),
     path('item/cart/list/update',views.cart_update,name="cart-update"),

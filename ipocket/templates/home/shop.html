@@ -195,7 +195,9 @@
 
 {% block scripts %}
 <script src="{% static 'js/home/custom.js' %}"></script>
-<script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
 </script>
 <script>
 
@@ -236,18 +238,15 @@ $("input:checkbox").on('click', function() {
 });
 
 function oneclickCart(proID){
+    console.log("product id is ", proID)
     let product_id = proID 
     let product_qty = 1 
-    let color = document.getElementById('colorspec'+proID).value 
-
-    console.log("Color is", color)
 
     $.ajax({
         method: "POST",
-        url: "{% url 'cart-add' %}",
+        url: "{% url 'cart-add-shop' %}",
         data: {
-            'product_id':product_id,
-            'color':color,
+            'productID':product_id,
             csrfmiddlewaretoken:getCookie('csrftoken')
         },
         success: function (response) {
