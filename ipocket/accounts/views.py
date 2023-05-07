@@ -1839,6 +1839,8 @@ def delete_productStock(request,variant_id):
 def wishlist_add(request):
     
     if request.method=="POST":
+            print("product id got ", request.POST['productID'])
+            
             product_id=request.POST['productID'] 
             base_variant = ProductVariant.objects.filter(product_id=product_id).first().product_variant_id
             base_color = Product_Color.objects.filter(product_id=product_id).first().id   
@@ -1855,9 +1857,6 @@ def wishlist_add(request):
                 return JsonResponse({'status':"Product added to Wishlist"})
             else:
                 return JsonResponse({'status':"Please login to add to wishlist"})    
-
-
-
 
 
 def wishlist_list(request):

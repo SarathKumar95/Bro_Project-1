@@ -238,7 +238,7 @@ $("input:checkbox").on('click', function() {
 });
 
 function oneclickCart(proID){
-    console.log("product id is ", proID)
+    
     let product_id = proID 
     let product_qty = 1 
 
@@ -262,7 +262,7 @@ function oneclickWish(proID){
     method: "POST",
     url: "{% url 'wish-add' %}",
     data: {
-        'product_id':product_id,
+        'productID':product_id,
         csrfmiddlewaretoken:getCookie('csrftoken')
     },
     success: function (response) {
